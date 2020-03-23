@@ -16,7 +16,7 @@ type UserHandler struct {
 	UserUsecase user.UsecaseUser
 }
 
-// NewUserHandler is constructor to initialize UserHandler
+// NewUserHandler is constructor to initialize UserHandler and return UserHandler
 func NewUserHandler(userUsecase user.UsecaseUser) *UserHandler {
 	return &UserHandler{UserUsecase: userUsecase}
 }
