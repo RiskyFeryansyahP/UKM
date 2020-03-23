@@ -41,6 +41,8 @@ type ProfileMutation struct {
 	created_at      *time.Time
 	updated_at      *time.Time
 	clearedFields   map[string]struct{}
+	owner           map[int]struct{}
+	removedowner    map[int]struct{}
 }
 
 var _ ent.Mutation = (*ProfileMutation)(nil)
@@ -233,6 +235,48 @@ func (m *ProfileMutation) UpdatedAt() (r time.Time, exists bool) {
 // ResetUpdatedAt reset all changes of the updated_at field.
 func (m *ProfileMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+}
+
+// AddOwnerIDs adds the owner edge to User by ids.
+func (m *ProfileMutation) AddOwnerIDs(ids ...int) {
+	if m.owner == nil {
+		m.owner = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.owner[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveOwnerIDs removes the owner edge to User by ids.
+func (m *ProfileMutation) RemoveOwnerIDs(ids ...int) {
+	if m.removedowner == nil {
+		m.removedowner = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedowner[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOwner returns the removed ids of owner.
+func (m *ProfileMutation) RemovedOwnerIDs() (ids []int) {
+	for id := range m.removedowner {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OwnerIDs returns the owner ids in the mutation.
+func (m *ProfileMutation) OwnerIDs() (ids []int) {
+	for id := range m.owner {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOwner reset all changes of the owner edge.
+func (m *ProfileMutation) ResetOwner() {
+	m.owner = nil
+	m.removedowner = nil
 }
 
 // Op returns the operation name.
@@ -444,7 +488,10 @@ func (m *ProfileMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ProfileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.owner != nil {
+		edges = append(edges, profile.EdgeOwner)
+	}
 	return edges
 }
 
@@ -452,6 +499,12 @@ func (m *ProfileMutation) AddedEdges() []string {
 // the given edge name.
 func (m *ProfileMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case profile.EdgeOwner:
+		ids := make([]ent.Value, 0, len(m.owner))
+		for id := range m.owner {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -459,7 +512,10 @@ func (m *ProfileMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ProfileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedowner != nil {
+		edges = append(edges, profile.EdgeOwner)
+	}
 	return edges
 }
 
@@ -467,6 +523,12 @@ func (m *ProfileMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ProfileMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case profile.EdgeOwner:
+		ids := make([]ent.Value, 0, len(m.removedowner))
+		for id := range m.removedowner {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -474,7 +536,7 @@ func (m *ProfileMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ProfileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -489,6 +551,8 @@ func (m *ProfileMutation) EdgeCleared(name string) bool {
 // ClearEdge clears the value for the given name. It returns an
 // error if the edge name is not defined in the schema.
 func (m *ProfileMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Profile unique edge %s", name)
 }
 
@@ -497,6 +561,9 @@ func (m *ProfileMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ProfileMutation) ResetEdge(name string) error {
 	switch name {
+	case profile.EdgeOwner:
+		m.ResetOwner()
+		return nil
 	}
 	return fmt.Errorf("unknown Profile edge %s", name)
 }

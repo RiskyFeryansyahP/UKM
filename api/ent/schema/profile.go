@@ -2,6 +2,7 @@ package schema
 
 import (
 	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
 	"time"
 )
@@ -35,5 +36,9 @@ func (Profile) Fields() []ent.Field {
 
 // Edges of the Profile.
 func (Profile) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("owner", User.Type).
+			Ref("profile").
+			Required(),
+	}
 }
