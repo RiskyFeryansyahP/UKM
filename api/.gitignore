@@ -1,0 +1,15 @@
+# IDE Setting
+.idea/
+
+# Dependency package
+/vendor
+/build
+
+#test or debug files
+*.test
+*.debug
+*.out
+*.out.tmp
+
+#environment variable
+.env
