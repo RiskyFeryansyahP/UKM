@@ -10,3 +10,6 @@ run: build
 
 migrate: build
 	./build/ukm --migrate=true
+
+generate:
+	entc generate ./ent/schema
