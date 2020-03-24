@@ -21,9 +21,9 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetUsername sets the username field.
-func (uc *UserCreate) SetUsername(s string) *UserCreate {
-	uc.mutation.SetUsername(s)
+// SetEmail sets the email field.
+func (uc *UserCreate) SetEmail(s string) *UserCreate {
+	uc.mutation.SetEmail(s)
 	return uc
 }
 
@@ -82,12 +82,12 @@ func (uc *UserCreate) SetProfile(p *Profile) *UserCreate {
 
 // Save creates the User in the database.
 func (uc *UserCreate) Save(ctx context.Context) (*User, error) {
-	if _, ok := uc.mutation.Username(); !ok {
-		return nil, errors.New("ent: missing required field \"username\"")
+	if _, ok := uc.mutation.Email(); !ok {
+		return nil, errors.New("ent: missing required field \"email\"")
 	}
-	if v, ok := uc.mutation.Username(); ok {
-		if err := user.UsernameValidator(v); err != nil {
-			return nil, fmt.Errorf("ent: validator failed for field \"username\": %v", err)
+	if v, ok := uc.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return nil, fmt.Errorf("ent: validator failed for field \"email\": %v", err)
 		}
 	}
 	if _, ok := uc.mutation.Password(); !ok {
@@ -152,13 +152,13 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 			},
 		}
 	)
-	if value, ok := uc.mutation.Username(); ok {
+	if value, ok := uc.mutation.Email(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldUsername,
+			Column: user.FieldEmail,
 		})
-		u.Username = value
+		u.Email = value
 	}
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

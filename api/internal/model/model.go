@@ -16,9 +16,9 @@ type ResponseRegister struct {
 	Result     ResultRegister `json:"result"`
 }
 
-// InputCreateUser is a input model create user
-type InputCreateUser struct {
-	Username    string       `json:"username"`
-	Password    string       `json:"password"`
-	UserProfile *ent.Profile `json:"userprofile"`
+// ResponseLogin model of response after login
+type ResponseLogin struct {
+	StatusCode int          `json:"statuscode"`
+	Status     bool         `json:""`
+	Profile    *ent.Profile `json:"profile"`
 }

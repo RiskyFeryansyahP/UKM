@@ -575,7 +575,7 @@ type UserMutation struct {
 	op             Op
 	typ            string
 	id             *int
-	username       *string
+	email          *string
 	password       *string
 	created_at     *time.Time
 	updated_at     *time.Time
@@ -624,23 +624,23 @@ func (m *UserMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetUsername sets the username field.
-func (m *UserMutation) SetUsername(s string) {
-	m.username = &s
+// SetEmail sets the email field.
+func (m *UserMutation) SetEmail(s string) {
+	m.email = &s
 }
 
-// Username returns the username value in the mutation.
-func (m *UserMutation) Username() (r string, exists bool) {
-	v := m.username
+// Email returns the email value in the mutation.
+func (m *UserMutation) Email() (r string, exists bool) {
+	v := m.email
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetUsername reset all changes of the username field.
-func (m *UserMutation) ResetUsername() {
-	m.username = nil
+// ResetEmail reset all changes of the email field.
+func (m *UserMutation) ResetEmail() {
+	m.email = nil
 }
 
 // SetPassword sets the password field.
@@ -754,8 +754,8 @@ func (m *UserMutation) Type() string {
 // fields that were in/decremented, call AddedFields().
 func (m *UserMutation) Fields() []string {
 	fields := make([]string, 0, 4)
-	if m.username != nil {
-		fields = append(fields, user.FieldUsername)
+	if m.email != nil {
+		fields = append(fields, user.FieldEmail)
 	}
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
@@ -774,8 +774,8 @@ func (m *UserMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case user.FieldUsername:
-		return m.Username()
+	case user.FieldEmail:
+		return m.Email()
 	case user.FieldPassword:
 		return m.Password()
 	case user.FieldCreatedAt:
@@ -791,12 +791,12 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case user.FieldUsername:
+	case user.FieldEmail:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUsername(v)
+		m.SetEmail(v)
 		return nil
 	case user.FieldPassword:
 		v, ok := value.(string)
@@ -869,8 +869,8 @@ func (m *UserMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *UserMutation) ResetField(name string) error {
 	switch name {
-	case user.FieldUsername:
-		m.ResetUsername()
+	case user.FieldEmail:
+		m.ResetEmail()
 		return nil
 	case user.FieldPassword:
 		m.ResetPassword()

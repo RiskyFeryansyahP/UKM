@@ -43,6 +43,7 @@ func main() {
 
 	router := fasthttprouter.New()
 	router.POST("/api/v0/user/register", userHandler.RegisterUser)
+	router.POST("/api/v0/user/login", userHandler.LoginUser)
 
 	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
