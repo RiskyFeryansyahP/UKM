@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 )
@@ -100,6 +101,21 @@ func (pc *ProfileCreate) SetNillableUpdatedAt(t *time.Time) *ProfileCreate {
 	return pc
 }
 
+// AddOwnerIDs adds the owner edge to User by ids.
+func (pc *ProfileCreate) AddOwnerIDs(ids ...int) *ProfileCreate {
+	pc.mutation.AddOwnerIDs(ids...)
+	return pc
+}
+
+// AddOwner adds the owner edges to User.
+func (pc *ProfileCreate) AddOwner(u ...*User) *ProfileCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pc.AddOwnerIDs(ids...)
+}
+
 // Save creates the Profile in the database.
 func (pc *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
 	if _, ok := pc.mutation.FirstName(); !ok {
@@ -144,6 +160,9 @@ func (pc *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
 	if _, ok := pc.mutation.UpdatedAt(); !ok {
 		v := profile.DefaultUpdatedAt()
 		pc.mutation.SetUpdatedAt(v)
+	}
+	if len(pc.mutation.OwnerIDs()) == 0 {
+		return nil, errors.New("ent: missing required edge \"owner\"")
 	}
 	var (
 		err  error
@@ -254,6 +273,25 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 			Column: profile.FieldUpdatedAt,
 		})
 		pr.UpdatedAt = value
+	}
+	if nodes := pc.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   profile.OwnerTable,
+			Columns: []string{profile.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {

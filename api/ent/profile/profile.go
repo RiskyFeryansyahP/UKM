@@ -20,8 +20,18 @@ const (
 	FieldCreatedAt      = "created_at"      // FieldUpdatedAt holds the string denoting the updated_at vertex property in the database.
 	FieldUpdatedAt      = "updated_at"
 
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
+
 	// Table holds the table name of the profile in the database.
 	Table = "profiles"
+	// OwnerTable is the table the holds the owner relation/edge.
+	OwnerTable = "users"
+	// OwnerInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	OwnerInverseTable = "users"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "user_profile"
 )
 
 // Columns holds all SQL columns for profile fields.

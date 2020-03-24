@@ -17,8 +17,8 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Username holds the value of the "username" field.
-	Username string `json:"username,omitempty"`
+	// Email holds the value of the "email" field.
+	Email string `json:"email,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -58,7 +58,7 @@ func (e UserEdges) ProfileOrErr() (*Profile, error) {
 func (*User) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
-		&sql.NullString{}, // username
+		&sql.NullString{}, // email
 		&sql.NullString{}, // password
 		&sql.NullTime{},   // created_at
 		&sql.NullTime{},   // updated_at
@@ -85,9 +85,9 @@ func (u *User) assignValues(values ...interface{}) error {
 	u.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field username", values[0])
+		return fmt.Errorf("unexpected type %T for field email", values[0])
 	} else if value.Valid {
-		u.Username = value.String
+		u.Email = value.String
 	}
 	if value, ok := values[1].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field password", values[1])
@@ -144,8 +144,8 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
-	builder.WriteString(", username=")
-	builder.WriteString(u.Username)
+	builder.WriteString(", email=")
+	builder.WriteString(u.Email)
 	builder.WriteString(", password=")
 	builder.WriteString(u.Password)
 	builder.WriteString(", created_at=")

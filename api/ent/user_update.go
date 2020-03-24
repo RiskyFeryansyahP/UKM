@@ -29,9 +29,9 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetUsername sets the username field.
-func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
-	uu.mutation.SetUsername(s)
+// SetEmail sets the email field.
+func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
+	uu.mutation.SetEmail(s)
 	return uu
 }
 
@@ -88,9 +88,9 @@ func (uu *UserUpdate) ClearProfile() *UserUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
-	if v, ok := uu.mutation.Username(); ok {
-		if err := user.UsernameValidator(v); err != nil {
-			return 0, fmt.Errorf("ent: validator failed for field \"username\": %v", err)
+	if v, ok := uu.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return 0, fmt.Errorf("ent: validator failed for field \"email\": %v", err)
 		}
 	}
 	if v, ok := uu.mutation.Password(); ok {
@@ -169,11 +169,11 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.Username(); ok {
+	if value, ok := uu.mutation.Email(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldUsername,
+			Column: user.FieldEmail,
 		})
 	}
 	if value, ok := uu.mutation.Password(); ok {
@@ -250,9 +250,9 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
-// SetUsername sets the username field.
-func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
-	uuo.mutation.SetUsername(s)
+// SetEmail sets the email field.
+func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
+	uuo.mutation.SetEmail(s)
 	return uuo
 }
 
@@ -309,9 +309,9 @@ func (uuo *UserUpdateOne) ClearProfile() *UserUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
-	if v, ok := uuo.mutation.Username(); ok {
-		if err := user.UsernameValidator(v); err != nil {
-			return nil, fmt.Errorf("ent: validator failed for field \"username\": %v", err)
+	if v, ok := uuo.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return nil, fmt.Errorf("ent: validator failed for field \"email\": %v", err)
 		}
 	}
 	if v, ok := uuo.mutation.Password(); ok {
@@ -388,11 +388,11 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 		return nil, fmt.Errorf("missing User.ID for update")
 	}
 	_spec.Node.ID.Value = id
-	if value, ok := uuo.mutation.Username(); ok {
+	if value, ok := uuo.mutation.Email(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldUsername,
+			Column: user.FieldEmail,
 		})
 	}
 	if value, ok := uuo.mutation.Password(); ok {

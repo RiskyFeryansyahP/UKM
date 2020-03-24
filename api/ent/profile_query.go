@@ -4,12 +4,14 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
 
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
@@ -23,6 +25,8 @@ type ProfileQuery struct {
 	order      []Order
 	unique     []string
 	predicates []predicate.Profile
+	// eager-loading edges.
+	withOwner *UserQuery
 	// intermediate query.
 	sql *sql.Selector
 }
@@ -49,6 +53,18 @@ func (pq *ProfileQuery) Offset(offset int) *ProfileQuery {
 func (pq *ProfileQuery) Order(o ...Order) *ProfileQuery {
 	pq.order = append(pq.order, o...)
 	return pq
+}
+
+// QueryOwner chains the current query on the owner edge.
+func (pq *ProfileQuery) QueryOwner() *UserQuery {
+	query := &UserQuery{config: pq.config}
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profile.Table, profile.FieldID, pq.sqlQuery()),
+		sqlgraph.To(user.Table, user.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, profile.OwnerTable, profile.OwnerColumn),
+	)
+	query.sql = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+	return query
 }
 
 // First returns the first Profile entity in the query. Returns *NotFoundError when no profile was found.
@@ -220,6 +236,17 @@ func (pq *ProfileQuery) Clone() *ProfileQuery {
 	}
 }
 
+//  WithOwner tells the query-builder to eager-loads the nodes that are connected to
+// the "owner" edge. The optional arguments used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithOwner(opts ...func(*UserQuery)) *ProfileQuery {
+	query := &UserQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withOwner = query
+	return pq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -263,8 +290,11 @@ func (pq *ProfileQuery) Select(field string, fields ...string) *ProfileSelect {
 
 func (pq *ProfileQuery) sqlAll(ctx context.Context) ([]*Profile, error) {
 	var (
-		nodes = []*Profile{}
-		_spec = pq.querySpec()
+		nodes       = []*Profile{}
+		_spec       = pq.querySpec()
+		loadedTypes = [1]bool{
+			pq.withOwner != nil,
+		}
 	)
 	_spec.ScanValues = func() []interface{} {
 		node := &Profile{config: pq.config}
@@ -277,6 +307,7 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context) ([]*Profile, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(values...)
 	}
 	if err := sqlgraph.QueryNodes(ctx, pq.driver, _spec); err != nil {
@@ -285,6 +316,35 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context) ([]*Profile, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := pq.withOwner; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Profile)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.User(func(s *sql.Selector) {
+			s.Where(sql.InValues(profile.OwnerColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_profile
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_profile" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_profile" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Owner = append(node.Edges.Owner, n)
+		}
+	}
+
 	return nodes, nil
 }
 

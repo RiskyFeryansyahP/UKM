@@ -9,6 +9,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
@@ -100,6 +101,36 @@ func (pu *ProfileUpdate) SetUpdatedAt(t time.Time) *ProfileUpdate {
 	return pu
 }
 
+// AddOwnerIDs adds the owner edge to User by ids.
+func (pu *ProfileUpdate) AddOwnerIDs(ids ...int) *ProfileUpdate {
+	pu.mutation.AddOwnerIDs(ids...)
+	return pu
+}
+
+// AddOwner adds the owner edges to User.
+func (pu *ProfileUpdate) AddOwner(u ...*User) *ProfileUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pu.AddOwnerIDs(ids...)
+}
+
+// RemoveOwnerIDs removes the owner edge to User by ids.
+func (pu *ProfileUpdate) RemoveOwnerIDs(ids ...int) *ProfileUpdate {
+	pu.mutation.RemoveOwnerIDs(ids...)
+	return pu
+}
+
+// RemoveOwner removes owner edges to User.
+func (pu *ProfileUpdate) RemoveOwner(u ...*User) *ProfileUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pu.RemoveOwnerIDs(ids...)
+}
+
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (pu *ProfileUpdate) Save(ctx context.Context) (int, error) {
 	if v, ok := pu.mutation.FirstName(); ok {
@@ -121,6 +152,7 @@ func (pu *ProfileUpdate) Save(ctx context.Context) (int, error) {
 		v := profile.UpdateDefaultUpdatedAt()
 		pu.mutation.SetUpdatedAt(v)
 	}
+
 	var (
 		err      error
 		affected int
@@ -243,6 +275,44 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: profile.FieldUpdatedAt,
 		})
 	}
+	if nodes := pu.mutation.RemovedOwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   profile.OwnerTable,
+			Columns: []string{profile.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   profile.OwnerTable,
+			Columns: []string{profile.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
@@ -333,6 +403,36 @@ func (puo *ProfileUpdateOne) SetUpdatedAt(t time.Time) *ProfileUpdateOne {
 	return puo
 }
 
+// AddOwnerIDs adds the owner edge to User by ids.
+func (puo *ProfileUpdateOne) AddOwnerIDs(ids ...int) *ProfileUpdateOne {
+	puo.mutation.AddOwnerIDs(ids...)
+	return puo
+}
+
+// AddOwner adds the owner edges to User.
+func (puo *ProfileUpdateOne) AddOwner(u ...*User) *ProfileUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return puo.AddOwnerIDs(ids...)
+}
+
+// RemoveOwnerIDs removes the owner edge to User by ids.
+func (puo *ProfileUpdateOne) RemoveOwnerIDs(ids ...int) *ProfileUpdateOne {
+	puo.mutation.RemoveOwnerIDs(ids...)
+	return puo
+}
+
+// RemoveOwner removes owner edges to User.
+func (puo *ProfileUpdateOne) RemoveOwner(u ...*User) *ProfileUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return puo.RemoveOwnerIDs(ids...)
+}
+
 // Save executes the query and returns the updated entity.
 func (puo *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
 	if v, ok := puo.mutation.FirstName(); ok {
@@ -354,6 +454,7 @@ func (puo *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
 		v := profile.UpdateDefaultUpdatedAt()
 		puo.mutation.SetUpdatedAt(v)
 	}
+
 	var (
 		err  error
 		node *Profile
@@ -473,6 +574,44 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (pr *Profile, err erro
 			Value:  value,
 			Column: profile.FieldUpdatedAt,
 		})
+	}
+	if nodes := puo.mutation.RemovedOwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   profile.OwnerTable,
+			Columns: []string{profile.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   profile.OwnerTable,
+			Columns: []string{profile.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	pr = &Profile{config: puo.config}
 	_spec.Assign = pr.assignValues

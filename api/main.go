@@ -3,10 +3,15 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/buaazp/fasthttprouter"
-	"github.com/confus1on/UKM/internal/postgres"
-	"github.com/valyala/fasthttp"
 	"log"
+
+	"github.com/confus1on/UKM/internal/postgres"
+	"github.com/confus1on/UKM/internal/service/user/handler"
+	"github.com/confus1on/UKM/internal/service/user/repository"
+	"github.com/confus1on/UKM/internal/service/user/usecase"
+
+	"github.com/buaazp/fasthttprouter"
+	"github.com/valyala/fasthttp"
 )
 
 const port = ":8080"
@@ -22,6 +27,7 @@ func main() {
 	ctx := context.Background()
 
 	migrate := flag.Bool("migrate", false, "a migrate database")
+	flag.Parse()
 	log.Print(*migrate)
 
 	// Run migration
@@ -31,8 +37,14 @@ func main() {
 		}
 	}
 
-	router := fasthttprouter.New()
+	userRepo := repository.NewUserRepository(client)
+	userUsecase := usecase.NewUserUsecase(userRepo)
+	userHandler := handler.NewUserHandler(userUsecase)
 
-	log.Printf("Server Running at localhost%v \n", port)
+	router := fasthttprouter.New()
+	router.POST("/api/v0/user/register", userHandler.RegisterUser)
+	router.POST("/api/v0/user/login", userHandler.LoginUser)
+
+	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
 }

@@ -183,6 +183,20 @@ func (c *ProfileClient) GetX(ctx context.Context, id int) *Profile {
 	return pr
 }
 
+// QueryOwner queries the owner edge of a Profile.
+func (c *ProfileClient) QueryOwner(pr *Profile) *UserQuery {
+	query := &UserQuery{config: c.config}
+	id := pr.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profile.Table, profile.FieldID, id),
+		sqlgraph.To(user.Table, user.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, profile.OwnerTable, profile.OwnerColumn),
+	)
+	query.sql = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ProfileClient) Hooks() []Hook {
 	return c.hooks.Profile
