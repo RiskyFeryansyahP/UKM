@@ -5,9 +5,9 @@ package ent
 import (
 	"time"
 
-	"github.com/confus1on/UKM/ent/profile"
-	"github.com/confus1on/UKM/ent/schema"
-	"github.com/confus1on/UKM/ent/user"
+	"github.com/RiskyFeryansyahP/UKM/ent/profile"
+	"github.com/RiskyFeryansyahP/UKM/ent/schema"
+	"github.com/RiskyFeryansyahP/UKM/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime

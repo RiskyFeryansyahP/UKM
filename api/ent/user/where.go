@@ -5,7 +5,7 @@ package user
 import (
 	"time"
 
-	"github.com/confus1on/UKM/ent/predicate"
+	"github.com/RiskyFeryansyahP/UKM/ent/predicate"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 )

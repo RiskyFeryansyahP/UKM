@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/confus1on/UKM/ent/predicate"
-	"github.com/confus1on/UKM/ent/user"
+	"github.com/RiskyFeryansyahP/UKM/ent/predicate"
+	"github.com/RiskyFeryansyahP/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"

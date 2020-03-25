@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/confus1on/UKM/ent/profile"
-	"github.com/confus1on/UKM/ent/user"
+	"github.com/RiskyFeryansyahP/UKM/ent/profile"
+	"github.com/RiskyFeryansyahP/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 )
 

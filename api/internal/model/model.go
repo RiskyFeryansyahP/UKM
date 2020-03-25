@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/confus1on/UKM/ent"
+	"github.com/RiskyFeryansyahP/UKM/ent"
 )
 
 // ResultRegister is model to show User after register

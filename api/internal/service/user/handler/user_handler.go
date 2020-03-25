@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/confus1on/UKM/internal/model"
-	"github.com/confus1on/UKM/internal/service/user"
-	"github.com/confus1on/UKM/internal/utils"
+	"github.com/RiskyFeryansyahP/UKM/internal/model"
+	"github.com/RiskyFeryansyahP/UKM/internal/service/user"
+	"github.com/RiskyFeryansyahP/UKM/internal/utils"
 
 	"github.com/valyala/fasthttp"
 )

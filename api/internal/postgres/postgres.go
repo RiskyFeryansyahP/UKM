@@ -3,7 +3,7 @@ package postgres
 import (
 	"time"
 
-	"github.com/confus1on/UKM/ent"
+	"github.com/RiskyFeryansyahP/UKM/ent"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 	_ "github.com/lib/pq" // Dialect Postgres

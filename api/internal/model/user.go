@@ -1,6 +1,6 @@
 package model
 
-import "github.com/confus1on/UKM/ent"
+import "github.com/RiskyFeryansyahP/UKM/ent"
 
 // InputCreateUser is a input model create user
 type InputCreateUser struct {

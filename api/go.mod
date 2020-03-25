@@ -1,4 +1,4 @@
-module github.com/confus1on/UKM
+module github.com/RiskyFeryansyahP/UKM
 
 go 1.14
 

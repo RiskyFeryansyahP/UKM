@@ -3,10 +3,10 @@ package repository
 import (
 	"time"
 
-	"github.com/confus1on/UKM/ent"
-	userAgregate "github.com/confus1on/UKM/ent/user"
-	"github.com/confus1on/UKM/internal/model"
-	"github.com/confus1on/UKM/internal/service/user"
+	"github.com/RiskyFeryansyahP/UKM/ent"
+	userAgregate "github.com/RiskyFeryansyahP/UKM/ent/user"
+	"github.com/RiskyFeryansyahP/UKM/internal/model"
+	"github.com/RiskyFeryansyahP/UKM/internal/service/user"
 
 	"github.com/valyala/fasthttp"
 )

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/confus1on/UKM/internal/model"
+	"github.com/RiskyFeryansyahP/UKM/internal/model"
 
 	"github.com/valyala/fasthttp"
 )

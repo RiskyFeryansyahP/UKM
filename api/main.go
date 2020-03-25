@@ -5,10 +5,10 @@ import (
 	"flag"
 	"log"
 
-	"github.com/confus1on/UKM/internal/postgres"
-	"github.com/confus1on/UKM/internal/service/user/handler"
-	"github.com/confus1on/UKM/internal/service/user/repository"
-	"github.com/confus1on/UKM/internal/service/user/usecase"
+	"github.com/RiskyFeryansyahP/UKM/internal/postgres"
+	"github.com/RiskyFeryansyahP/UKM/internal/service/user/handler"
+	"github.com/RiskyFeryansyahP/UKM/internal/service/user/repository"
+	"github.com/RiskyFeryansyahP/UKM/internal/service/user/usecase"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"

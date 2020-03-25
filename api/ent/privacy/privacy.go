@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/confus1on/UKM/ent"
+	"github.com/RiskyFeryansyahP/UKM/ent"
 )
 
 var (

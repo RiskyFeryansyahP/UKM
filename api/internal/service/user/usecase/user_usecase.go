@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/confus1on/UKM/internal/model"
-	"github.com/confus1on/UKM/internal/service/user"
+	"github.com/RiskyFeryansyahP/UKM/internal/model"
+	"github.com/RiskyFeryansyahP/UKM/internal/service/user"
 
 	"github.com/valyala/fasthttp"
 )

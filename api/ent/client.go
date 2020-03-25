@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/confus1on/UKM/ent/migrate"
+	"github.com/RiskyFeryansyahP/UKM/ent/migrate"
 
-	"github.com/confus1on/UKM/ent/profile"
-	"github.com/confus1on/UKM/ent/user"
+	"github.com/RiskyFeryansyahP/UKM/ent/profile"
+	"github.com/RiskyFeryansyahP/UKM/ent/user"
 
 	"github.com/facebookincubator/ent/dialect"
 	"github.com/facebookincubator/ent/dialect/sql"

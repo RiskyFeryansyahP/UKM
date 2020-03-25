@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/confus1on/UKM/ent"
+	"github.com/RiskyFeryansyahP/UKM/ent"
 )
 
 // The ProfileFunc type is an adapter to allow the use of ordinary
