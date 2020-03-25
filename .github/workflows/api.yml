@@ -1,4 +1,4 @@
-name: Go workflow
+name: API workflow
 on: [pull_request]
 jobs:
   api-test:
@@ -13,7 +13,7 @@ jobs:
             go-version: '1.14'
       - name: Run test
         run: cd api && go test -test.v -test.coverprofile=coverage.out -test.covermode=count ./...
-        
+
   api-lint:
     name: golangci-lint
     runs-on: ubuntu-latest
