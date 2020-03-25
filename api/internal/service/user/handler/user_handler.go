@@ -53,7 +53,7 @@ func (u *UserHandler) RegisterUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	json.NewEncoder(ctx).Encode(result)
+	_ = json.NewEncoder(ctx).Encode(result)
 }
 
 // LoginUser handle request when user want login
@@ -87,5 +87,5 @@ func (u *UserHandler) LoginUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	json.NewEncoder(ctx).Encode(result)
+	_ = json.NewEncoder(ctx).Encode(result)
 }
