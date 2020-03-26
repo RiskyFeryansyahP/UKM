@@ -13,10 +13,6 @@ jobs:
             go-version: '1.14'
       - name: Run test
         run: cd api && go test -test.v -test.coverprofile=coverage.out -test.covermode=count ./...
-      - name: codecov check coverage
-        env:
-          CODECOV_TOKEN: "f803157f-4689-4383-8498-26ff8911c339"
-        run: bash <(curl -s https://codecov.io/bash)
 
   api-lint:
     name: golangci-lint
