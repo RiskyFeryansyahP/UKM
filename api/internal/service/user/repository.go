@@ -1,14 +1,14 @@
 package user
 
 import (
+	"context"
+
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/internal/model"
-
-	"github.com/valyala/fasthttp"
 )
 
 // RepositoryUser repository interface to implemented in user repository
 type RepositoryUser interface {
-	Register(ctx *fasthttp.RequestCtx, input model.InputCreateUser) (*ent.User, error)
-	Login(ctx *fasthttp.RequestCtx, input model.InputLoginUser) (*ent.Profile, error)
+	Register(ctx context.Context, input model.InputCreateUser) (*ent.User, error)
+	Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, error)
 }
