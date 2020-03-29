@@ -1,0 +1,14 @@
+name: Coverage workflow
+on: 
+  push:
+    branches:
+      - master
+jobs:
+  code-coverage:
+    name: check-code-coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: codecov check coverage
+        env:
+          CODECOV_TOKEN: "f803157f-4689-4383-8498-26ff8911c339"
+        run: bash <(curl -s https://codecov.io/bash)
