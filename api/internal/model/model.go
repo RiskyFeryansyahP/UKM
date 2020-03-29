@@ -13,7 +13,7 @@ type ResultRegister struct {
 type ResponseRegister struct {
 	StatusCode int            `json:"statuscode"`
 	Status     bool           `json:"status"`
-	Result     ResultRegister `json:"result"`
+	Result     *ent.User `json:"result"`
 }
 
 // ResponseLogin model of response after login
