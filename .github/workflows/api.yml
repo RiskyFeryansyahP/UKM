@@ -30,3 +30,13 @@ jobs:
           echo ::add-path::$HOME/bin
           echo ::add-path::$(go env GOPATH)/bin # for Go projects
       - run: cd api && golangci-lint run
+
+  code-coverage:
+    name: check-code-coverage
+    runs-on: ubuntu-latest
+    needs: [api-test]
+    steps:
+      - name: codecov check coverage
+        env:
+          CODECOV_TOKEN: "f803157f-4689-4383-8498-26ff8911c339"
+        run: bash <(curl -s https://codecov.io/bash)
