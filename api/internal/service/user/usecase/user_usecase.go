@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/user"
 )
@@ -26,9 +27,7 @@ func (u *UserUsecase) CreateUser(ctx context.Context, input model.InputCreateUse
 	response := &model.ResponseRegister{
 		StatusCode: 200,
 		Status:     true,
-		Result: model.ResultRegister{
-			User: user,
-		},
+		Result:     user,
 	}
 
 	return response, nil

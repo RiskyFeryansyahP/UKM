@@ -46,11 +46,9 @@ func TestUserHandler_RegisterUser(t *testing.T) {
 		resp := &model.ResponseRegister{
 			StatusCode: 200,
 			Status:     true,
-			Result: model.ResultRegister{
-				User: &ent.User{
-					Email:    input.Email,
-					Password: input.Password,
-				},
+			Result: &ent.User{
+				Email:    input.Email,
+				Password: input.Password,
 			},
 		}
 
