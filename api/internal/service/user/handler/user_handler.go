@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -28,20 +29,9 @@ func (u *UserHandler) RegisterUser(ctx *fasthttp.RequestCtx) {
 
 	body := ctx.Request.Body()
 
-	err := json.Unmarshal(body, &input)
-	if err != nil {
-		log.Printf("Failed unmarshan body %v", err)
+	_ = json.Unmarshal(body, &input)
 
-		statuscode := http.StatusInternalServerError
-
-		ctx.Response.Header.SetStatusCode(statuscode)
-
-		resErr := utils.WrapErrorJson(err, statuscode)
-		_ = json.NewEncoder(ctx).Encode(resErr)
-		return
-	}
-
-	result, err := u.UserUsecase.CreateUser(ctx, input)
+	result, err := u.UserUsecase.CreateUser(context.Background(), input)
 	if err != nil {
 		log.Printf("Failed Create User %v", err)
 		statuscode := http.StatusBadRequest
@@ -62,23 +52,12 @@ func (u *UserHandler) LoginUser(ctx *fasthttp.RequestCtx) {
 
 	body := ctx.Request.Body()
 
-	err := json.Unmarshal(body, &input)
-	if err != nil {
-		log.Printf("Failed unmarshal body %v", err)
+	_ = json.Unmarshal(body, &input)
 
-		statuscode := http.StatusInternalServerError
-
-		ctx.Response.Header.SetStatusCode(statuscode)
-
-		resErr := utils.WrapErrorJson(err, statuscode)
-		_ = json.NewEncoder(ctx).Encode(resErr)
-		return
-	}
-
-	result, err := u.UserUsecase.SigninUser(ctx, input)
+	result, err := u.UserUsecase.SigninUser(context.Background(), input)
 	if err != nil {
 		log.Printf("Failed Login User %v", err)
-		statuscode := http.StatusBadRequest
+		statuscode := http.StatusUnauthorized
 
 		ctx.Response.Header.SetStatusCode(statuscode)
 
