@@ -1,14 +1,13 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	"github.com/confus1on/UKM/ent"
 	userAgregate "github.com/confus1on/UKM/ent/user"
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/user"
-
-	"github.com/valyala/fasthttp"
 )
 
 // UserRepository a struct to inject depedency from client connection
@@ -22,7 +21,7 @@ func NewUserRepository(DB *ent.Client) user.RepositoryUser {
 }
 
 // Register is a register user with return *ent.User and error
-func (u *UserRepository) Register(ctx *fasthttp.RequestCtx, input model.InputCreateUser) (*ent.User, error) {
+func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUser) (*ent.User, error) {
 	now := time.Now()
 
 	user, err := u.DB.User.Create().
@@ -56,7 +55,7 @@ func (u *UserRepository) Register(ctx *fasthttp.RequestCtx, input model.InputCre
 }
 
 // Login user signin with return profile user
-func (u *UserRepository) Login(ctx *fasthttp.RequestCtx, input model.InputLoginUser) (*ent.Profile, error) {
+func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, error) {
 	profile, err := u.DB.User.
 		Query().
 		Where(
