@@ -7,8 +7,6 @@ jobs:
   code-coverage:
     name: check-code-coverage
     runs-on: ubuntu-latest
-    needs: [api-test]
-    if: github.event.pull_request.merged
     steps:
       - name: codecov check coverage
         env:
