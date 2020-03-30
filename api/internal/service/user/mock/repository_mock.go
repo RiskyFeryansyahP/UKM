@@ -52,12 +52,13 @@ func (mr *MockRepositoryUserMockRecorder) Register(ctx, input interface{}) *gomo
 }
 
 // Login mocks base method
-func (m *MockRepositoryUser) Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, error) {
+func (m *MockRepositoryUser) Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, *ent.Role, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", ctx, input)
 	ret0, _ := ret[0].(*ent.Profile)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(*ent.Role)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // Login indicates an expected call of Login
