@@ -132,6 +132,11 @@ func TestUserHandler_LoginUser(t *testing.T) {
 			ImgProfile:     "",
 		}
 
+		role := &ent.Role{
+			ID:    1,
+			Value: "DEVELOPER",
+		}
+
 		input := model.InputLoginUser{
 			Email:    "171111040@mhs.stiki.ac.id",
 			Password: "risky",
@@ -141,6 +146,7 @@ func TestUserHandler_LoginUser(t *testing.T) {
 			StatusCode: 200,
 			Status:     true,
 			Profile:    profile,
+			Role:       role,
 		}
 
 		u := mock.NewMockUsecaseUser(controller)
