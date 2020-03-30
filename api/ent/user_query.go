@@ -10,6 +10,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/role"
 	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
@@ -26,6 +27,7 @@ type UserQuery struct {
 	predicates []predicate.User
 	// eager-loading edges.
 	withProfile *ProfileQuery
+	withRole    *RoleQuery
 	withFKs     bool
 	// intermediate query.
 	sql *sql.Selector
@@ -62,6 +64,18 @@ func (uq *UserQuery) QueryProfile() *ProfileQuery {
 		sqlgraph.From(user.Table, user.FieldID, uq.sqlQuery()),
 		sqlgraph.To(profile.Table, profile.FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, user.ProfileTable, user.ProfileColumn),
+	)
+	query.sql = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+	return query
+}
+
+// QueryRole chains the current query on the role edge.
+func (uq *UserQuery) QueryRole() *RoleQuery {
+	query := &RoleQuery{config: uq.config}
+	step := sqlgraph.NewStep(
+		sqlgraph.From(user.Table, user.FieldID, uq.sqlQuery()),
+		sqlgraph.To(role.Table, role.FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, user.RoleTable, user.RoleColumn),
 	)
 	query.sql = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 	return query
@@ -247,6 +261,17 @@ func (uq *UserQuery) WithProfile(opts ...func(*ProfileQuery)) *UserQuery {
 	return uq
 }
 
+//  WithRole tells the query-builder to eager-loads the nodes that are connected to
+// the "role" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UserQuery) WithRole(opts ...func(*RoleQuery)) *UserQuery {
+	query := &RoleQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withRole = query
+	return uq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -293,11 +318,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withProfile != nil,
+			uq.withRole != nil,
 		}
 	)
-	if uq.withProfile != nil {
+	if uq.withProfile != nil || uq.withRole != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -348,6 +374,31 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Profile = n
+			}
+		}
+	}
+
+	if query := uq.withRole; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*User)
+		for i := range nodes {
+			if fk := nodes[i].user_role; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(role.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_role" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Role = n
 			}
 		}
 	}

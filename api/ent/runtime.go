@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/role"
 	"github.com/confus1on/UKM/ent/schema"
 	"github.com/confus1on/UKM/ent/user"
 )
@@ -46,6 +47,12 @@ func init() {
 	profile.DefaultUpdatedAt = profileDescUpdatedAt.Default.(func() time.Time)
 	// profile.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	profile.UpdateDefaultUpdatedAt = profileDescUpdatedAt.UpdateDefault.(func() time.Time)
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescValue is the schema descriptor for value field.
+	roleDescValue := roleFields[0].Descriptor()
+	// role.ValueValidator is a validator for the "value" field. It is called by the builders before save.
+	role.ValueValidator = roleDescValue.Validators[0].(func(string) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.
