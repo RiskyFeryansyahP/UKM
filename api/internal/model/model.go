@@ -11,8 +11,8 @@ type ResultRegister struct {
 
 // ResponseRegister is model Response after successfull register
 type ResponseRegister struct {
-	StatusCode int            `json:"statuscode"`
-	Status     bool           `json:"status"`
+	StatusCode int       `json:"statuscode"`
+	Status     bool      `json:"status"`
 	Result     *ent.User `json:"result"`
 }
 
@@ -21,4 +21,5 @@ type ResponseLogin struct {
 	StatusCode int          `json:"statuscode"`
 	Status     bool         `json:""`
 	Profile    *ent.Profile `json:"profile"`
+	Role       *ent.Role    `json:"role"`
 }
