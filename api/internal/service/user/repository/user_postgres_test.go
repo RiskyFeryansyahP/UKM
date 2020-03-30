@@ -24,6 +24,14 @@ func TestUserRepository(t *testing.T) {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	t.Run("create role", func(t *testing.T) {
+		_, err := client.Role.Create().
+			SetValue("DEVELOPER").
+			Save(context.Background())
+
+		require.NoError(t, err)
+	})
+
 	t.Run("create user and profile", func(t *testing.T) {
 		now := time.Now()
 
@@ -42,6 +50,7 @@ func TestUserRepository(t *testing.T) {
 		user := model.InputCreateUser{
 			Email:       "171111040@mhs.stiki.ac.id",
 			Password:    "risky",
+			Role:        1,
 			UserProfile: profile,
 		}
 
@@ -97,6 +106,7 @@ func TestUserRepository(t *testing.T) {
 		input := model.InputCreateUser{
 			Email:       "171111041@mhs.stiki.ac.id",
 			Password:    "teuku",
+			Role:        1,
 			UserProfile: profile,
 		}
 
@@ -115,11 +125,12 @@ func TestUserRepository(t *testing.T) {
 
 		user := NewUserRepository(client)
 
-		profile, err := user.Login(context.Background(), input)
+		profile, role, err := user.Login(context.Background(), input)
 		require.NoError(t, err)
 		require.Equal(t, "Risky F", profile.FirstName)
 		require.Equal(t, "Pribadi", profile.LastName)
 		require.Equal(t, true, profile.Status)
+		require.Equal(t, 1, role.ID)
 	})
 
 	t.Run("failed login wrong email / password", func(t *testing.T) {
@@ -130,8 +141,9 @@ func TestUserRepository(t *testing.T) {
 
 		user := NewUserRepository(client)
 
-		profile, err := user.Login(context.Background(), input)
+		profile, role, err := user.Login(context.Background(), input)
 		require.Error(t, err)
 		require.Nil(t, profile)
+		require.Nil(t, role)
 	})
 }

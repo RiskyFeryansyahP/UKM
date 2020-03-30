@@ -36,7 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [api-test]
     steps:
+      - name: Checkout source
+        uses: actions/checkout@master
       - name: codecov check coverage
-        env:
-          CODECOV_TOKEN: "f803157f-4689-4383-8498-26ff8911c339"
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v1
+        with:
+            token: ${{ secrets.CODECOV_TOKEN }}

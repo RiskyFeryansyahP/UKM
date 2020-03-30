@@ -79,7 +79,7 @@ func TestUserUsecase_SigninUser(t *testing.T) {
 		}
 
 		u := mock.NewMockRepositoryUser(controller)
-		u.EXPECT().Login(context.Background(), input).Return(&ent.Profile{}, nil).AnyTimes()
+		u.EXPECT().Login(context.Background(), input).Return(&ent.Profile{}, &ent.Role{}, nil).AnyTimes()
 
 		user := NewUserUsecase(u)
 		p, err := user.SigninUser(context.Background(), input)
@@ -98,7 +98,7 @@ func TestUserUsecase_SigninUser(t *testing.T) {
 		err := errors.New("error data nil")
 
 		u := mock.NewMockRepositoryUser(controller)
-		u.EXPECT().Login(context.Background(), input).Return(nil, err).Times(1)
+		u.EXPECT().Login(context.Background(), input).Return(nil, nil, err).Times(1)
 
 		user := NewUserUsecase(u)
 		_, err = user.SigninUser(context.Background(), input)

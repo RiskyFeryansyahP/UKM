@@ -18,6 +18,8 @@ const (
 
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
+	// EdgeRole holds the string denoting the role edge name in mutations.
+	EdgeRole = "role"
 
 	// Table holds the table name of the user in the database.
 	Table = "users"
@@ -28,6 +30,13 @@ const (
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
 	ProfileColumn = "user_profile"
+	// RoleTable is the table the holds the role relation/edge.
+	RoleTable = "users"
+	// RoleInverseTable is the table name for the Role entity.
+	// It exists in this package in order to avoid circular dependency with the "role" package.
+	RoleInverseTable = "roles"
+	// RoleColumn is the table column denoting the role relation/edge.
+	RoleColumn = "user_role"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -42,6 +51,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the User type.
 var ForeignKeys = []string{
 	"user_profile",
+	"user_role",
 }
 
 var (

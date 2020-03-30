@@ -13,6 +13,8 @@ type Tx struct {
 	config
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -36,6 +38,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Profile = NewProfileClient(tx.config)
+	tx.Role = NewRoleClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

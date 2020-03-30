@@ -33,5 +33,7 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("profile", Profile.Type).
 			Unique(),
+		edge.To("role", Role.Type).
+			Unique(),
 	}
 }

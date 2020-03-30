@@ -6,6 +6,7 @@ import "github.com/confus1on/UKM/ent"
 type InputCreateUser struct {
 	Email       string       `json:"email"`
 	Password    string       `json:"password"`
+	Role        int          `json:"role_id"`
 	UserProfile *ent.Profile `json:"userprofile"`
 }
 

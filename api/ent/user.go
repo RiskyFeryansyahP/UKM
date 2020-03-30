@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/role"
 	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 )
@@ -29,15 +30,18 @@ type User struct {
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
 	user_profile *int
+	user_role    *int
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
 	// Profile holds the value of the profile edge.
 	Profile *Profile
+	// Role holds the value of the role edge.
+	Role *Role
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
@@ -52,6 +56,20 @@ func (e UserEdges) ProfileOrErr() (*Profile, error) {
 		return e.Profile, nil
 	}
 	return nil, &NotLoadedError{edge: "profile"}
+}
+
+// RoleOrErr returns the Role value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) RoleOrErr() (*Role, error) {
+	if e.loadedTypes[1] {
+		if e.Role == nil {
+			// The edge role was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: role.Label}
+		}
+		return e.Role, nil
+	}
+	return nil, &NotLoadedError{edge: "role"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -69,6 +87,7 @@ func (*User) scanValues() []interface{} {
 func (*User) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // user_profile
+		&sql.NullInt64{}, // user_role
 	}
 }
 
@@ -112,6 +131,12 @@ func (u *User) assignValues(values ...interface{}) error {
 			u.user_profile = new(int)
 			*u.user_profile = int(value.Int64)
 		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field user_role", value)
+		} else if value.Valid {
+			u.user_role = new(int)
+			*u.user_role = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -119,6 +144,11 @@ func (u *User) assignValues(values ...interface{}) error {
 // QueryProfile queries the profile edge of the User.
 func (u *User) QueryProfile() *ProfileQuery {
 	return (&UserClient{config: u.config}).QueryProfile(u)
+}
+
+// QueryRole queries the role edge of the User.
+func (u *User) QueryRole() *RoleQuery {
+	return (&UserClient{config: u.config}).QueryRole(u)
 }
 
 // Update returns a builder for updating this User.

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/role"
 	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
@@ -78,6 +79,25 @@ func (uc *UserCreate) SetNillableProfileID(id *int) *UserCreate {
 // SetProfile sets the profile edge to Profile.
 func (uc *UserCreate) SetProfile(p *Profile) *UserCreate {
 	return uc.SetProfileID(p.ID)
+}
+
+// SetRoleID sets the role edge to Role by id.
+func (uc *UserCreate) SetRoleID(id int) *UserCreate {
+	uc.mutation.SetRoleID(id)
+	return uc
+}
+
+// SetNillableRoleID sets the role edge to Role by id if the given value is not nil.
+func (uc *UserCreate) SetNillableRoleID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetRoleID(*id)
+	}
+	return uc
+}
+
+// SetRole sets the role edge to Role.
+func (uc *UserCreate) SetRole(r *Role) *UserCreate {
+	return uc.SetRoleID(r.ID)
 }
 
 // Save creates the User in the database.
@@ -195,6 +215,25 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: profile.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RoleIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   user.RoleTable,
+			Columns: []string{user.RoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: role.FieldID,
 				},
 			},
 		}
