@@ -58,10 +58,10 @@ func TestUserUsecase_CreateUser(t *testing.T) {
 
 		err := errors.New("error invalid data")
 
-		u := mock.NewMockRepositoryUser(controller)
-		u.EXPECT().Register(context.Background(), input).Return(nil, err).Times(1)
+		usr := mock.NewMockRepositoryUser(controller)
+		usr.EXPECT().Register(context.Background(), input).Return(nil, err).Times(1)
 
-		user := NewUserUsecase(u)
+		user := NewUserUsecase(usr)
 		_, err = user.CreateUser(context.Background(), input)
 
 		require.Error(t, err)

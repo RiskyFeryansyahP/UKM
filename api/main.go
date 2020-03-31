@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"os"
 
 	"github.com/confus1on/UKM/internal/postgres"
 	"github.com/confus1on/UKM/internal/service/user/handler"
@@ -14,9 +15,14 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-const port = ":8080"
-
 func main() {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "5000"
+	}
+
+	port = ":" + port
 	// Connect to database
 	client, err := postgres.NewPostgreSQL()
 	if err != nil {

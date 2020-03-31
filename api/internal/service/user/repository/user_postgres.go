@@ -56,7 +56,20 @@ func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUs
 }
 
 // Login user signin with return profile user
-func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, *ent.Role, error) {
+func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) (*ent.User, *ent.Profile, *ent.Role, error) {
+	user, err := u.DB.User.
+		Query().
+		Where(
+			userAgregate.And(
+				userAgregate.EmailEQ(input.Email),
+				userAgregate.Password(input.Password),
+			),
+		).
+		Only(ctx)
+
+	if err != nil {
+		return nil, nil, nil, err
+	}
 	profile, err := u.DB.User.
 		Query().
 		Where(
@@ -68,7 +81,7 @@ func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) 
 		QueryProfile().
 		Only(ctx)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	role, _ := u.DB.User.
@@ -82,5 +95,5 @@ func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) 
 		QueryRole().
 		Only(ctx)
 
-	return profile, role, nil
+	return user, profile, role, nil
 }
