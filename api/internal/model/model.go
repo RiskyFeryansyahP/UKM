@@ -20,6 +20,6 @@ type ResponseRegister struct {
 type ResponseLogin struct {
 	StatusCode int          `json:"statuscode"`
 	Status     bool         `json:""`
-	Profile    *ent.Profile `json:"profile"`
-	Role       *ent.Role    `json:"role"`
+	Profile    *ent.Profile `json:"result_profile"`
+	Role       *ent.Role    `json:"result_role"`
 }
