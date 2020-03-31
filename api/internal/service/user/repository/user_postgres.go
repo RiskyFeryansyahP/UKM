@@ -57,7 +57,7 @@ func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUs
 
 // Login user signin with return profile user
 func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) (*ent.User, *ent.Profile, *ent.Role, error) {
-	user, err := u.DB.User.
+	us, err := u.DB.User.
 		Query().
 		Where(
 			userAgregate.And(
@@ -95,5 +95,5 @@ func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) 
 		QueryRole().
 		Only(ctx)
 
-	return user, profile, role, nil
+	return us, profile, role, nil
 }
