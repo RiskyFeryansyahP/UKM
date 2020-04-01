@@ -12,5 +12,8 @@ type Profile func(*sql.Selector)
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
+// Ukm is the predicate function for ukm builders.
+type Ukm func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

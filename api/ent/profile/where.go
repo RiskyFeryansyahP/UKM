@@ -898,6 +898,34 @@ func HasOwnerWith(preds ...predicate.User) predicate.Profile {
 	})
 }
 
+// HasUkm applies the HasEdge predicate on the "ukm" edge.
+func HasUkm() predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UkmTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, UkmTable, UkmPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUkmWith applies the HasEdge predicate on the "ukm" edge with a given conditions (other predicates).
+func HasUkmWith(preds ...predicate.Ukm) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UkmInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, UkmTable, UkmPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Profile) predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {

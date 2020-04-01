@@ -22,6 +22,8 @@ const (
 
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeUkm holds the string denoting the ukm edge name in mutations.
+	EdgeUkm = "ukm"
 
 	// Table holds the table name of the profile in the database.
 	Table = "profiles"
@@ -32,6 +34,11 @@ const (
 	OwnerInverseTable = "users"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "user_profile"
+	// UkmTable is the table the holds the ukm relation/edge. The primary key declared below.
+	UkmTable = "profile_ukm"
+	// UkmInverseTable is the table name for the Ukm entity.
+	// It exists in this package in order to avoid circular dependency with the "ukm" package.
+	UkmInverseTable = "ukms"
 )
 
 // Columns holds all SQL columns for profile fields.
@@ -46,6 +53,12 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
+
+var (
+	// UkmPrimaryKey and UkmColumn2 are the table columns denoting the
+	// primary key for the ukm relation (M2M).
+	UkmPrimaryKey = []string{"profile_id", "ukm_id"}
+)
 
 var (
 	// FirstNameValidator is a validator for the "firstName" field. It is called by the builders before save.

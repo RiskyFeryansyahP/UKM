@@ -11,6 +11,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/profile"
 	"github.com/confus1on/UKM/ent/role"
+	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
 
 	"github.com/facebookincubator/ent/dialect"
@@ -27,6 +28,8 @@ type Client struct {
 	Profile *ProfileClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// Ukm is the client for interacting with the Ukm builders.
+	Ukm *UkmClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -44,6 +47,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Profile = NewProfileClient(c.config)
 	c.Role = NewRoleClient(c.config)
+	c.Ukm = NewUkmClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -77,6 +81,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:  cfg,
 		Profile: NewProfileClient(cfg),
 		Role:    NewRoleClient(cfg),
+		Ukm:     NewUkmClient(cfg),
 		User:    NewUserClient(cfg),
 	}, nil
 }
@@ -108,6 +113,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Profile.Use(hooks...)
 	c.Role.Use(hooks...)
+	c.Ukm.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
@@ -197,6 +203,20 @@ func (c *ProfileClient) QueryOwner(pr *Profile) *UserQuery {
 		sqlgraph.From(profile.Table, profile.FieldID, id),
 		sqlgraph.To(user.Table, user.FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, true, profile.OwnerTable, profile.OwnerColumn),
+	)
+	query.sql = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+
+	return query
+}
+
+// QueryUkm queries the ukm edge of a Profile.
+func (c *ProfileClient) QueryUkm(pr *Profile) *UkmQuery {
+	query := &UkmQuery{config: c.config}
+	id := pr.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profile.Table, profile.FieldID, id),
+		sqlgraph.To(ukm.Table, ukm.FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, profile.UkmTable, profile.UkmPrimaryKey...),
 	)
 	query.sql = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 
@@ -303,6 +323,103 @@ func (c *RoleClient) QueryAccess(r *Role) *UserQuery {
 // Hooks returns the client hooks.
 func (c *RoleClient) Hooks() []Hook {
 	return c.hooks.Role
+}
+
+// UkmClient is a client for the Ukm schema.
+type UkmClient struct {
+	config
+}
+
+// NewUkmClient returns a client for the Ukm from the given config.
+func NewUkmClient(c config) *UkmClient {
+	return &UkmClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ukm.Hooks(f(g(h())))`.
+func (c *UkmClient) Use(hooks ...Hook) {
+	c.hooks.Ukm = append(c.hooks.Ukm, hooks...)
+}
+
+// Create returns a create builder for Ukm.
+func (c *UkmClient) Create() *UkmCreate {
+	mutation := newUkmMutation(c.config, OpCreate)
+	return &UkmCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for Ukm.
+func (c *UkmClient) Update() *UkmUpdate {
+	mutation := newUkmMutation(c.config, OpUpdate)
+	return &UkmUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UkmClient) UpdateOne(u *Ukm) *UkmUpdateOne {
+	return c.UpdateOneID(u.ID)
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UkmClient) UpdateOneID(id int) *UkmUpdateOne {
+	mutation := newUkmMutation(c.config, OpUpdateOne)
+	mutation.id = &id
+	return &UkmUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Ukm.
+func (c *UkmClient) Delete() *UkmDelete {
+	mutation := newUkmMutation(c.config, OpDelete)
+	return &UkmDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *UkmClient) DeleteOne(u *Ukm) *UkmDeleteOne {
+	return c.DeleteOneID(u.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *UkmClient) DeleteOneID(id int) *UkmDeleteOne {
+	builder := c.Delete().Where(ukm.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UkmDeleteOne{builder}
+}
+
+// Create returns a query builder for Ukm.
+func (c *UkmClient) Query() *UkmQuery {
+	return &UkmQuery{config: c.config}
+}
+
+// Get returns a Ukm entity by its id.
+func (c *UkmClient) Get(ctx context.Context, id int) (*Ukm, error) {
+	return c.Query().Where(ukm.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UkmClient) GetX(ctx context.Context, id int) *Ukm {
+	u, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return u
+}
+
+// QueryProfiles queries the profiles edge of a Ukm.
+func (c *UkmClient) QueryProfiles(u *Ukm) *ProfileQuery {
+	query := &ProfileQuery{config: c.config}
+	id := u.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(ukm.Table, ukm.FieldID, id),
+		sqlgraph.To(profile.Table, profile.FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, ukm.ProfilesTable, ukm.ProfilesPrimaryKey...),
+	)
+	query.sql = sqlgraph.Neighbors(u.driver.Dialect(), step)
+
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UkmClient) Hooks() []Hook {
+	return c.hooks.Ukm
 }
 
 // UserClient is a client for the User schema.

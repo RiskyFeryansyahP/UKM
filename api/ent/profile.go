@@ -41,9 +41,11 @@ type Profile struct {
 type ProfileEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner []*User
+	// Ukm holds the value of the ukm edge.
+	Ukm []*Ukm
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -53,6 +55,15 @@ func (e ProfileEdges) OwnerOrErr() ([]*User, error) {
 		return e.Owner, nil
 	}
 	return nil, &NotLoadedError{edge: "owner"}
+}
+
+// UkmOrErr returns the Ukm value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProfileEdges) UkmOrErr() ([]*Ukm, error) {
+	if e.loadedTypes[1] {
+		return e.Ukm, nil
+	}
+	return nil, &NotLoadedError{edge: "ukm"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -128,6 +139,11 @@ func (pr *Profile) assignValues(values ...interface{}) error {
 // QueryOwner queries the owner edge of the Profile.
 func (pr *Profile) QueryOwner() *UserQuery {
 	return (&ProfileClient{config: pr.config}).QueryOwner(pr)
+}
+
+// QueryUkm queries the ukm edge of the Profile.
+func (pr *Profile) QueryUkm() *UkmQuery {
+	return (&ProfileClient{config: pr.config}).QueryUkm(pr)
 }
 
 // Update returns a builder for updating this Profile.
