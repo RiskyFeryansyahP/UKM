@@ -19,7 +19,13 @@ type InputUpdateProfile struct {
 }
 
 type ResponseUpdateProfile struct {
-	StatusCode int `json:"statuscode"`
-	Status bool `json:"status"`
-	Result *ent.Profile `json:"result"`
+	StatusCode int          `json:"statuscode"`
+	Status     bool         `json:"status"`
+	Result     *ent.Profile `json:"result"`
+}
+
+type ResponseGetProfile struct {
+	StatusCode int          `json:"statuscode"`
+	Status     bool         `json:"status"`
+	Result     *ent.Profile `json:"result"`
 }
