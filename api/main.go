@@ -7,9 +7,12 @@ import (
 	"os"
 
 	"github.com/confus1on/UKM/internal/postgres"
-	"github.com/confus1on/UKM/internal/service/user/handler"
-	"github.com/confus1on/UKM/internal/service/user/repository"
-	"github.com/confus1on/UKM/internal/service/user/usecase"
+	usrHandler "github.com/confus1on/UKM/internal/service/user/handler"
+	usrRepo "github.com/confus1on/UKM/internal/service/user/repository"
+	usrUC "github.com/confus1on/UKM/internal/service/user/usecase"
+	profileHandler "github.com/confus1on/UKM/internal/service/profile/handler"
+	profileRepo "github.com/confus1on/UKM/internal/service/profile/repository"
+	profileUC "github.com/confus1on/UKM/internal/service/profile/usecase"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
@@ -45,13 +48,21 @@ func main() {
 		}
 	}
 
-	userRepo := repository.NewUserRepository(client)
-	userUsecase := usecase.NewUserUsecase(userRepo)
-	userHandler := handler.NewUserHandler(userUsecase)
+	// initialize user service
+	userRepo := usrRepo.NewUserRepository(client)
+	userUsecase := usrUC.NewUserUsecase(userRepo)
+	user := usrHandler.NewUserHandler(userUsecase)
+
+	// initialize profile service
+	profileRepo := profileRepo.NewProfileRepository(client)
+	profileUsecase := profileUC.NewProfileUsecase(profileRepo)
+	profile := profileHandler.NewProfileHandler(profileUsecase)
 
 	router := fasthttprouter.New()
-	router.POST("/api/v0/user/register", userHandler.RegisterUser)
-	router.POST("/api/v0/user/login", userHandler.LoginUser)
+	router.POST("/api/v0/user/register", user.RegisterUser)
+	router.POST("/api/v0/user/login", user.LoginUser)
+
+	router.PUT("/api/v0/profile/update/:id", profile.UpdateProfile)
 
 	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
