@@ -9,7 +9,7 @@ import (
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/internal/model"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" // SQLite Dialect
 	"github.com/stretchr/testify/require"
 )
 
