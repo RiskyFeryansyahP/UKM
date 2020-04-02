@@ -2,34 +2,56 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
+	"net/http"
+
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/profile"
 	"github.com/confus1on/UKM/internal/utils"
+
 	"github.com/valyala/fasthttp"
-	"log"
-	"net/http"
-	"strconv"
 )
 
+// ProfileHandler model of handler profile
 type ProfileHandler struct {
 	ProfileUsecase profile.UsecaseProfile
 }
 
+// NewProfileHandler create a new profile handler to REST
 func NewProfileHandler(profileUsecase profile.UsecaseProfile) *ProfileHandler {
 	return &ProfileHandler{ProfileUsecase: profileUsecase}
 }
 
-func (p *ProfileHandler) UpdateProfile(ctx *fasthttp.RequestCtx)  {
+// GetDetailProfile get detail of a profile handler
+func (p *ProfileHandler) GetDetailProfile(ctx *fasthttp.RequestCtx) {
+	ctx.SetUserValue("email", "")
+	email := ctx.UserValue("email").(string)
+
+	resp, err := p.ProfileUsecase.GetProfile(ctx, email)
+	if err != nil {
+		log.Println("failed get detail profile")
+
+		statuscode := http.StatusBadRequest
+
+		respErr := utils.WrapErrorJson(err, statuscode)
+
+		_ = json.NewEncoder(ctx).Encode(respErr)
+	}
+
+	_ = json.NewEncoder(ctx).Encode(resp)
+}
+
+// UpdateProfile update a profile handler
+func (p *ProfileHandler) UpdateProfile(ctx *fasthttp.RequestCtx) {
 	var input model.InputUpdateProfile
 
 	body := ctx.Request.Body()
 
 	_ = json.Unmarshal(body, &input)
 
-	param := ctx.UserValue("id").(string)
-	id, _ := strconv.Atoi(param)
+	email := ctx.UserValue("email").(string)
 
-	resp, err := p.ProfileUsecase.UpdateProfile(ctx, id, input)
+	resp, err := p.ProfileUsecase.UpdateProfile(ctx, email, input)
 	if err != nil {
 		log.Println("failed update profile")
 
