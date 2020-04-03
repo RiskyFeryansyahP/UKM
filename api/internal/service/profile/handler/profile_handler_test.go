@@ -149,6 +149,7 @@ func TestProfileHandler_UpdateProfile(t *testing.T) {
 
 		resp := fasthttp.AcquireResponse()
 		err = serve(router.Handler, req, resp)
+		require.NoError(t, err)
 
 		err = json.Unmarshal(resp.Body(), &response)
 		require.NoError(t, err)
@@ -191,6 +192,7 @@ func TestProfileHandler_UpdateProfile(t *testing.T) {
 
 		resp := fasthttp.AcquireResponse()
 		err = serve(router.Handler, req, resp)
+		require.NoError(t, err)
 
 		respErr := new(utils.Error)
 
