@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -24,18 +25,18 @@ func NewProfileHandler(profileUsecase profile.UsecaseProfile) *ProfileHandler {
 
 // GetDetailProfile get detail of a profile handler
 func (p *ProfileHandler) GetDetailProfile(ctx *fasthttp.RequestCtx) {
-	ctx.SetUserValue("email", "")
 	email := ctx.UserValue("email").(string)
 
-	resp, err := p.ProfileUsecase.GetProfile(ctx, email)
+	resp, err := p.ProfileUsecase.GetProfile(context.Background(), email)
 	if err != nil {
-		log.Println("failed get detail profile")
+		log.Printf("failed get detail profile %v", err)
 
 		statuscode := http.StatusBadRequest
 
 		respErr := utils.WrapErrorJson(err, statuscode)
 
 		_ = json.NewEncoder(ctx).Encode(respErr)
+		return
 	}
 
 	_ = json.NewEncoder(ctx).Encode(resp)
@@ -51,7 +52,7 @@ func (p *ProfileHandler) UpdateProfile(ctx *fasthttp.RequestCtx) {
 
 	email := ctx.UserValue("email").(string)
 
-	resp, err := p.ProfileUsecase.UpdateProfile(ctx, email, input)
+	resp, err := p.ProfileUsecase.UpdateProfile(context.Background(), email, input)
 	if err != nil {
 		log.Println("failed update profile")
 
@@ -62,6 +63,7 @@ func (p *ProfileHandler) UpdateProfile(ctx *fasthttp.RequestCtx) {
 		respErr := utils.WrapErrorJson(err, statuscode)
 
 		_ = json.NewEncoder(ctx).Encode(respErr)
+		return
 	}
 
 	_ = json.NewEncoder(ctx).Encode(resp)
