@@ -26,6 +26,7 @@ type config struct {
 type hooks struct {
 	Profile []ent.Hook
 	Role    []ent.Hook
+	Ukm     []ent.Hook
 	User    []ent.Hook
 }
 

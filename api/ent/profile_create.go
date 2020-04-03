@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
@@ -114,6 +115,21 @@ func (pc *ProfileCreate) AddOwner(u ...*User) *ProfileCreate {
 		ids[i] = u[i].ID
 	}
 	return pc.AddOwnerIDs(ids...)
+}
+
+// AddUkmIDs adds the ukm edge to Ukm by ids.
+func (pc *ProfileCreate) AddUkmIDs(ids ...int) *ProfileCreate {
+	pc.mutation.AddUkmIDs(ids...)
+	return pc
+}
+
+// AddUkm adds the ukm edges to Ukm.
+func (pc *ProfileCreate) AddUkm(u ...*Ukm) *ProfileCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return pc.AddUkmIDs(ids...)
 }
 
 // Save creates the Profile in the database.
@@ -285,6 +301,25 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.UkmIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   profile.UkmTable,
+			Columns: profile.UkmPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: ukm.FieldID,
 				},
 			},
 		}

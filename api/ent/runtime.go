@@ -8,6 +8,7 @@ import (
 	"github.com/confus1on/UKM/ent/profile"
 	"github.com/confus1on/UKM/ent/role"
 	"github.com/confus1on/UKM/ent/schema"
+	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
 )
 
@@ -53,6 +54,22 @@ func init() {
 	roleDescValue := roleFields[0].Descriptor()
 	// role.ValueValidator is a validator for the "value" field. It is called by the builders before save.
 	role.ValueValidator = roleDescValue.Validators[0].(func(string) error)
+	ukmFields := schema.Ukm{}.Fields()
+	_ = ukmFields
+	// ukmDescName is the schema descriptor for name field.
+	ukmDescName := ukmFields[0].Descriptor()
+	// ukm.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	ukm.NameValidator = ukmDescName.Validators[0].(func(string) error)
+	// ukmDescCreatedAt is the schema descriptor for created_at field.
+	ukmDescCreatedAt := ukmFields[1].Descriptor()
+	// ukm.DefaultCreatedAt holds the default value on creation for the created_at field.
+	ukm.DefaultCreatedAt = ukmDescCreatedAt.Default.(func() time.Time)
+	// ukmDescUpdatedAt is the schema descriptor for updated_at field.
+	ukmDescUpdatedAt := ukmFields[2].Descriptor()
+	// ukm.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	ukm.DefaultUpdatedAt = ukmDescUpdatedAt.Default.(func() time.Time)
+	// ukm.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	ukm.UpdateDefaultUpdatedAt = ukmDescUpdatedAt.UpdateDefault.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.

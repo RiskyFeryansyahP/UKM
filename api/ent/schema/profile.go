@@ -40,5 +40,6 @@ func (Profile) Edges() []ent.Edge {
 		edge.From("owner", User.Type).
 			Ref("profile").
 			Required(),
+		edge.To("ukm", Ukm.Type),
 	}
 }

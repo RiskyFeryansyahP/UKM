@@ -11,6 +11,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,7 @@ type ProfileQuery struct {
 	predicates []predicate.Profile
 	// eager-loading edges.
 	withOwner *UserQuery
+	withUkm   *UkmQuery
 	// intermediate query.
 	sql *sql.Selector
 }
@@ -62,6 +64,18 @@ func (pq *ProfileQuery) QueryOwner() *UserQuery {
 		sqlgraph.From(profile.Table, profile.FieldID, pq.sqlQuery()),
 		sqlgraph.To(user.Table, user.FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, true, profile.OwnerTable, profile.OwnerColumn),
+	)
+	query.sql = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+	return query
+}
+
+// QueryUkm chains the current query on the ukm edge.
+func (pq *ProfileQuery) QueryUkm() *UkmQuery {
+	query := &UkmQuery{config: pq.config}
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profile.Table, profile.FieldID, pq.sqlQuery()),
+		sqlgraph.To(ukm.Table, ukm.FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, profile.UkmTable, profile.UkmPrimaryKey...),
 	)
 	query.sql = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 	return query
@@ -247,6 +261,17 @@ func (pq *ProfileQuery) WithOwner(opts ...func(*UserQuery)) *ProfileQuery {
 	return pq
 }
 
+//  WithUkm tells the query-builder to eager-loads the nodes that are connected to
+// the "ukm" edge. The optional arguments used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithUkm(opts ...func(*UkmQuery)) *ProfileQuery {
+	query := &UkmQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withUkm = query
+	return pq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -292,8 +317,9 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context) ([]*Profile, error) {
 	var (
 		nodes       = []*Profile{}
 		_spec       = pq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			pq.withOwner != nil,
+			pq.withUkm != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -342,6 +368,69 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context) ([]*Profile, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_profile" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Owner = append(node.Edges.Owner, n)
+		}
+	}
+
+	if query := pq.withUkm; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Profile, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Profile)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   profile.UkmTable,
+				Columns: profile.UkmPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(profile.UkmPrimaryKey[0], fks...))
+			},
+
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				edgeids = append(edgeids, inValue)
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, pq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "ukm": %v`, err)
+		}
+		query.Where(ukm.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "ukm" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Ukm = append(nodes[i].Edges.Ukm, n)
+			}
 		}
 	}
 

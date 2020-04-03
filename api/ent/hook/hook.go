@@ -35,6 +35,19 @@ func (f RoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return f(ctx, mv)
 }
 
+// The UkmFunc type is an adapter to allow the use of ordinary
+// function as Ukm mutator.
+type UkmFunc func(context.Context, *ent.UkmMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UkmFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UkmMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UkmMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

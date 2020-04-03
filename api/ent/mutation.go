@@ -8,6 +8,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/profile"
 	"github.com/confus1on/UKM/ent/role"
+	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
 
 	"github.com/facebookincubator/ent"
@@ -24,6 +25,7 @@ const (
 	// Node types.
 	TypeProfile = "Profile"
 	TypeRole    = "Role"
+	TypeUkm     = "Ukm"
 	TypeUser    = "User"
 )
 
@@ -45,6 +47,8 @@ type ProfileMutation struct {
 	clearedFields   map[string]struct{}
 	owner           map[int]struct{}
 	removedowner    map[int]struct{}
+	ukm             map[int]struct{}
+	removedukm      map[int]struct{}
 }
 
 var _ ent.Mutation = (*ProfileMutation)(nil)
@@ -281,6 +285,48 @@ func (m *ProfileMutation) ResetOwner() {
 	m.removedowner = nil
 }
 
+// AddUkmIDs adds the ukm edge to Ukm by ids.
+func (m *ProfileMutation) AddUkmIDs(ids ...int) {
+	if m.ukm == nil {
+		m.ukm = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.ukm[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveUkmIDs removes the ukm edge to Ukm by ids.
+func (m *ProfileMutation) RemoveUkmIDs(ids ...int) {
+	if m.removedukm == nil {
+		m.removedukm = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedukm[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUkm returns the removed ids of ukm.
+func (m *ProfileMutation) RemovedUkmIDs() (ids []int) {
+	for id := range m.removedukm {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UkmIDs returns the ukm ids in the mutation.
+func (m *ProfileMutation) UkmIDs() (ids []int) {
+	for id := range m.ukm {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUkm reset all changes of the ukm edge.
+func (m *ProfileMutation) ResetUkm() {
+	m.ukm = nil
+	m.removedukm = nil
+}
+
 // Op returns the operation name.
 func (m *ProfileMutation) Op() Op {
 	return m.op
@@ -490,9 +536,12 @@ func (m *ProfileMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ProfileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.owner != nil {
 		edges = append(edges, profile.EdgeOwner)
+	}
+	if m.ukm != nil {
+		edges = append(edges, profile.EdgeUkm)
 	}
 	return edges
 }
@@ -507,6 +556,12 @@ func (m *ProfileMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case profile.EdgeUkm:
+		ids := make([]ent.Value, 0, len(m.ukm))
+		for id := range m.ukm {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -514,9 +569,12 @@ func (m *ProfileMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ProfileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedowner != nil {
 		edges = append(edges, profile.EdgeOwner)
+	}
+	if m.removedukm != nil {
+		edges = append(edges, profile.EdgeUkm)
 	}
 	return edges
 }
@@ -531,6 +589,12 @@ func (m *ProfileMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case profile.EdgeUkm:
+		ids := make([]ent.Value, 0, len(m.removedukm))
+		for id := range m.removedukm {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -538,7 +602,7 @@ func (m *ProfileMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ProfileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -565,6 +629,9 @@ func (m *ProfileMutation) ResetEdge(name string) error {
 	switch name {
 	case profile.EdgeOwner:
 		m.ResetOwner()
+		return nil
+	case profile.EdgeUkm:
+		m.ResetUkm()
 		return nil
 	}
 	return fmt.Errorf("unknown Profile edge %s", name)
@@ -866,6 +933,374 @@ func (m *RoleMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Role edge %s", name)
+}
+
+// UkmMutation represents an operation that mutate the Ukms
+// nodes in the graph.
+type UkmMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	clearedFields   map[string]struct{}
+	profiles        map[int]struct{}
+	removedprofiles map[int]struct{}
+}
+
+var _ ent.Mutation = (*UkmMutation)(nil)
+
+// newUkmMutation creates new mutation for $n.Name.
+func newUkmMutation(c config, op Op) *UkmMutation {
+	return &UkmMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUkm,
+		clearedFields: make(map[string]struct{}),
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UkmMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UkmMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *UkmMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the name field.
+func (m *UkmMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *UkmMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetName reset all changes of the name field.
+func (m *UkmMutation) ResetName() {
+	m.name = nil
+}
+
+// SetCreatedAt sets the created_at field.
+func (m *UkmMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the created_at value in the mutation.
+func (m *UkmMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt reset all changes of the created_at field.
+func (m *UkmMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the updated_at field.
+func (m *UkmMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the updated_at value in the mutation.
+func (m *UkmMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt reset all changes of the updated_at field.
+func (m *UkmMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// AddProfileIDs adds the profiles edge to Profile by ids.
+func (m *UkmMutation) AddProfileIDs(ids ...int) {
+	if m.profiles == nil {
+		m.profiles = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.profiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveProfileIDs removes the profiles edge to Profile by ids.
+func (m *UkmMutation) RemoveProfileIDs(ids ...int) {
+	if m.removedprofiles == nil {
+		m.removedprofiles = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedprofiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedProfiles returns the removed ids of profiles.
+func (m *UkmMutation) RemovedProfilesIDs() (ids []int) {
+	for id := range m.removedprofiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ProfilesIDs returns the profiles ids in the mutation.
+func (m *UkmMutation) ProfilesIDs() (ids []int) {
+	for id := range m.profiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetProfiles reset all changes of the profiles edge.
+func (m *UkmMutation) ResetProfiles() {
+	m.profiles = nil
+	m.removedprofiles = nil
+}
+
+// Op returns the operation name.
+func (m *UkmMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Ukm).
+func (m *UkmMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *UkmMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.name != nil {
+		fields = append(fields, ukm.FieldName)
+	}
+	if m.created_at != nil {
+		fields = append(fields, ukm.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, ukm.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *UkmMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case ukm.FieldName:
+		return m.Name()
+	case ukm.FieldCreatedAt:
+		return m.CreatedAt()
+	case ukm.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *UkmMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case ukm.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case ukm.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case ukm.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Ukm field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *UkmMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *UkmMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *UkmMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Ukm numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *UkmMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *UkmMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UkmMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Ukm nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *UkmMutation) ResetField(name string) error {
+	switch name {
+	case ukm.FieldName:
+		m.ResetName()
+		return nil
+	case ukm.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case ukm.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown Ukm field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *UkmMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.profiles != nil {
+		edges = append(edges, ukm.EdgeProfiles)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *UkmMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case ukm.EdgeProfiles:
+		ids := make([]ent.Value, 0, len(m.profiles))
+		for id := range m.profiles {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *UkmMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedprofiles != nil {
+		edges = append(edges, ukm.EdgeProfiles)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *UkmMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case ukm.EdgeProfiles:
+		ids := make([]ent.Value, 0, len(m.removedprofiles))
+		for id := range m.removedprofiles {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *UkmMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *UkmMutation) EdgeCleared(name string) bool {
+	switch name {
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *UkmMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Ukm unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *UkmMutation) ResetEdge(name string) error {
+	switch name {
+	case ukm.EdgeProfiles:
+		m.ResetProfiles()
+		return nil
+	}
+	return fmt.Errorf("unknown Ukm edge %s", name)
 }
 
 // UserMutation represents an operation that mutate the Users

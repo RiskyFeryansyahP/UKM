@@ -39,6 +39,20 @@ var (
 		PrimaryKey:  []*schema.Column{RolesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// UkmsColumns holds the columns for the "ukms" table.
+	UkmsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+	}
+	// UkmsTable holds the schema information for the "ukms" table.
+	UkmsTable = &schema.Table{
+		Name:        "ukms",
+		Columns:     UkmsColumns,
+		PrimaryKey:  []*schema.Column{UkmsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -71,15 +85,46 @@ var (
 			},
 		},
 	}
+	// ProfileUkmColumns holds the columns for the "profile_ukm" table.
+	ProfileUkmColumns = []*schema.Column{
+		{Name: "profile_id", Type: field.TypeInt},
+		{Name: "ukm_id", Type: field.TypeInt},
+	}
+	// ProfileUkmTable holds the schema information for the "profile_ukm" table.
+	ProfileUkmTable = &schema.Table{
+		Name:       "profile_ukm",
+		Columns:    ProfileUkmColumns,
+		PrimaryKey: []*schema.Column{ProfileUkmColumns[0], ProfileUkmColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "profile_ukm_profile_id",
+				Columns: []*schema.Column{ProfileUkmColumns[0]},
+
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "profile_ukm_ukm_id",
+				Columns: []*schema.Column{ProfileUkmColumns[1]},
+
+				RefColumns: []*schema.Column{UkmsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ProfilesTable,
 		RolesTable,
+		UkmsTable,
 		UsersTable,
+		ProfileUkmTable,
 	}
 )
 
 func init() {
 	UsersTable.ForeignKeys[0].RefTable = ProfilesTable
 	UsersTable.ForeignKeys[1].RefTable = RolesTable
+	ProfileUkmTable.ForeignKeys[0].RefTable = ProfilesTable
+	ProfileUkmTable.ForeignKeys[1].RefTable = UkmsTable
 }
