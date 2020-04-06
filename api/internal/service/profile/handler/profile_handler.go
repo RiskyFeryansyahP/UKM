@@ -3,14 +3,10 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"log"
-	"net/http"
-
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/profile"
-	"github.com/confus1on/UKM/internal/utils"
-
 	"github.com/valyala/fasthttp"
+	"log"
 )
 
 // ProfileHandler model of handler profile
@@ -31,11 +27,7 @@ func (p *ProfileHandler) GetDetailProfile(ctx *fasthttp.RequestCtx) {
 	if err != nil {
 		log.Printf("failed get detail profile %v", err)
 
-		statuscode := http.StatusBadRequest
-
-		respErr := utils.WrapErrorJson(err, statuscode)
-
-		_ = json.NewEncoder(ctx).Encode(respErr)
+		_ = json.NewEncoder(ctx).Encode(err)
 		return
 	}
 
@@ -56,13 +48,7 @@ func (p *ProfileHandler) UpdateProfile(ctx *fasthttp.RequestCtx) {
 	if err != nil {
 		log.Println("failed update profile")
 
-		statuscode := http.StatusBadRequest
-
-		ctx.Response.Header.SetStatusCode(statuscode)
-
-		respErr := utils.WrapErrorJson(err, statuscode)
-
-		_ = json.NewEncoder(ctx).Encode(respErr)
+		_ = json.NewEncoder(ctx).Encode(err)
 		return
 	}
 

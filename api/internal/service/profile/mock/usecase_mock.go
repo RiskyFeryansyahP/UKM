@@ -7,6 +7,7 @@ package mock
 import (
 	context "context"
 	model "github.com/confus1on/UKM/internal/model"
+	utils "github.com/confus1on/UKM/internal/utils"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,11 +36,11 @@ func (m *MockUsecaseProfile) EXPECT() *MockUsecaseProfileMockRecorder {
 }
 
 // GetProfile mocks base method
-func (m *MockUsecaseProfile) GetProfile(ctx context.Context, email string) (*model.ResponseGetProfile, error) {
+func (m *MockUsecaseProfile) GetProfile(ctx context.Context, email string) (*model.ResponseGetProfile, *utils.Error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetProfile", ctx, email)
 	ret0, _ := ret[0].(*model.ResponseGetProfile)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*utils.Error)
 	return ret0, ret1
 }
 
@@ -50,11 +51,11 @@ func (mr *MockUsecaseProfileMockRecorder) GetProfile(ctx, email interface{}) *go
 }
 
 // UpdateProfile mocks base method
-func (m *MockUsecaseProfile) UpdateProfile(ctx context.Context, email string, input model.InputUpdateProfile) (*model.ResponseUpdateProfile, error) {
+func (m *MockUsecaseProfile) UpdateProfile(ctx context.Context, email string, input model.InputUpdateProfile) (*model.ResponseUpdateProfile, *utils.Error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateProfile", ctx, email, input)
 	ret0, _ := ret[0].(*model.ResponseUpdateProfile)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*utils.Error)
 	return ret0, ret1
 }
 

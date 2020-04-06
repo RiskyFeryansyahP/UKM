@@ -35,7 +35,7 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 		p := NewProfileUsecase(repo)
 		response, err := p.GetProfile(context.Background(), email)
 
-		require.NoError(t, err)
+		require.Nil(t, err)
 		require.Equal(t, 200, response.StatusCode)
 		require.Equal(t, "Galih", response.Result.FirstName)
 		require.Equal(t, "Satriawan", response.Result.LastName)
@@ -50,9 +50,9 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 		repo.EXPECT().GetByEmail(context.Background(), email).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.GetProfile(context.Background(), email)
+		response, respErr := p.GetProfile(context.Background(), email)
 
-		require.Error(t, err)
+		require.Equal(t, 400, respErr.StatusCode)
 		require.Nil(t, response)
 	})
 
@@ -65,9 +65,9 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 		repo.EXPECT().GetByEmail(context.Background(), email).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.GetProfile(context.Background(), email)
+		response, respErr := p.GetProfile(context.Background(), email)
 
-		require.Error(t, err)
+		require.Equal(t, 200, respErr.StatusCode)
 		require.Nil(t, response)
 	})
 }
@@ -103,7 +103,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		p := NewProfileUsecase(repo)
 		response, err := p.UpdateProfile(context.Background(), email, input)
 
-		require.NoError(t, err)
+		require.Nil(t, err)
 		require.Equal(t, 200, response.StatusCode)
 		require.Equal(t, true, response.Status)
 		require.Equal(t, "Galih", response.Result.FirstName)
@@ -138,7 +138,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		p := NewProfileUsecase(repo)
 		response, err := p.UpdateProfile(context.Background(), email, input)
 
-		require.NoError(t, err)
+		require.Nil(t, err)
 		require.Equal(t, 200, response.StatusCode)
 		require.Equal(t, true, response.Status)
 		require.Equal(t, "Galih", response.Result.FirstName)
@@ -163,9 +163,9 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.UpdateProfile(context.Background(), email, input)
+		response, respErr := p.UpdateProfile(context.Background(), email, input)
 
-		require.Error(t, err)
+		require.Equal(t, 200, respErr.StatusCode)
 		require.Nil(t, response)
 	})
 
@@ -187,9 +187,9 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.UpdateProfile(context.Background(), email, input)
+		response, respErr := p.UpdateProfile(context.Background(), email, input)
 
-		require.Error(t, err)
+		require.Equal(t, 400, respErr.StatusCode)
 		require.Nil(t, response)
 	})
 
@@ -211,9 +211,9 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.UpdateProfile(context.Background(), email, input)
+		response, respErr := p.UpdateProfile(context.Background(), email, input)
 
-		require.Error(t, err)
+		require.Equal(t, 400, respErr.StatusCode)
 		require.Nil(t, response)
 	})
 
@@ -235,9 +235,9 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.UpdateProfile(context.Background(), email, input)
+		response, respErr := p.UpdateProfile(context.Background(), email, input)
 
-		require.Error(t, err)
+		require.Equal(t, 400, respErr.StatusCode)
 		require.Nil(t, response)
 	})
 }

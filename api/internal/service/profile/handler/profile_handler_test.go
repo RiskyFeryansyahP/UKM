@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net"
 	"testing"
@@ -70,7 +69,10 @@ func TestProfileHandler_GetDetailProfile(t *testing.T) {
 	t.Run("get detail profile handler should failed wrong email", func(t *testing.T) {
 		email := "171111020@mhs.stiki.ac.id"
 
-		errs := errors.New("failed get detail profile")
+		errs := &utils.Error{
+			StatusCode: 200,
+			Message:    "failed get detail profile",
+		}
 
 		uc := mock.NewMockUsecaseProfile(controller)
 		uc.EXPECT().GetProfile(context.Background(), email).Return(nil, errs).Times(1)
@@ -95,7 +97,7 @@ func TestProfileHandler_GetDetailProfile(t *testing.T) {
 		err = json.Unmarshal(resp.Body(), &resErr)
 
 		require.NoError(t, err)
-		require.Equal(t, 400, resErr.StatusCode)
+		require.Equal(t, 200, resErr.StatusCode)
 	})
 }
 
@@ -170,7 +172,10 @@ func TestProfileHandler_UpdateProfile(t *testing.T) {
 
 		email := "171111040@mhs.stiki.ac.id"
 
-		errs := errors.New("firstname and lastname can't be empty")
+		errs := &utils.Error{
+			StatusCode: 400,
+			Message:    "firstname and lastname can't be empty",
+		}
 
 		uc := mock.NewMockUsecaseProfile(controller)
 		uc.EXPECT().UpdateProfile(context.Background(), email, input).Return(nil, errs).Times(1)
