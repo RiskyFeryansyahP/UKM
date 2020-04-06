@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"errors"
+	"github.com/confus1on/UKM/internal/utils"
+	"github.com/valyala/fasthttp"
 
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/profile"
@@ -19,15 +21,15 @@ func NewProfileUsecase(profileRepo profile.RepositoryProfile) profile.UsecasePro
 }
 
 // GetProfile get one profile and validation email
-func (p *ProfileUsecase) GetProfile(ctx context.Context, email string) (*model.ResponseGetProfile, error) {
+func (p *ProfileUsecase) GetProfile(ctx context.Context, email string) (*model.ResponseGetProfile, *utils.Error) {
 	if email == "" || &email == nil {
 		err := errors.New("email can't be empty")
-		return nil, err
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
 	profile, err := p.ProfileRepo.GetByEmail(ctx, email)
 	if err != nil {
-		return nil, err
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusOK)
 	}
 
 	respose := &model.ResponseGetProfile{
@@ -40,25 +42,25 @@ func (p *ProfileUsecase) GetProfile(ctx context.Context, email string) (*model.R
 }
 
 // UpdateProfile update new of data profile
-func (p *ProfileUsecase) UpdateProfile(ctx context.Context, email string, input model.InputUpdateProfile) (*model.ResponseUpdateProfile, error) {
+func (p *ProfileUsecase) UpdateProfile(ctx context.Context, email string, input model.InputUpdateProfile) (*model.ResponseUpdateProfile, *utils.Error) {
 	if input.LastName == "" || &input.LastName == nil {
 		err := errors.New("last name can't be empty")
-		return nil, err
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
 	if input.FirstName == "" || &input.FirstName == nil {
 		err := errors.New("first name can't be empty")
-		return nil, err
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
 	if len(input.Phone) < 11 {
 		err := errors.New("wrong format phone number")
-		return nil, err
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
 	profile, err := p.ProfileRepo.Update(ctx, email, input)
 	if err != nil {
-		return nil, err
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusOK)
 	}
 
 	response := &model.ResponseUpdateProfile{
