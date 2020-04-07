@@ -39,7 +39,6 @@ jobs:
     name: deploy-heroku
     runs-on: ubuntu-latest
     needs: api-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
       HEROKU_APP_NAME: "ukm-backend"
