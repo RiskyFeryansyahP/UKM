@@ -1,0 +1,21 @@
+name: Staging deployment
+on:
+  push:
+    branches:
+      - master
+jobs:
+  go-deploy-heroku:
+    name: deploy-heroku
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
+      HEROKU_APP_NAME: "ukm-backend"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      
+      - name: Push to heroku
+        run: |
+          git fetch --unshallow
+          git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git $GITHUB_SHA:master
