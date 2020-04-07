@@ -1,1 +1,1 @@
-web: cd api && bin/UKM
+web: bin/UKM
