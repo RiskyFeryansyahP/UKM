@@ -1,9 +1,5 @@
 name: API workflow
-on:
-  pull_request:
-  push:
-    branches:
-      - master
+on: [pull_request]
 jobs:
   api-test:
     name: go test
@@ -45,7 +41,7 @@ jobs:
     needs: api-test
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
       HEROKU_APP_NAME: "ukm-backend"
     steps:
       - name: Checkout
