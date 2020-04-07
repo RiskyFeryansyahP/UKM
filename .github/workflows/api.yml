@@ -51,5 +51,5 @@ jobs:
       
       - name: Push to heroku
         run: |
-          "[[ ! -s \"$(git rev-parse --git-dir)/shallow\" ]] || git fetch --unshallow"
+          git fetch --unshallow
           git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git $GITHUB_SHA:master
