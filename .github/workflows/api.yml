@@ -1,9 +1,5 @@
 name: API workflow
-on:
-  pull_request:
-  push:
-    branches:
-      - master
+on: [pull_request]
 jobs:
   api-test:
     name: go test
@@ -43,7 +39,6 @@ jobs:
     name: deploy-heroku
     runs-on: ubuntu-latest
     needs: api-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_TOKEN }}
       HEROKU_APP_NAME: "ukm-backend"
@@ -52,4 +47,4 @@ jobs:
         uses: actions/checkout@master
       
       - name: Push to heroku
-        run: git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git $GITHUB_SHA:master
+        run: git fetch --all --unshallow https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git $GITHUB_SHA:master && git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git $GITHUB_SHA:master
