@@ -3,28 +3,25 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 
 	"github.com/confus1on/UKM/internal/postgres"
-	usrHandler "github.com/confus1on/UKM/internal/service/user/handler"
-	usrRepo "github.com/confus1on/UKM/internal/service/user/repository"
-	usrUC "github.com/confus1on/UKM/internal/service/user/usecase"
 	profileHandler "github.com/confus1on/UKM/internal/service/profile/handler"
 	profileRepo "github.com/confus1on/UKM/internal/service/profile/repository"
 	profileUC "github.com/confus1on/UKM/internal/service/profile/usecase"
+	usrHandler "github.com/confus1on/UKM/internal/service/user/handler"
+	usrRepo "github.com/confus1on/UKM/internal/service/user/repository"
+	usrUC "github.com/confus1on/UKM/internal/service/user/usecase"
 
 	"github.com/buaazp/fasthttprouter"
+	"github.com/joho/godotenv"
 	"github.com/valyala/fasthttp"
 )
 
 func main() {
 	// load environment variable from .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	_ = godotenv.Load()
 
 	// get port in environment
 	port := os.Getenv("PORT")
