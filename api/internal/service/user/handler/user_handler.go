@@ -28,7 +28,7 @@ func (u *UserHandler) RegisterUser(ctx *fasthttp.RequestCtx) {
 	var input model.InputCreateUser
 
 	body := ctx.Request.Body()
-
+	ctx.Response.Header.SetContentType("application/json")
 	_ = json.Unmarshal(body, &input)
 
 	result, err := u.UserUsecase.CreateUser(context.Background(), input)
@@ -51,6 +51,8 @@ func (u *UserHandler) LoginUser(ctx *fasthttp.RequestCtx) {
 	var input model.InputLoginUser
 
 	body := ctx.Request.Body()
+
+	ctx.Response.Header.SetContentType("application/json")
 
 	_ = json.Unmarshal(body, &input)
 
