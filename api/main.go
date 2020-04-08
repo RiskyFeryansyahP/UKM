@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/joho/godotenv"
 	"log"
 	"os"
 
@@ -19,6 +20,12 @@ import (
 )
 
 func main() {
+	// load environment variable from .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// get port in environment
 	port := os.Getenv("PORT")
 

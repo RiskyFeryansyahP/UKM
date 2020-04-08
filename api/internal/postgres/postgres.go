@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"os"
 	"time"
 
 	"github.com/confus1on/UKM/ent"
@@ -11,7 +12,9 @@ import (
 
 // NewPostgreSQL create a client connection to database
 func NewPostgreSQL() (*ent.Client, error) {
-	drv, err := sql.Open("postgres", "postgres://feaxpsyq:K5J6nBn1tv-GrMn7-yGh-EqB6dj9tbIY@rosie.db.elephantsql.com:5432/feaxpsyq")
+	databaseURL := os.Getenv("DATABASE_URL") // load url database from environment variable
+
+	drv, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, err
 	}

@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@master
+        
+      - name: Configure Heroku
+        run: heroku config:set GIT_HASH=${GITHUB_SHA} GIT_BRANCH=${GITHUB_REF} --app $HEROKU_APP_NAME
       
       - name: Push to heroku
         run: |

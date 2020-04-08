@@ -7,6 +7,7 @@ require (
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/facebookincubator/ent v0.1.4
 	github.com/golang/mock v1.4.3
+	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/stretchr/testify v1.4.0
