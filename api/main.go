@@ -73,7 +73,7 @@ func main() {
 	router.POST("/api/v0/user/login", user.LoginUser)
 
 	router.GET("/api/v0/profile/:email", profile.GetDetailProfile)
-	router.PUT("/api/v0/profile/update/:email", profile.UpdateProfile)
+	router.PUT("/api/v0/profile/:email", profile.UpdateProfile)
 
 	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
