@@ -1,1 +1,1 @@
-web: bin/UKM
+web: bin/UKM --migrate=true
