@@ -47,8 +47,14 @@ func main() {
 
 	// Run migration
 	if *migrate {
-		if err := client.Schema.Create(ctx); err != nil {
+		err := client.Schema.Create(ctx)
+		if err != nil {
 			log.Fatalf("failed creating schema resources: %v", err)
+		}
+
+		err = postgres.InitValueRoleDB(client)
+		if err != nil {
+			log.Fatalf("failed initialize value role: %v", err)
 		}
 	}
 

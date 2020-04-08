@@ -1,6 +1,8 @@
 package postgres
 
 import (
+	"context"
+	"log"
 	"os"
 	"time"
 
@@ -25,4 +27,31 @@ func NewPostgreSQL() (*ent.Client, error) {
 	db.SetConnMaxLifetime(time.Hour)
 
 	return ent.NewClient(ent.Driver(drv)), nil
+}
+
+// InitValueRoleDB initial value table role into database
+func InitValueRoleDB(client *ent.Client) error {
+	ctx := context.Background()
+
+	roles, err := client.Role.Query().
+		All(ctx)
+
+	if err != nil {
+		log.Printf("Error query roles: %v", err)
+	}
+
+	if len(roles) <= 0 {
+		roleValue := []string{"DEVELOPER", "KEMAHASISWAAN", "BEM", "PENGURUS", "ANGGOTA"}
+
+		for _, value := range roleValue {
+			_, err := client.Role.Create().
+				SetValue(value).
+				Save(ctx)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
