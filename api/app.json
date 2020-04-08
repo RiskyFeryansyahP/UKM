@@ -1,0 +1,17 @@
+{
+    "name": "UKM Organization",
+    "description": "This apps for management ukm organization at STIKI MALANG",
+    "keywords": [
+        "UKM",
+        "Organization"
+    ],
+    "repository": "https://github.com/RiskyFeryansyahP/UKM/",
+    "formation": {
+        "web": {
+            "quantity": 1
+        }
+    },
+    "addons": {
+        "plan": "heroku-postgresql:hobby-dev"
+    }
+}
