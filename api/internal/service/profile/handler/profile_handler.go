@@ -23,7 +23,10 @@ func NewProfileHandler(profileUsecase profile.UsecaseProfile) *ProfileHandler {
 // GetDetailProfile get detail of a profile handler
 func (p *ProfileHandler) GetDetailProfile(ctx *fasthttp.RequestCtx) {
 	email := ctx.UserValue("email").(string)
+
+
 	ctx.Response.Header.SetContentType("application/json")
+
 	resp, err := p.ProfileUsecase.GetProfile(context.Background(), email)
 	if err != nil {
 		log.Printf("failed get detail profile %v", err)
@@ -40,10 +43,13 @@ func (p *ProfileHandler) UpdateProfile(ctx *fasthttp.RequestCtx) {
 	var input model.InputUpdateProfile
 
 	body := ctx.Request.Body()
-	ctx.Response.Header.SetContentType("application/json")
+
 	_ = json.Unmarshal(body, &input)
 
 	email := ctx.UserValue("email").(string)
+
+
+	ctx.Response.Header.SetContentType("application/json")
 
 	resp, err := p.ProfileUsecase.UpdateProfile(context.Background(), email, input)
 	if err != nil {
