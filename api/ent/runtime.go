@@ -27,23 +27,23 @@ func init() {
 	// profile.LastNameValidator is a validator for the "lastName" field. It is called by the builders before save.
 	profile.LastNameValidator = profileDescLastName.Validators[0].(func(string) error)
 	// profileDescPhone is the schema descriptor for phone field.
-	profileDescPhone := profileFields[3].Descriptor()
+	profileDescPhone := profileFields[6].Descriptor()
 	// profile.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
 	profile.PhoneValidator = profileDescPhone.Validators[0].(func(string) error)
 	// profileDescStatus is the schema descriptor for status field.
-	profileDescStatus := profileFields[4].Descriptor()
+	profileDescStatus := profileFields[7].Descriptor()
 	// profile.DefaultStatus holds the default value on creation for the status field.
 	profile.DefaultStatus = profileDescStatus.Default.(bool)
 	// profileDescImgProfile is the schema descriptor for img_profile field.
-	profileDescImgProfile := profileFields[5].Descriptor()
+	profileDescImgProfile := profileFields[8].Descriptor()
 	// profile.DefaultImgProfile holds the default value on creation for the img_profile field.
 	profile.DefaultImgProfile = profileDescImgProfile.Default.(string)
 	// profileDescCreatedAt is the schema descriptor for created_at field.
-	profileDescCreatedAt := profileFields[6].Descriptor()
+	profileDescCreatedAt := profileFields[9].Descriptor()
 	// profile.DefaultCreatedAt holds the default value on creation for the created_at field.
 	profile.DefaultCreatedAt = profileDescCreatedAt.Default.(func() time.Time)
 	// profileDescUpdatedAt is the schema descriptor for updated_at field.
-	profileDescUpdatedAt := profileFields[7].Descriptor()
+	profileDescUpdatedAt := profileFields[10].Descriptor()
 	// profile.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	profile.DefaultUpdatedAt = profileDescUpdatedAt.Default.(func() time.Time)
 	// profile.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
