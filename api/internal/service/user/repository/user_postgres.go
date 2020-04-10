@@ -39,6 +39,7 @@ func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUs
 	_, err = u.DB.Profile.Create().
 		SetFirstName(input.UserProfile.FirstName).
 		SetLastName(input.UserProfile.LastName).
+		SetJk(input.UserProfile.Jk).
 		SetYearGeneration(input.UserProfile.YearGeneration).
 		SetPhone(input.UserProfile.Phone).
 		SetStatus(true).
