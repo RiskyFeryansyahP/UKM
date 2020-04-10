@@ -49,6 +49,7 @@ func TestProfileRepository(t *testing.T) {
 			SetFirstName("Risky").
 			SetLastName("Pribadi").
 			SetYearGeneration("2017").
+			SetJk("Male").
 			SetStatus(true).
 			SetPhone("083834121712").
 			SetImgProfile("").
@@ -68,6 +69,9 @@ func TestProfileRepository(t *testing.T) {
 		input := model.InputUpdateProfile{
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
+			Alamat:         "Jln Tidar",
+			TanggalLahir:   "12-07-1997",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,

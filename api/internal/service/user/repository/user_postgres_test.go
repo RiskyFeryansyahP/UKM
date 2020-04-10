@@ -39,6 +39,7 @@ func TestUserRepository(t *testing.T) {
 			ID:             1,
 			FirstName:      "Risky F",
 			LastName:       "Pribadi",
+			Jk:             "Male",
 			YearGeneration: "2017",
 			Phone:          "083834121715",
 			Status:         true,

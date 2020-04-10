@@ -13,3 +13,6 @@
 
 #environment variable
 .env
+
+#markdown
+documentation.md

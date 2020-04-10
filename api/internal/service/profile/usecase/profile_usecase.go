@@ -53,6 +53,11 @@ func (p *ProfileUsecase) UpdateProfile(ctx context.Context, email string, input 
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
+	if input.Jk == "" || &input.Jk == nil {
+		err := errors.New("jenis kelamin can't be empty")
+		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
+	}
+
 	if len(input.Phone) < 11 {
 		err := errors.New("wrong format phone number")
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)

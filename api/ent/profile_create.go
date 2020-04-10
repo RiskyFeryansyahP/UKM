@@ -34,6 +34,40 @@ func (pc *ProfileCreate) SetLastName(s string) *ProfileCreate {
 	return pc
 }
 
+// SetJk sets the jk field.
+func (pc *ProfileCreate) SetJk(pr profile.Jk) *ProfileCreate {
+	pc.mutation.SetJk(pr)
+	return pc
+}
+
+// SetAlamat sets the alamat field.
+func (pc *ProfileCreate) SetAlamat(s string) *ProfileCreate {
+	pc.mutation.SetAlamat(s)
+	return pc
+}
+
+// SetNillableAlamat sets the alamat field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableAlamat(s *string) *ProfileCreate {
+	if s != nil {
+		pc.SetAlamat(*s)
+	}
+	return pc
+}
+
+// SetTanggalLahir sets the tanggal_lahir field.
+func (pc *ProfileCreate) SetTanggalLahir(s string) *ProfileCreate {
+	pc.mutation.SetTanggalLahir(s)
+	return pc
+}
+
+// SetNillableTanggalLahir sets the tanggal_lahir field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableTanggalLahir(s *string) *ProfileCreate {
+	if s != nil {
+		pc.SetTanggalLahir(*s)
+	}
+	return pc
+}
+
 // SetYearGeneration sets the year_generation field.
 func (pc *ProfileCreate) SetYearGeneration(s string) *ProfileCreate {
 	pc.mutation.SetYearGeneration(s)
@@ -150,6 +184,14 @@ func (pc *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
 			return nil, fmt.Errorf("ent: validator failed for field \"lastName\": %v", err)
 		}
 	}
+	if _, ok := pc.mutation.Jk(); !ok {
+		return nil, errors.New("ent: missing required field \"jk\"")
+	}
+	if v, ok := pc.mutation.Jk(); ok {
+		if err := profile.JkValidator(v); err != nil {
+			return nil, fmt.Errorf("ent: validator failed for field \"jk\": %v", err)
+		}
+	}
 	if _, ok := pc.mutation.YearGeneration(); !ok {
 		return nil, errors.New("ent: missing required field \"year_generation\"")
 	}
@@ -241,6 +283,30 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 			Column: profile.FieldLastName,
 		})
 		pr.LastName = value
+	}
+	if value, ok := pc.mutation.Jk(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: profile.FieldJk,
+		})
+		pr.Jk = value
+	}
+	if value, ok := pc.mutation.Alamat(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: profile.FieldAlamat,
+		})
+		pr.Alamat = value
+	}
+	if value, ok := pc.mutation.TanggalLahir(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: profile.FieldTanggalLahir,
+		})
+		pr.TanggalLahir = value
 	}
 	if value, ok := pc.mutation.YearGeneration(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

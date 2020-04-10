@@ -42,6 +42,52 @@ func (pu *ProfileUpdate) SetLastName(s string) *ProfileUpdate {
 	return pu
 }
 
+// SetJk sets the jk field.
+func (pu *ProfileUpdate) SetJk(pr profile.Jk) *ProfileUpdate {
+	pu.mutation.SetJk(pr)
+	return pu
+}
+
+// SetAlamat sets the alamat field.
+func (pu *ProfileUpdate) SetAlamat(s string) *ProfileUpdate {
+	pu.mutation.SetAlamat(s)
+	return pu
+}
+
+// SetNillableAlamat sets the alamat field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableAlamat(s *string) *ProfileUpdate {
+	if s != nil {
+		pu.SetAlamat(*s)
+	}
+	return pu
+}
+
+// ClearAlamat clears the value of alamat.
+func (pu *ProfileUpdate) ClearAlamat() *ProfileUpdate {
+	pu.mutation.ClearAlamat()
+	return pu
+}
+
+// SetTanggalLahir sets the tanggal_lahir field.
+func (pu *ProfileUpdate) SetTanggalLahir(s string) *ProfileUpdate {
+	pu.mutation.SetTanggalLahir(s)
+	return pu
+}
+
+// SetNillableTanggalLahir sets the tanggal_lahir field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableTanggalLahir(s *string) *ProfileUpdate {
+	if s != nil {
+		pu.SetTanggalLahir(*s)
+	}
+	return pu
+}
+
+// ClearTanggalLahir clears the value of tanggal_lahir.
+func (pu *ProfileUpdate) ClearTanggalLahir() *ProfileUpdate {
+	pu.mutation.ClearTanggalLahir()
+	return pu
+}
+
 // SetYearGeneration sets the year_generation field.
 func (pu *ProfileUpdate) SetYearGeneration(s string) *ProfileUpdate {
 	pu.mutation.SetYearGeneration(s)
@@ -174,6 +220,11 @@ func (pu *ProfileUpdate) Save(ctx context.Context) (int, error) {
 			return 0, fmt.Errorf("ent: validator failed for field \"lastName\": %v", err)
 		}
 	}
+	if v, ok := pu.mutation.Jk(); ok {
+		if err := profile.JkValidator(v); err != nil {
+			return 0, fmt.Errorf("ent: validator failed for field \"jk\": %v", err)
+		}
+	}
 	if v, ok := pu.mutation.Phone(); ok {
 		if err := profile.PhoneValidator(v); err != nil {
 			return 0, fmt.Errorf("ent: validator failed for field \"phone\": %v", err)
@@ -262,6 +313,39 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: profile.FieldLastName,
+		})
+	}
+	if value, ok := pu.mutation.Jk(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: profile.FieldJk,
+		})
+	}
+	if value, ok := pu.mutation.Alamat(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: profile.FieldAlamat,
+		})
+	}
+	if pu.mutation.AlamatCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: profile.FieldAlamat,
+		})
+	}
+	if value, ok := pu.mutation.TanggalLahir(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: profile.FieldTanggalLahir,
+		})
+	}
+	if pu.mutation.TanggalLahirCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: profile.FieldTanggalLahir,
 		})
 	}
 	if value, ok := pu.mutation.YearGeneration(); ok {
@@ -412,6 +496,52 @@ func (puo *ProfileUpdateOne) SetLastName(s string) *ProfileUpdateOne {
 	return puo
 }
 
+// SetJk sets the jk field.
+func (puo *ProfileUpdateOne) SetJk(pr profile.Jk) *ProfileUpdateOne {
+	puo.mutation.SetJk(pr)
+	return puo
+}
+
+// SetAlamat sets the alamat field.
+func (puo *ProfileUpdateOne) SetAlamat(s string) *ProfileUpdateOne {
+	puo.mutation.SetAlamat(s)
+	return puo
+}
+
+// SetNillableAlamat sets the alamat field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableAlamat(s *string) *ProfileUpdateOne {
+	if s != nil {
+		puo.SetAlamat(*s)
+	}
+	return puo
+}
+
+// ClearAlamat clears the value of alamat.
+func (puo *ProfileUpdateOne) ClearAlamat() *ProfileUpdateOne {
+	puo.mutation.ClearAlamat()
+	return puo
+}
+
+// SetTanggalLahir sets the tanggal_lahir field.
+func (puo *ProfileUpdateOne) SetTanggalLahir(s string) *ProfileUpdateOne {
+	puo.mutation.SetTanggalLahir(s)
+	return puo
+}
+
+// SetNillableTanggalLahir sets the tanggal_lahir field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableTanggalLahir(s *string) *ProfileUpdateOne {
+	if s != nil {
+		puo.SetTanggalLahir(*s)
+	}
+	return puo
+}
+
+// ClearTanggalLahir clears the value of tanggal_lahir.
+func (puo *ProfileUpdateOne) ClearTanggalLahir() *ProfileUpdateOne {
+	puo.mutation.ClearTanggalLahir()
+	return puo
+}
+
 // SetYearGeneration sets the year_generation field.
 func (puo *ProfileUpdateOne) SetYearGeneration(s string) *ProfileUpdateOne {
 	puo.mutation.SetYearGeneration(s)
@@ -544,6 +674,11 @@ func (puo *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
 			return nil, fmt.Errorf("ent: validator failed for field \"lastName\": %v", err)
 		}
 	}
+	if v, ok := puo.mutation.Jk(); ok {
+		if err := profile.JkValidator(v); err != nil {
+			return nil, fmt.Errorf("ent: validator failed for field \"jk\": %v", err)
+		}
+	}
 	if v, ok := puo.mutation.Phone(); ok {
 		if err := profile.PhoneValidator(v); err != nil {
 			return nil, fmt.Errorf("ent: validator failed for field \"phone\": %v", err)
@@ -630,6 +765,39 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (pr *Profile, err erro
 			Type:   field.TypeString,
 			Value:  value,
 			Column: profile.FieldLastName,
+		})
+	}
+	if value, ok := puo.mutation.Jk(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: profile.FieldJk,
+		})
+	}
+	if value, ok := puo.mutation.Alamat(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: profile.FieldAlamat,
+		})
+	}
+	if puo.mutation.AlamatCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: profile.FieldAlamat,
+		})
+	}
+	if value, ok := puo.mutation.TanggalLahir(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: profile.FieldTanggalLahir,
+		})
+	}
+	if puo.mutation.TanggalLahirCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: profile.FieldTanggalLahir,
 		})
 	}
 	if value, ok := puo.mutation.YearGeneration(); ok {

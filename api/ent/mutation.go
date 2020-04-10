@@ -38,6 +38,9 @@ type ProfileMutation struct {
 	id              *int
 	firstName       *string
 	lastName        *string
+	jk              *profile.Jk
+	alamat          *string
+	tanggal_lahir   *string
 	year_generation *string
 	phone           *string
 	status          *bool
@@ -127,6 +130,89 @@ func (m *ProfileMutation) LastName() (r string, exists bool) {
 // ResetLastName reset all changes of the lastName field.
 func (m *ProfileMutation) ResetLastName() {
 	m.lastName = nil
+}
+
+// SetJk sets the jk field.
+func (m *ProfileMutation) SetJk(pr profile.Jk) {
+	m.jk = &pr
+}
+
+// Jk returns the jk value in the mutation.
+func (m *ProfileMutation) Jk() (r profile.Jk, exists bool) {
+	v := m.jk
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetJk reset all changes of the jk field.
+func (m *ProfileMutation) ResetJk() {
+	m.jk = nil
+}
+
+// SetAlamat sets the alamat field.
+func (m *ProfileMutation) SetAlamat(s string) {
+	m.alamat = &s
+}
+
+// Alamat returns the alamat value in the mutation.
+func (m *ProfileMutation) Alamat() (r string, exists bool) {
+	v := m.alamat
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAlamat clears the value of alamat.
+func (m *ProfileMutation) ClearAlamat() {
+	m.alamat = nil
+	m.clearedFields[profile.FieldAlamat] = struct{}{}
+}
+
+// AlamatCleared returns if the field alamat was cleared in this mutation.
+func (m *ProfileMutation) AlamatCleared() bool {
+	_, ok := m.clearedFields[profile.FieldAlamat]
+	return ok
+}
+
+// ResetAlamat reset all changes of the alamat field.
+func (m *ProfileMutation) ResetAlamat() {
+	m.alamat = nil
+	delete(m.clearedFields, profile.FieldAlamat)
+}
+
+// SetTanggalLahir sets the tanggal_lahir field.
+func (m *ProfileMutation) SetTanggalLahir(s string) {
+	m.tanggal_lahir = &s
+}
+
+// TanggalLahir returns the tanggal_lahir value in the mutation.
+func (m *ProfileMutation) TanggalLahir() (r string, exists bool) {
+	v := m.tanggal_lahir
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTanggalLahir clears the value of tanggal_lahir.
+func (m *ProfileMutation) ClearTanggalLahir() {
+	m.tanggal_lahir = nil
+	m.clearedFields[profile.FieldTanggalLahir] = struct{}{}
+}
+
+// TanggalLahirCleared returns if the field tanggal_lahir was cleared in this mutation.
+func (m *ProfileMutation) TanggalLahirCleared() bool {
+	_, ok := m.clearedFields[profile.FieldTanggalLahir]
+	return ok
+}
+
+// ResetTanggalLahir reset all changes of the tanggal_lahir field.
+func (m *ProfileMutation) ResetTanggalLahir() {
+	m.tanggal_lahir = nil
+	delete(m.clearedFields, profile.FieldTanggalLahir)
 }
 
 // SetYearGeneration sets the year_generation field.
@@ -341,12 +427,21 @@ func (m *ProfileMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ProfileMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 11)
 	if m.firstName != nil {
 		fields = append(fields, profile.FieldFirstName)
 	}
 	if m.lastName != nil {
 		fields = append(fields, profile.FieldLastName)
+	}
+	if m.jk != nil {
+		fields = append(fields, profile.FieldJk)
+	}
+	if m.alamat != nil {
+		fields = append(fields, profile.FieldAlamat)
+	}
+	if m.tanggal_lahir != nil {
+		fields = append(fields, profile.FieldTanggalLahir)
 	}
 	if m.year_generation != nil {
 		fields = append(fields, profile.FieldYearGeneration)
@@ -378,6 +473,12 @@ func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
 		return m.FirstName()
 	case profile.FieldLastName:
 		return m.LastName()
+	case profile.FieldJk:
+		return m.Jk()
+	case profile.FieldAlamat:
+		return m.Alamat()
+	case profile.FieldTanggalLahir:
+		return m.TanggalLahir()
 	case profile.FieldYearGeneration:
 		return m.YearGeneration()
 	case profile.FieldPhone:
@@ -412,6 +513,27 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLastName(v)
+		return nil
+	case profile.FieldJk:
+		v, ok := value.(profile.Jk)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetJk(v)
+		return nil
+	case profile.FieldAlamat:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlamat(v)
+		return nil
+	case profile.FieldTanggalLahir:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTanggalLahir(v)
 		return nil
 	case profile.FieldYearGeneration:
 		v, ok := value.(string)
@@ -484,7 +606,14 @@ func (m *ProfileMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *ProfileMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(profile.FieldAlamat) {
+		fields = append(fields, profile.FieldAlamat)
+	}
+	if m.FieldCleared(profile.FieldTanggalLahir) {
+		fields = append(fields, profile.FieldTanggalLahir)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -497,6 +626,14 @@ func (m *ProfileMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ProfileMutation) ClearField(name string) error {
+	switch name {
+	case profile.FieldAlamat:
+		m.ClearAlamat()
+		return nil
+	case profile.FieldTanggalLahir:
+		m.ClearTanggalLahir()
+		return nil
+	}
 	return fmt.Errorf("unknown Profile nullable field %s", name)
 }
 
@@ -510,6 +647,15 @@ func (m *ProfileMutation) ResetField(name string) error {
 		return nil
 	case profile.FieldLastName:
 		m.ResetLastName()
+		return nil
+	case profile.FieldJk:
+		m.ResetJk()
+		return nil
+	case profile.FieldAlamat:
+		m.ResetAlamat()
+		return nil
+	case profile.FieldTanggalLahir:
+		m.ResetTanggalLahir()
 		return nil
 	case profile.FieldYearGeneration:
 		m.ResetYearGeneration()

@@ -107,6 +107,20 @@ func LastName(v string) predicate.Profile {
 	})
 }
 
+// Alamat applies equality check predicate on the "alamat" field. It's identical to AlamatEQ.
+func Alamat(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAlamat), v))
+	})
+}
+
+// TanggalLahir applies equality check predicate on the "tanggal_lahir" field. It's identical to TanggalLahirEQ.
+func TanggalLahir(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTanggalLahir), v))
+	})
+}
+
 // YearGeneration applies equality check predicate on the "year_generation" field. It's identical to YearGenerationEQ.
 func YearGeneration(v string) predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
@@ -368,6 +382,304 @@ func LastNameEqualFold(v string) predicate.Profile {
 func LastNameContainsFold(v string) predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldLastName), v))
+	})
+}
+
+// JkEQ applies the EQ predicate on the "jk" field.
+func JkEQ(v Jk) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldJk), v))
+	})
+}
+
+// JkNEQ applies the NEQ predicate on the "jk" field.
+func JkNEQ(v Jk) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldJk), v))
+	})
+}
+
+// JkIn applies the In predicate on the "jk" field.
+func JkIn(vs ...Jk) predicate.Profile {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Profile(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(vs) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldJk), v...))
+	})
+}
+
+// JkNotIn applies the NotIn predicate on the "jk" field.
+func JkNotIn(vs ...Jk) predicate.Profile {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Profile(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(vs) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldJk), v...))
+	})
+}
+
+// AlamatEQ applies the EQ predicate on the "alamat" field.
+func AlamatEQ(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatNEQ applies the NEQ predicate on the "alamat" field.
+func AlamatNEQ(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatIn applies the In predicate on the "alamat" field.
+func AlamatIn(vs ...string) predicate.Profile {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Profile(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(vs) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAlamat), v...))
+	})
+}
+
+// AlamatNotIn applies the NotIn predicate on the "alamat" field.
+func AlamatNotIn(vs ...string) predicate.Profile {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Profile(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(vs) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAlamat), v...))
+	})
+}
+
+// AlamatGT applies the GT predicate on the "alamat" field.
+func AlamatGT(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatGTE applies the GTE predicate on the "alamat" field.
+func AlamatGTE(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatLT applies the LT predicate on the "alamat" field.
+func AlamatLT(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatLTE applies the LTE predicate on the "alamat" field.
+func AlamatLTE(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatContains applies the Contains predicate on the "alamat" field.
+func AlamatContains(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatHasPrefix applies the HasPrefix predicate on the "alamat" field.
+func AlamatHasPrefix(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatHasSuffix applies the HasSuffix predicate on the "alamat" field.
+func AlamatHasSuffix(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatIsNil applies the IsNil predicate on the "alamat" field.
+func AlamatIsNil() predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAlamat)))
+	})
+}
+
+// AlamatNotNil applies the NotNil predicate on the "alamat" field.
+func AlamatNotNil() predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAlamat)))
+	})
+}
+
+// AlamatEqualFold applies the EqualFold predicate on the "alamat" field.
+func AlamatEqualFold(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAlamat), v))
+	})
+}
+
+// AlamatContainsFold applies the ContainsFold predicate on the "alamat" field.
+func AlamatContainsFold(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAlamat), v))
+	})
+}
+
+// TanggalLahirEQ applies the EQ predicate on the "tanggal_lahir" field.
+func TanggalLahirEQ(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirNEQ applies the NEQ predicate on the "tanggal_lahir" field.
+func TanggalLahirNEQ(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirIn applies the In predicate on the "tanggal_lahir" field.
+func TanggalLahirIn(vs ...string) predicate.Profile {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Profile(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(vs) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTanggalLahir), v...))
+	})
+}
+
+// TanggalLahirNotIn applies the NotIn predicate on the "tanggal_lahir" field.
+func TanggalLahirNotIn(vs ...string) predicate.Profile {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Profile(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(vs) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTanggalLahir), v...))
+	})
+}
+
+// TanggalLahirGT applies the GT predicate on the "tanggal_lahir" field.
+func TanggalLahirGT(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirGTE applies the GTE predicate on the "tanggal_lahir" field.
+func TanggalLahirGTE(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirLT applies the LT predicate on the "tanggal_lahir" field.
+func TanggalLahirLT(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirLTE applies the LTE predicate on the "tanggal_lahir" field.
+func TanggalLahirLTE(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirContains applies the Contains predicate on the "tanggal_lahir" field.
+func TanggalLahirContains(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirHasPrefix applies the HasPrefix predicate on the "tanggal_lahir" field.
+func TanggalLahirHasPrefix(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirHasSuffix applies the HasSuffix predicate on the "tanggal_lahir" field.
+func TanggalLahirHasSuffix(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirIsNil applies the IsNil predicate on the "tanggal_lahir" field.
+func TanggalLahirIsNil() predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTanggalLahir)))
+	})
+}
+
+// TanggalLahirNotNil applies the NotNil predicate on the "tanggal_lahir" field.
+func TanggalLahirNotNil() predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTanggalLahir)))
+	})
+}
+
+// TanggalLahirEqualFold applies the EqualFold predicate on the "tanggal_lahir" field.
+func TanggalLahirEqualFold(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldTanggalLahir), v))
+	})
+}
+
+// TanggalLahirContainsFold applies the ContainsFold predicate on the "tanggal_lahir" field.
+func TanggalLahirContainsFold(v string) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldTanggalLahir), v))
 	})
 }
 

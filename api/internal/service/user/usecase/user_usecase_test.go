@@ -24,6 +24,7 @@ func TestUserUsecase_CreateUser(t *testing.T) {
 		profile := &ent.Profile{
 			FirstName:      "Risky F",
 			LastName:       "Pribadi",
+			Jk:             "Male",
 			YearGeneration: "2017",
 			Phone:          "083834121712",
 			Status:         true,

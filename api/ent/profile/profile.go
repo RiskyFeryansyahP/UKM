@@ -3,6 +3,7 @@
 package profile
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -12,7 +13,10 @@ const (
 	// FieldID holds the string denoting the id field in the database.
 	FieldID             = "id"              // FieldFirstName holds the string denoting the firstname vertex property in the database.
 	FieldFirstName      = "first_name"      // FieldLastName holds the string denoting the lastname vertex property in the database.
-	FieldLastName       = "last_name"       // FieldYearGeneration holds the string denoting the year_generation vertex property in the database.
+	FieldLastName       = "last_name"       // FieldJk holds the string denoting the jk vertex property in the database.
+	FieldJk             = "jk"              // FieldAlamat holds the string denoting the alamat vertex property in the database.
+	FieldAlamat         = "alamat"          // FieldTanggalLahir holds the string denoting the tanggal_lahir vertex property in the database.
+	FieldTanggalLahir   = "tanggal_lahir"   // FieldYearGeneration holds the string denoting the year_generation vertex property in the database.
 	FieldYearGeneration = "year_generation" // FieldPhone holds the string denoting the phone vertex property in the database.
 	FieldPhone          = "phone"           // FieldStatus holds the string denoting the status vertex property in the database.
 	FieldStatus         = "status"          // FieldImgProfile holds the string denoting the img_profile vertex property in the database.
@@ -46,6 +50,9 @@ var Columns = []string{
 	FieldID,
 	FieldFirstName,
 	FieldLastName,
+	FieldJk,
+	FieldAlamat,
+	FieldTanggalLahir,
 	FieldYearGeneration,
 	FieldPhone,
 	FieldStatus,
@@ -78,3 +85,26 @@ var (
 	// UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	UpdateDefaultUpdatedAt func() time.Time
 )
+
+// Jk defines the type for the jk enum field.
+type Jk string
+
+// Jk values.
+const (
+	JkMale   Jk = "Male"
+	JkFemale Jk = "Female"
+)
+
+func (s Jk) String() string {
+	return string(s)
+}
+
+// JkValidator is a validator for the "j" field enum values. It is called by the builders before save.
+func JkValidator(j Jk) error {
+	switch j {
+	case JkMale, JkFemale:
+		return nil
+	default:
+		return fmt.Errorf("profile: invalid enum value for jk field: %q", j)
+	}
+}

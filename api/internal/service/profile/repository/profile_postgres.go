@@ -36,6 +36,9 @@ func (p *ProfileRepository) Update(ctx context.Context, email string, input mode
 	result, err := p.DB.Profile.UpdateOneID(id).
 		SetFirstName(input.FirstName).
 		SetLastName(input.LastName).
+		SetJk(input.Jk).
+		SetAlamat(input.Alamat).
+		SetTanggalLahir(input.TanggalLahir).
 		SetYearGeneration(input.YearGeneration).
 		SetPhone(input.Phone).
 		SetStatus(true).

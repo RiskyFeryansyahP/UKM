@@ -23,6 +23,7 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 			ID:             1,
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,
@@ -79,6 +80,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		input := model.InputUpdateProfile{
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,
@@ -91,6 +93,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 			ID:             1,
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,
@@ -114,6 +117,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		input := model.InputUpdateProfile{
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,
@@ -126,6 +130,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 			ID:             1,
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,
@@ -145,10 +150,11 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		require.Equal(t, "Satriawan", response.Result.LastName)
 	})
 
-	t.Run("update profile failed empty phone", func(t *testing.T) {
+	t.Run("update profile failed empty email", func(t *testing.T) {
 		input := model.InputUpdateProfile{
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "089691952594",
 			Status:         true,
@@ -221,6 +227,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		input := model.InputUpdateProfile{
 			FirstName:      "Galih",
 			LastName:       "Satriawan",
+			Jk:             "Male",
 			YearGeneration: "2016",
 			Phone:          "08",
 			Status:         true,
@@ -230,6 +237,31 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		email := "171111040@mhs.stiki.ac.id"
 
 		err := errors.New("wrong format phone number")
+
+		repo := mock.NewMockRepositoryProfile(controller)
+		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
+
+		p := NewProfileUsecase(repo)
+		response, respErr := p.UpdateProfile(context.Background(), email, input)
+
+		require.Equal(t, 400, respErr.StatusCode)
+		require.Nil(t, response)
+	})
+
+	t.Run("update profile failed empty JK", func(t *testing.T) {
+		input := model.InputUpdateProfile{
+			FirstName:      "Galih",
+			LastName:       "Satriawan",
+			Jk:             "",
+			YearGeneration: "2016",
+			Phone:          "089691952594",
+			Status:         true,
+			ImgProfile:     "",
+		}
+
+		email := "171111040@mhs.stiki.ac.id"
+
+		err := errors.New("jenis kelamin can't be empty")
 
 		repo := mock.NewMockRepositoryProfile(controller)
 		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)

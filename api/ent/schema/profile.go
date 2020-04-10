@@ -19,6 +19,12 @@ func (Profile) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("lastName").
 			NotEmpty(),
+		field.Enum("jk").
+			Values("Male", "Female"),
+		field.String("alamat").
+			Optional(),
+		field.String("tanggal_lahir").
+			Optional(),
 		field.String("year_generation"),
 		field.String("phone").
 			NotEmpty(),
