@@ -24,7 +24,9 @@ func NewUserRepository(DB *ent.Client) user.RepositoryUser {
 func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUser) (*ent.User, error) {
 	now := time.Now()
 
-	user, err := u.DB.User.Create().
+	tx, _ := u.DB.Tx(ctx)
+
+	user, err := tx.User.Create().
 		SetEmail(input.Email).
 		SetPassword(input.Password).
 		SetRoleID(input.Role).
@@ -33,10 +35,10 @@ func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUs
 		Save(ctx)
 
 	if err != nil {
-		return nil, err
+		return nil, rollback(tx, err)
 	}
 
-	_, err = u.DB.Profile.Create().
+	_, err = tx.Profile.Create().
 		SetFirstName(input.UserProfile.FirstName).
 		SetLastName(input.UserProfile.LastName).
 		SetJk(input.UserProfile.Jk).
@@ -50,8 +52,10 @@ func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUs
 		Save(ctx)
 
 	if err != nil {
-		return nil, err
+		return nil, rollback(tx, err)
 	}
+
+	_ = tx.Commit()
 
 	return user, nil
 }
@@ -84,4 +88,9 @@ func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) 
 		Only(ctx)
 
 	return profile, role, nil
+}
+
+func rollback(tx *ent.Tx, err error) error {
+	_ = tx.Rollback() // doing rollback
+	return err
 }
