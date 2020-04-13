@@ -27,12 +27,14 @@ type InputUpdateProfile struct {
 	ImgProfile string `json:"img_profile,omitempty"`
 }
 
+// ResponseUpdateProfile hold value response after update profile
 type ResponseUpdateProfile struct {
 	StatusCode int          `json:"statuscode"`
 	Status     bool         `json:"status"`
 	Result     *ent.Profile `json:"result"`
 }
 
+// ResponseGetProfile hold value after get profile
 type ResponseGetProfile struct {
 	StatusCode int          `json:"statuscode"`
 	Status     bool         `json:"status"`
