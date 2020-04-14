@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/confus1on/UKM/ent"
 
 	"github.com/facebookincubator/ent/dialect/sql"
@@ -29,8 +31,24 @@ func NewPostgreSQL() (*ent.Client, error) {
 	return ent.NewClient(ent.Driver(drv)), nil
 }
 
-// InitValueRoleDB initial value table role into database
-func InitValueRoleDB(client *ent.Client) error {
+// InitDefaultValue create defualt value to db for role and ukm
+func InitDefaultValue(client *ent.Client) error {
+	err := initValueRoleDB(client)
+	if err != nil {
+		err = errors.Wrap(err, "Failed init value role :")
+		return err
+	}
+
+	err = initValueForUkmDB(client)
+	if err != nil {
+		err = errors.Wrap(err, "Failed init value ukm :")
+		return err
+	}
+
+	return nil
+}
+
+func initValueRoleDB(client *ent.Client) error {
 	ctx := context.Background()
 
 	roles, err := client.Role.Query().
@@ -47,6 +65,37 @@ func InitValueRoleDB(client *ent.Client) error {
 			_, err := client.Role.Create().
 				SetValue(value).
 				Save(ctx)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func initValueForUkmDB(client *ent.Client) error {
+	ctx := context.Background()
+
+	now := time.Now()
+
+	ukms, err := client.Ukm.Query().
+		All(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if len(ukms) <= 0 {
+		ukmInitValue := []string{"HIC", "Byte", "SceN", "SFC", "IMAKRISKA", "Ikatan Studi Islam", "Kompeni", "Kepak Elang"}
+
+		for _, v := range ukmInitValue {
+			_, err := client.Ukm.Create().
+				SetName(v).
+				SetUpdatedAt(now).
+				SetCreatedAt(now).
+				Save(ctx)
+
 			if err != nil {
 				return err
 			}

@@ -13,6 +13,9 @@ import (
 	usrHandler "github.com/confus1on/UKM/internal/service/user/handler"
 	usrRepo "github.com/confus1on/UKM/internal/service/user/repository"
 	usrUC "github.com/confus1on/UKM/internal/service/user/usecase"
+	ukmRepo "github.com/confus1on/UKM/internal/service/ukm/repository"
+	ukmUC "github.com/confus1on/UKM/internal/service/ukm/usecase"
+	ukmHandler "github.com/confus1on/UKM/internal/service/ukm/handler"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/joho/godotenv"
@@ -52,9 +55,9 @@ func main() {
 			log.Fatalf("failed creating schema resources: %v", err)
 		}
 
-		err = postgres.InitValueRoleDB(client)
+		err = postgres.InitDefaultValue(client)
 		if err != nil {
-			log.Fatalf("failed initialize value role: %v", err)
+			log.Fatalf("failed initialize default value: %v", err)
 		}
 	}
 
@@ -68,12 +71,21 @@ func main() {
 	profileUsecase := profileUC.NewProfileUsecase(profileRepo)
 	profile := profileHandler.NewProfileHandler(profileUsecase)
 
+	// initialize ukm service
+	ukmRepo := ukmRepo.NewRepositoryUKM(client)
+	ukmUsecase := ukmUC.NewUKMUsecase(ukmRepo)
+	ukm := ukmHandler.NewUKMHandler(ukmUsecase)
+
 	router := fasthttprouter.New()
 	router.POST("/api/v0/user/register", user.RegisterUser)
 	router.POST("/api/v0/user/login", user.LoginUser)
 
 	router.GET("/api/v0/profile/:email", profile.GetDetailProfile)
 	router.PUT("/api/v0/profile/:email", profile.UpdateProfile)
+
+	router.GET("/api/v0/ukm", ukm.GetAllUKM)
+	router.POST("/api/v0/ukm/register/profile/:profileID", ukm.RegisterUKM)
+	router.PUT("/api/v0/ukm/:ukmID", ukm.UpdateUKM)
 
 	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
