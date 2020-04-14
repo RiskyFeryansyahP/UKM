@@ -83,7 +83,9 @@ func main() {
 	router.GET("/api/v0/profile/:email", profile.GetDetailProfile)
 	router.PUT("/api/v0/profile/:email", profile.UpdateProfile)
 
-	router.POST("/api/v0/ukm/register", ukm.RegisterUKM)
+	router.GET("/api/v0/ukm", ukm.GetAllUKM)
+	router.POST("/api/v0/ukm/register/profile/:profileID", ukm.RegisterUKM)
+	router.PUT("/api/v0/ukm/:ukmID", ukm.UpdateUKM)
 
 	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
