@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"strconv"
@@ -25,7 +26,7 @@ func NewUKMHandler(UKMUsecase ukm.UsecaseUKM) *UKMHandler {
 func (u *UKMHandler) GetAllUKM(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := u.UKMUsecase.GetAll(ctx)
+	result, err := u.UKMUsecase.GetAll(context.Background())
 	if err != nil {
 		log.Printf("failed get all data ukm: %v", err)
 
@@ -49,7 +50,7 @@ func (u *UKMHandler) RegisterUKM(ctx *fasthttp.RequestCtx) {
 	_ = json.Unmarshal(body, &input)
 
 	ctx.Response.Header.SetContentType("application/json")
-	result, err := u.UKMUsecase.Register(ctx, profileID, input)
+	result, err := u.UKMUsecase.Register(context.Background(), profileID, input)
 	if err != nil {
 		log.Printf("failed register ukm: %v", err.Message)
 
@@ -74,7 +75,7 @@ func (u *UKMHandler) UpdateUKM(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := u.UKMUsecase.Update(ctx, id, input)
+	result, err := u.UKMUsecase.Update(context.Background(), id, input)
 	if err != nil {
 		log.Printf("failed update ukm: %v", err)
 

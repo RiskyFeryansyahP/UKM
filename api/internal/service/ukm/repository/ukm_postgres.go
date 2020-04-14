@@ -42,13 +42,10 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 		return nil, err
 	}
 
-	profile, err := u.DB.Profile.Query().
+	profile := u.DB.Profile.Query().
 		Where(profile.IDEQ(profileID)).
 		WithUkm().
-		Only(ctx)
-	if err != nil {
-		return nil, err
-	}
+		OnlyX(ctx)
 
 	return profile, err
 }
