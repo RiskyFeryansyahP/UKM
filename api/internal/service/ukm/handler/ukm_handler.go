@@ -30,6 +30,7 @@ func (u *UKMHandler) GetAllUKM(ctx *fasthttp.RequestCtx) {
 		log.Printf("failed get all data ukm: %v", err)
 
 		_ = json.NewEncoder(ctx).Encode(err)
+		return
 	}
 
 	_ = json.NewEncoder(ctx).Encode(result)
@@ -53,6 +54,7 @@ func (u *UKMHandler) RegisterUKM(ctx *fasthttp.RequestCtx) {
 		log.Printf("failed register ukm: %v", err.Message)
 
 		_ = json.NewEncoder(ctx).Encode(err)
+		return
 	}
 
 	_ = json.NewEncoder(ctx).Encode(result)
@@ -77,6 +79,7 @@ func (u *UKMHandler) UpdateUKM(ctx *fasthttp.RequestCtx) {
 		log.Printf("failed update ukm: %v", err)
 
 		_ = json.NewEncoder(ctx).Encode(err)
+		return
 	}
 
 	_ = json.NewEncoder(ctx).Encode(result)
