@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/ukm"
@@ -20,18 +21,60 @@ func NewUKMHandler(UKMUsecase ukm.UsecaseUKM) *UKMHandler {
 	return &UKMHandler{UKMUsecase: UKMUsecase}
 }
 
-// RegisterUKM handler to doing registraion ukm for user
+// GetAllUKM handler fetch all data in database
+func (u *UKMHandler) GetAllUKM(ctx *fasthttp.RequestCtx) {
+	ctx.Response.Header.SetContentType("application/json")
+
+	result, err := u.UKMUsecase.GetAll(ctx)
+	if err != nil {
+		log.Printf("failed get all data ukm: %v", err)
+
+		_ = json.NewEncoder(ctx).Encode(err)
+	}
+
+	_ = json.NewEncoder(ctx).Encode(result)
+}
+
+// RegisterUKM handler doing registraion ukm for user
 func (u *UKMHandler) RegisterUKM(ctx *fasthttp.RequestCtx) {
 	var input model.InputRegisterUKM
+
+	param := ctx.UserValue("profileID").(string)
+
+	profileID, _ := strconv.Atoi(param)
 
 	body := ctx.Request.Body()
 
 	_ = json.Unmarshal(body, &input)
 
 	ctx.Response.Header.SetContentType("application/json")
-	result, err := u.UKMUsecase.Register(ctx, input)
+	result, err := u.UKMUsecase.Register(ctx, profileID, input)
 	if err != nil {
 		log.Printf("failed register ukm: %v", err.Message)
+
+		_ = json.NewEncoder(ctx).Encode(err)
+	}
+
+	_ = json.NewEncoder(ctx).Encode(result)
+}
+
+// UpdateUKM handler update value ukm in database
+func (u *UKMHandler) UpdateUKM(ctx *fasthttp.RequestCtx) {
+	var input model.InputUpdateUKM
+
+	param := ctx.UserValue("ukmID").(string)
+
+	id, _ := strconv.Atoi(param)
+
+	body := ctx.Request.Body()
+
+	_ = json.Unmarshal(body, &input)
+
+	ctx.Response.Header.SetContentType("application/json")
+
+	result, err := u.UKMUsecase.Update(ctx, id, input)
+	if err != nil {
+		log.Printf("failed update ukm: %v", err)
 
 		_ = json.NewEncoder(ctx).Encode(err)
 	}

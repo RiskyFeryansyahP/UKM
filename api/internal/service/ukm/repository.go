@@ -9,5 +9,7 @@ import (
 
 // RepositoryUKM abstract to be implemented in repository
 type RepositoryUKM interface {
-	RegisterUKM(ctx context.Context, input model.InputRegisterUKM) (*ent.Profile, error)
+	GetAll(ctx context.Context) ([]*ent.Ukm, error)
+	RegisterUKM(ctx context.Context, profileID int, input model.InputRegisterUKM) (*ent.Profile, error)
+	Update(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error)
 }
