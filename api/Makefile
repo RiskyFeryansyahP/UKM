@@ -13,6 +13,9 @@ build: dep
 	GO111MODULE=on CGO_ENABLED=0 go build -ldflags="-s -w" \
 	-o build/ukm .
 
+docker-build:
+	docker build -t ukm-organization:0.3.1 . -f Dockerfile
+
 run: build
 	./build/ukm
 
