@@ -50,7 +50,8 @@ func (u *UKMHandler) RegisterUKM(ctx *fasthttp.RequestCtx) {
 	_ = json.Unmarshal(body, &input)
 
 	ctx.Response.Header.SetContentType("application/json")
-	result, err := u.UKMUsecase.Register(context.Background(), profileID, input)
+
+	result, err := u.UKMUsecase.RegisterUKM(context.Background(), profileID, input)
 	if err != nil {
 		log.Printf("failed register ukm: %v", err.Message)
 
@@ -75,7 +76,7 @@ func (u *UKMHandler) UpdateUKM(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := u.UKMUsecase.Update(context.Background(), id, input)
+	result, err := u.UKMUsecase.UpdateUKM(context.Background(), id, input)
 	if err != nil {
 		log.Printf("failed update ukm: %v", err)
 

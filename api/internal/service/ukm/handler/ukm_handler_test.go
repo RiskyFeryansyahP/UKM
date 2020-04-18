@@ -101,7 +101,7 @@ func TestUKMHandler_RegisterUKM(t *testing.T) {
 			Status:     true,
 		}
 
-		mockUsecase.EXPECT().Register(ctx, profileID, input).Return(response, nil).Times(1)
+		mockUsecase.EXPECT().RegisterUKM(ctx, profileID, input).Return(response, nil).Times(1)
 
 		ukm := NewUKMHandler(mockUsecase)
 
@@ -141,7 +141,7 @@ func TestUKMHandler_RegisterUKM(t *testing.T) {
 			Message:    "name can't be empty",
 		}
 
-		mockUsecase.EXPECT().Register(ctx, profileID, input).Return(nil, respErr).Times(1)
+		mockUsecase.EXPECT().RegisterUKM(ctx, profileID, input).Return(nil, respErr).Times(1)
 
 		ukm := NewUKMHandler(mockUsecase)
 
@@ -191,7 +191,7 @@ func TestUKMHandler_UpdateUKM(t *testing.T) {
 			Status:     true,
 		}
 
-		mockUsecase.EXPECT().Update(ctx, ukmID, input).Return(res, nil).Times(1)
+		mockUsecase.EXPECT().UpdateUKM(ctx, ukmID, input).Return(res, nil).Times(1)
 
 		ukm := NewUKMHandler(mockUsecase)
 
@@ -232,7 +232,7 @@ func TestUKMHandler_UpdateUKM(t *testing.T) {
 			Message:    "name can't be empty",
 		}
 
-		mockUsecase.EXPECT().Update(ctx, ukmID, input).Return(nil, resErr).Times(1)
+		mockUsecase.EXPECT().UpdateUKM(ctx, ukmID, input).Return(nil, resErr).Times(1)
 
 		ukm := NewUKMHandler(mockUsecase)
 

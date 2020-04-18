@@ -20,7 +20,7 @@ func TestUKMUsecase_GetAll(t *testing.T) {
 	mockRepo := mock.NewMockRepositoryUKM(controller)
 
 	t.Run("success get all ukm", func(t *testing.T) {
-		mockRepo.EXPECT().GetAll(ctx).Return([]*ent.Ukm{}, nil).Times(1)
+		mockRepo.EXPECT().FetchAll(ctx).Return([]*ent.Ukm{}, nil).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
 		response, err := ukmUC.GetAll(ctx)
@@ -33,7 +33,7 @@ func TestUKMUsecase_GetAll(t *testing.T) {
 	t.Run("failed get all ukm connection refused", func(t *testing.T) {
 		respErr := errors.New("connection refused")
 
-		mockRepo.EXPECT().GetAll(ctx).Return(nil, respErr).Times(1)
+		mockRepo.EXPECT().FetchAll(ctx).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
 		response, err := ukmUC.GetAll(ctx)
@@ -61,7 +61,7 @@ func TestUKMUsecase_Register(t *testing.T) {
 		mockRepo.EXPECT().RegisterUKM(ctx, profileID, input).Return(&ent.Profile{}, nil).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Register(ctx, profileID, input)
+		response, err := ukmUC.RegisterUKM(ctx, profileID, input)
 
 		require.Nil(t, err)
 		require.Equal(t, 200, response.StatusCode)
@@ -80,7 +80,7 @@ func TestUKMUsecase_Register(t *testing.T) {
 		mockRepo.EXPECT().RegisterUKM(ctx, profileID, input).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Register(ctx, profileID, input)
+		response, err := ukmUC.RegisterUKM(ctx, profileID, input)
 
 		require.Equal(t, 200, err.StatusCode)
 		require.Equal(t, "failed register ukm: : not found profile match with profile id", err.Message)
@@ -99,7 +99,7 @@ func TestUKMUsecase_Register(t *testing.T) {
 		mockRepo.EXPECT().RegisterUKM(ctx, profileID, input).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Register(ctx, profileID, input)
+		response, err := ukmUC.RegisterUKM(ctx, profileID, input)
 
 		require.Equal(t, 400, err.StatusCode)
 		require.Equal(t, "phone can't be empty", err.Message)
@@ -118,7 +118,7 @@ func TestUKMUsecase_Register(t *testing.T) {
 		mockRepo.EXPECT().RegisterUKM(ctx, profileID, input).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Register(ctx, profileID, input)
+		response, err := ukmUC.RegisterUKM(ctx, profileID, input)
 
 		require.Equal(t, 400, err.StatusCode)
 		require.Equal(t, "name can't be empty", err.Message)
@@ -140,10 +140,10 @@ func TestUKMUsecase_Update(t *testing.T) {
 
 		ukmID := 1
 
-		mockRepo.EXPECT().Update(ctx, ukmID, input).Return(&ent.Ukm{}, nil).Times(1)
+		mockRepo.EXPECT().UpdateOne(ctx, ukmID, input).Return(&ent.Ukm{}, nil).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Update(ctx, ukmID, input)
+		response, err := ukmUC.UpdateUKM(ctx, ukmID, input)
 
 		require.Nil(t, err)
 		require.Equal(t, 200, response.StatusCode)
@@ -159,10 +159,10 @@ func TestUKMUsecase_Update(t *testing.T) {
 
 		respErr := errors.New("not found id match in database")
 
-		mockRepo.EXPECT().Update(ctx, ukmID, input).Return(nil, respErr).Times(1)
+		mockRepo.EXPECT().UpdateOne(ctx, ukmID, input).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Update(ctx, ukmID, input)
+		response, err := ukmUC.UpdateUKM(ctx, ukmID, input)
 
 		require.Equal(t, 200, err.StatusCode)
 		require.Equal(t, "failed update ukm: : not found id match in database", err.Message)
@@ -178,10 +178,10 @@ func TestUKMUsecase_Update(t *testing.T) {
 
 		respErr := errors.New("name can't be empty")
 
-		mockRepo.EXPECT().Update(ctx, ukmID, input).Return(nil, respErr).Times(1)
+		mockRepo.EXPECT().UpdateOne(ctx, ukmID, input).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Update(ctx, ukmID, input)
+		response, err := ukmUC.UpdateUKM(ctx, ukmID, input)
 
 		require.Equal(t, 400, err.StatusCode)
 		require.Equal(t, "name can't be empty", err.Message)
@@ -197,10 +197,10 @@ func TestUKMUsecase_Update(t *testing.T) {
 
 		respErr := errors.New("id can't be empty")
 
-		mockRepo.EXPECT().Update(ctx, nil, input).Return(nil, respErr).Times(1)
+		mockRepo.EXPECT().UpdateOne(ctx, nil, input).Return(nil, respErr).Times(1)
 
 		ukmUC := NewUKMUsecase(mockRepo)
-		response, err := ukmUC.Update(ctx, ukmID, input)
+		response, err := ukmUC.UpdateUKM(ctx, ukmID, input)
 
 		require.Equal(t, 400, err.StatusCode)
 		require.Equal(t, "id can't be empty", err.Message)
