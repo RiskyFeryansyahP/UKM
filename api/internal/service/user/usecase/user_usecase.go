@@ -35,17 +35,17 @@ func (u *UserUsecase) CreateUser(ctx context.Context, input model.InputCreateUse
 
 // SigninUser validation input and return to model ResponseLogin
 func (u *UserUsecase) SigninUser(ctx context.Context, input model.InputLoginUser) (*model.ResponseLogin, error) {
-	p, r, err := u.UserRepo.Login(ctx, input)
+	profile, role, err := u.UserRepo.Login(ctx, input)
 	if err != nil {
 		return nil, err
 	}
 
-	profile := &model.ResponseLogin{
+	response := &model.ResponseLogin{
 		StatusCode: 200,
 		Status:     true,
-		Profile:    p,
-		Role:       r,
+		Profile:    profile,
+		Role:       role,
 	}
 
-	return profile, nil
+	return response, nil
 }

@@ -35,32 +35,32 @@ func (m *MockRepositoryProfile) EXPECT() *MockRepositoryProfileMockRecorder {
 	return m.recorder
 }
 
-// GetByEmail mocks base method
-func (m *MockRepositoryProfile) GetByEmail(ctx context.Context, email string) (*ent.Profile, error) {
+// FindByEmail mocks base method
+func (m *MockRepositoryProfile) FindByEmail(ctx context.Context, email string) (*ent.Profile, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByEmail", ctx, email)
+	ret := m.ctrl.Call(m, "FindByEmail", ctx, email)
 	ret0, _ := ret[0].(*ent.Profile)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetByEmail indicates an expected call of GetByEmail
-func (mr *MockRepositoryProfileMockRecorder) GetByEmail(ctx, email interface{}) *gomock.Call {
+// FindByEmail indicates an expected call of FindByEmail
+func (mr *MockRepositoryProfileMockRecorder) FindByEmail(ctx, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockRepositoryProfile)(nil).GetByEmail), ctx, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByEmail", reflect.TypeOf((*MockRepositoryProfile)(nil).FindByEmail), ctx, email)
 }
 
-// Update mocks base method
-func (m *MockRepositoryProfile) Update(ctx context.Context, email string, input model.InputUpdateProfile) (*ent.Profile, error) {
+// UpdateOne mocks base method
+func (m *MockRepositoryProfile) UpdateOne(ctx context.Context, email string, input model.InputUpdateProfile) (*ent.Profile, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, email, input)
+	ret := m.ctrl.Call(m, "UpdateOne", ctx, email, input)
 	ret0, _ := ret[0].(*ent.Profile)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Update indicates an expected call of Update
-func (mr *MockRepositoryProfileMockRecorder) Update(ctx, email, input interface{}) *gomock.Call {
+// UpdateOne indicates an expected call of UpdateOne
+func (mr *MockRepositoryProfileMockRecorder) UpdateOne(ctx, email, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRepositoryProfile)(nil).Update), ctx, email, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOne", reflect.TypeOf((*MockRepositoryProfile)(nil).UpdateOne), ctx, email, input)
 }

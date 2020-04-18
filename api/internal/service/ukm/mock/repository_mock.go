@@ -35,19 +35,19 @@ func (m *MockRepositoryUKM) EXPECT() *MockRepositoryUKMMockRecorder {
 	return m.recorder
 }
 
-// GetAll mocks base method
-func (m *MockRepositoryUKM) GetAll(ctx context.Context) ([]*ent.Ukm, error) {
+// FetchAll mocks base method
+func (m *MockRepositoryUKM) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll", ctx)
+	ret := m.ctrl.Call(m, "FetchAll", ctx)
 	ret0, _ := ret[0].([]*ent.Ukm)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetAll indicates an expected call of GetAll
-func (mr *MockRepositoryUKMMockRecorder) GetAll(ctx interface{}) *gomock.Call {
+// FetchAll indicates an expected call of FetchAll
+func (mr *MockRepositoryUKMMockRecorder) FetchAll(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockRepositoryUKM)(nil).GetAll), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchAll", reflect.TypeOf((*MockRepositoryUKM)(nil).FetchAll), ctx)
 }
 
 // RegisterUKM mocks base method
@@ -65,17 +65,17 @@ func (mr *MockRepositoryUKMMockRecorder) RegisterUKM(ctx, profileID, input inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUKM", reflect.TypeOf((*MockRepositoryUKM)(nil).RegisterUKM), ctx, profileID, input)
 }
 
-// Update mocks base method
-func (m *MockRepositoryUKM) Update(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error) {
+// UpdateOne mocks base method
+func (m *MockRepositoryUKM) UpdateOne(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, id, input)
+	ret := m.ctrl.Call(m, "UpdateOne", ctx, id, input)
 	ret0, _ := ret[0].(*ent.Ukm)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Update indicates an expected call of Update
-func (mr *MockRepositoryUKMMockRecorder) Update(ctx, id, input interface{}) *gomock.Call {
+// UpdateOne indicates an expected call of UpdateOne
+func (mr *MockRepositoryUKMMockRecorder) UpdateOne(ctx, id, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRepositoryUKM)(nil).Update), ctx, id, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOne", reflect.TypeOf((*MockRepositoryUKM)(nil).UpdateOne), ctx, id, input)
 }
