@@ -21,24 +21,24 @@ func NewProfileUsecase(profileRepo profile.RepositoryProfile) profile.UsecasePro
 }
 
 // GetProfile get one profile and validation email
-func (p *ProfileUsecase) GetProfile(ctx context.Context, email string) (*model.ResponseGetProfile, *utils.Error) {
+func (p *ProfileUsecase) GetDetailProfile(ctx context.Context, email string) (*model.ResponseGetProfile, *utils.Error) {
 	if email == "" || &email == nil {
 		err := errors.New("email can't be empty")
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
-	profile, err := p.ProfileRepo.GetByEmail(ctx, email)
+	profile, err := p.ProfileRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusOK)
 	}
 
-	respose := &model.ResponseGetProfile{
+	response := &model.ResponseGetProfile{
 		StatusCode: 200,
 		Status:     true,
 		Result:     profile,
 	}
 
-	return respose, nil
+	return response, nil
 }
 
 // UpdateProfile update new of data profile
@@ -63,7 +63,7 @@ func (p *ProfileUsecase) UpdateProfile(ctx context.Context, email string, input 
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
-	profile, err := p.ProfileRepo.Update(ctx, email, input)
+	profile, err := p.ProfileRepo.UpdateOne(ctx, email, input)
 	if err != nil {
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusOK)
 	}

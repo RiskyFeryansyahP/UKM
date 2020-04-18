@@ -42,7 +42,7 @@ func TestProfileHandler_GetDetailProfile(t *testing.T) {
 		}
 
 		uc := mock.NewMockUsecaseProfile(controller)
-		uc.EXPECT().GetProfile(context.Background(), email).Return(response, nil).Times(2)
+		uc.EXPECT().GetDetailProfile(context.Background(), email).Return(response, nil).Times(2)
 
 		p := NewProfileHandler(uc)
 
@@ -75,7 +75,7 @@ func TestProfileHandler_GetDetailProfile(t *testing.T) {
 		}
 
 		uc := mock.NewMockUsecaseProfile(controller)
-		uc.EXPECT().GetProfile(context.Background(), email).Return(nil, errs).Times(1)
+		uc.EXPECT().GetDetailProfile(context.Background(), email).Return(nil, errs).Times(1)
 
 		p := NewProfileHandler(uc)
 

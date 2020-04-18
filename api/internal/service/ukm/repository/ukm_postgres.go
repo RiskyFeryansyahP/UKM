@@ -21,7 +21,7 @@ func NewRepositoryUKM(DB *ent.Client) ukm.RepositoryUKM {
 }
 
 // GetAll fetch all ukm data in database
-func (u *UKMRepository) GetAll(ctx context.Context) ([]*ent.Ukm, error) {
+func (u *UKMRepository) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 	ukms, err := u.DB.Ukm.Query().
 		Order(ent.Asc(ukmField.FieldID)).
 		All(ctx)
@@ -51,7 +51,7 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 }
 
 // Update set a new name for ukm
-func (u *UKMRepository) Update(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error) {
+func (u *UKMRepository) UpdateOne(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error) {
 	ukm, err := u.DB.Ukm.UpdateOneID(id).
 		SetName(input.Name).
 		Save(ctx)

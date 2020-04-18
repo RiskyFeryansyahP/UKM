@@ -31,7 +31,6 @@ type ResponseRegister struct {
 // ResponseLogin model of response after login
 type ResponseLogin struct {
 	StatusCode int          `json:"statuscode"`
-	Status     bool         `json:""`
-	Profile    *ent.Profile `json:"result_profile"`
-	Role       *ent.Role    `json:"result_role"`
+	Status     bool         `json:"status"`
+	Result    *ent.User `json:"result_profile"`
 }

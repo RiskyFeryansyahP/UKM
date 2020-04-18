@@ -35,19 +35,19 @@ func (m *MockUsecaseProfile) EXPECT() *MockUsecaseProfileMockRecorder {
 	return m.recorder
 }
 
-// GetProfile mocks base method
-func (m *MockUsecaseProfile) GetProfile(ctx context.Context, email string) (*model.ResponseGetProfile, *utils.Error) {
+// GetDetailProfile mocks base method
+func (m *MockUsecaseProfile) GetDetailProfile(ctx context.Context, email string) (*model.ResponseGetProfile, *utils.Error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetProfile", ctx, email)
+	ret := m.ctrl.Call(m, "GetDetailProfile", ctx, email)
 	ret0, _ := ret[0].(*model.ResponseGetProfile)
 	ret1, _ := ret[1].(*utils.Error)
 	return ret0, ret1
 }
 
-// GetProfile indicates an expected call of GetProfile
-func (mr *MockUsecaseProfileMockRecorder) GetProfile(ctx, email interface{}) *gomock.Call {
+// GetDetailProfile indicates an expected call of GetDetailProfile
+func (mr *MockUsecaseProfileMockRecorder) GetDetailProfile(ctx, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockUsecaseProfile)(nil).GetProfile), ctx, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDetailProfile", reflect.TypeOf((*MockUsecaseProfile)(nil).GetDetailProfile), ctx, email)
 }
 
 // UpdateProfile mocks base method

@@ -137,6 +137,16 @@ func TestUserHandler_LoginUser(t *testing.T) {
 			Value: "DEVELOPER",
 		}
 
+		u := &ent.User{
+			ID:       1,
+			Email:    "171111040@mhs.stiki.ac.id",
+			Password: "risky",
+			Edges:    ent.UserEdges{
+				Profile: profile,
+				Role:    role,
+			},
+		}
+
 		input := model.InputLoginUser{
 			Email:    "171111040@mhs.stiki.ac.id",
 			Password: "risky",
@@ -145,14 +155,13 @@ func TestUserHandler_LoginUser(t *testing.T) {
 		resp := &model.ResponseLogin{
 			StatusCode: 200,
 			Status:     true,
-			Profile:    profile,
-			Role:       role,
+			Result: u,
 		}
 
-		u := mock.NewMockUsecaseUser(controller)
-		u.EXPECT().SigninUser(context.Background(), input).Return(resp, nil).Times(1)
+		userUC := mock.NewMockUsecaseUser(controller)
+		userUC.EXPECT().SigninUser(context.Background(), input).Return(resp, nil).Times(1)
 
-		user := NewUserHandler(u)
+		user := NewUserHandler(userUC)
 
 		b, _ := json.Marshal(input)
 

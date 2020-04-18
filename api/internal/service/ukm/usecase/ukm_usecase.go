@@ -23,7 +23,7 @@ func NewUKMUsecase(UKMRepo ukm.RepositoryUKM) ukm.UsecaseUKM {
 
 // GetAll converting response and custom when error
 func (u *UKMUsecase) GetAll(ctx context.Context) (*model.ResponseGetAllUKM, *utils.Error) {
-	ukms, err := u.UKMRepo.GetAll(ctx)
+	ukms, err := u.UKMRepo.FetchAll(ctx)
 	if err != nil {
 		err := errors.Wrap(err, "failed get all ukm: ")
 
@@ -40,7 +40,7 @@ func (u *UKMUsecase) GetAll(ctx context.Context) (*model.ResponseGetAllUKM, *uti
 }
 
 // Register doing validation data and converting response
-func (u *UKMUsecase) Register(ctx context.Context, profileID int, input model.InputRegisterUKM) (*model.ResponseRegisterUKM, *utils.Error) {
+func (u *UKMUsecase) RegisterUKM(ctx context.Context, profileID int, input model.InputRegisterUKM) (*model.ResponseRegisterUKM, *utils.Error) {
 	if input.Name == "" || &input.Name == nil {
 		err := errors.New("name can't be empty")
 
@@ -70,7 +70,7 @@ func (u *UKMUsecase) Register(ctx context.Context, profileID int, input model.In
 }
 
 // Update validate input and converting response
-func (u *UKMUsecase) Update(ctx context.Context, id int, input model.InputUpdateUKM) (*model.ResponseUpdateUKM, *utils.Error) {
+func (u *UKMUsecase) UpdateUKM(ctx context.Context, id int, input model.InputUpdateUKM) (*model.ResponseUpdateUKM, *utils.Error) {
 	if input.Name == "" || &input.Name == nil {
 		err := errors.New("name can't be empty")
 
@@ -83,7 +83,7 @@ func (u *UKMUsecase) Update(ctx context.Context, id int, input model.InputUpdate
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
 
-	ukm, err := u.UKMRepo.Update(ctx, id, input)
+	ukm, err := u.UKMRepo.UpdateOne(ctx, id, input)
 	if err != nil {
 		err = errors.Wrap(err, "failed update ukm: ")
 

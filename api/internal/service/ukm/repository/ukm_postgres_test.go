@@ -59,7 +59,7 @@ func TestUKMRepository(t *testing.T) {
 	})
 
 	t.Run("success get all ukm", func(t *testing.T) {
-		result, err := ukm.GetAll(ctx)
+		result, err := ukm.FetchAll(ctx)
 
 		require.Nil(t, err)
 		require.Equal(t, "SceN", result[0].Name)
@@ -72,7 +72,7 @@ func TestUKMRepository(t *testing.T) {
 
 		ukmID := 1
 
-		result, err := ukm.Update(ctx, ukmID, input)
+		result, err := ukm.UpdateOne(ctx, ukmID, input)
 
 		require.NoError(t, err)
 		require.Equal(t, "SFC", result.Name)
@@ -85,7 +85,7 @@ func TestUKMRepository(t *testing.T) {
 
 		ukmID := 4
 
-		result, err := ukm.Update(ctx, ukmID, input)
+		result, err := ukm.UpdateOne(ctx, ukmID, input)
 
 		require.Error(t, err)
 		require.Nil(t, result)

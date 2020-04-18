@@ -61,8 +61,8 @@ func (u *UserRepository) Register(ctx context.Context, input model.InputCreateUs
 }
 
 // Login user signin with return profile user
-func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, *ent.Role, error) {
-	profile, err := u.DB.User.
+func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) (*ent.User, error) {
+	user, err := u.DB.User.
 		Query().
 		Where(
 			userAgregate.And(
@@ -70,24 +70,14 @@ func (u *UserRepository) Login(ctx context.Context, input model.InputLoginUser) 
 				userAgregate.Password(input.Password),
 			),
 		).
-		QueryProfile().
+		WithProfile().
+		WithRole().
 		Only(ctx)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	role, _ := u.DB.User.
-		Query().
-		Where(
-			userAgregate.And(
-				userAgregate.EmailEQ(input.Email),
-				userAgregate.Password(input.Password),
-			),
-		).
-		QueryRole().
-		Only(ctx)
-
-	return profile, role, nil
+	return user, nil
 }
 
 func rollback(tx *ent.Tx, err error) error {

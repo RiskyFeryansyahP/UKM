@@ -50,32 +50,32 @@ func (mr *MockUsecaseUKMMockRecorder) GetAll(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockUsecaseUKM)(nil).GetAll), ctx)
 }
 
-// Register mocks base method
-func (m *MockUsecaseUKM) Register(ctx context.Context, profileID int, input model.InputRegisterUKM) (*model.ResponseRegisterUKM, *utils.Error) {
+// RegisterUKM mocks base method
+func (m *MockUsecaseUKM) RegisterUKM(ctx context.Context, profileID int, input model.InputRegisterUKM) (*model.ResponseRegisterUKM, *utils.Error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Register", ctx, profileID, input)
+	ret := m.ctrl.Call(m, "RegisterUKM", ctx, profileID, input)
 	ret0, _ := ret[0].(*model.ResponseRegisterUKM)
 	ret1, _ := ret[1].(*utils.Error)
 	return ret0, ret1
 }
 
-// Register indicates an expected call of Register
-func (mr *MockUsecaseUKMMockRecorder) Register(ctx, profileID, input interface{}) *gomock.Call {
+// RegisterUKM indicates an expected call of RegisterUKM
+func (mr *MockUsecaseUKMMockRecorder) RegisterUKM(ctx, profileID, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUsecaseUKM)(nil).Register), ctx, profileID, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUKM", reflect.TypeOf((*MockUsecaseUKM)(nil).RegisterUKM), ctx, profileID, input)
 }
 
-// Update mocks base method
-func (m *MockUsecaseUKM) Update(ctx context.Context, id int, input model.InputUpdateUKM) (*model.ResponseUpdateUKM, *utils.Error) {
+// UpdateUKM mocks base method
+func (m *MockUsecaseUKM) UpdateUKM(ctx context.Context, id int, input model.InputUpdateUKM) (*model.ResponseUpdateUKM, *utils.Error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, id, input)
+	ret := m.ctrl.Call(m, "UpdateUKM", ctx, id, input)
 	ret0, _ := ret[0].(*model.ResponseUpdateUKM)
 	ret1, _ := ret[1].(*utils.Error)
 	return ret0, ret1
 }
 
-// Update indicates an expected call of Update
-func (mr *MockUsecaseUKMMockRecorder) Update(ctx, id, input interface{}) *gomock.Call {
+// UpdateUKM indicates an expected call of UpdateUKM
+func (mr *MockUsecaseUKMMockRecorder) UpdateUKM(ctx, id, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUsecaseUKM)(nil).Update), ctx, id, input)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUKM", reflect.TypeOf((*MockUsecaseUKM)(nil).UpdateUKM), ctx, id, input)
 }

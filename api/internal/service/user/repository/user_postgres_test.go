@@ -124,14 +124,14 @@ func TestUserRepository(t *testing.T) {
 			Password: "risky",
 		}
 
-		user := NewUserRepository(client)
+		userRepo := NewUserRepository(client)
 
-		profile, role, err := user.Login(context.Background(), input)
+		user, err := userRepo.Login(context.Background(), input)
 		require.NoError(t, err)
-		require.Equal(t, "Risky F", profile.FirstName)
-		require.Equal(t, "Pribadi", profile.LastName)
-		require.Equal(t, true, profile.Status)
-		require.Equal(t, 1, role.ID)
+		require.Equal(t, "Risky F", user.Edges.Profile.FirstName)
+		require.Equal(t, "Pribadi", user.Edges.Profile.LastName)
+		require.Equal(t, true, user.Edges.Profile.Status)
+		require.Equal(t, 1, user.Edges.Role.ID)
 	})
 
 	t.Run("failed login wrong email / password", func(t *testing.T) {
@@ -140,11 +140,10 @@ func TestUserRepository(t *testing.T) {
 			Password: "risky",
 		}
 
-		user := NewUserRepository(client)
+		userRepo := NewUserRepository(client)
 
-		profile, role, err := user.Login(context.Background(), input)
+		user, err := userRepo.Login(context.Background(), input)
 		require.Error(t, err)
-		require.Nil(t, profile)
-		require.Nil(t, role)
+		require.Nil(t, user)
 	})
 }
