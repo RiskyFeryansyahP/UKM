@@ -31,10 +31,10 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 		}
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().GetByEmail(context.Background(), email).Return(expect, nil).Times(1)
+		repo.EXPECT().FindByEmail(context.Background(), email).Return(expect, nil).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, err := p.GetProfile(context.Background(), email)
+		response, err := p.GetDetailProfile(context.Background(), email)
 
 		require.Nil(t, err)
 		require.Equal(t, 200, response.StatusCode)
@@ -48,10 +48,10 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 		err := errors.New("email can't be empty")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().GetByEmail(context.Background(), email).Return(nil, err).Times(1)
+		repo.EXPECT().FindByEmail(context.Background(), email).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, respErr := p.GetProfile(context.Background(), email)
+		response, respErr := p.GetDetailProfile(context.Background(), email)
 
 		require.Equal(t, 400, respErr.StatusCode)
 		require.Nil(t, response)
@@ -63,10 +63,10 @@ func TestProfileUsecase_GetProfile(t *testing.T) {
 		err := errors.New("profile not found")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().GetByEmail(context.Background(), email).Return(nil, err).Times(1)
+		repo.EXPECT().FindByEmail(context.Background(), email).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
-		response, respErr := p.GetProfile(context.Background(), email)
+		response, respErr := p.GetDetailProfile(context.Background(), email)
 
 		require.Equal(t, 200, respErr.StatusCode)
 		require.Nil(t, response)
@@ -101,7 +101,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		}
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(expect, nil).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(expect, nil).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, err := p.UpdateProfile(context.Background(), email, input)
@@ -138,7 +138,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		}
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(expect, nil).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(expect, nil).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, err := p.UpdateProfile(context.Background(), email, input)
@@ -166,7 +166,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		err := errors.New("email can't be empty")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, respErr := p.UpdateProfile(context.Background(), email, input)
@@ -190,7 +190,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		err := errors.New("first name can't be empty")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, respErr := p.UpdateProfile(context.Background(), email, input)
@@ -214,7 +214,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		err := errors.New("last name can't be empty")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, respErr := p.UpdateProfile(context.Background(), email, input)
@@ -239,7 +239,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		err := errors.New("wrong format phone number")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, respErr := p.UpdateProfile(context.Background(), email, input)
@@ -264,7 +264,7 @@ func TestProfileUsecase_UpdateProfile(t *testing.T) {
 		err := errors.New("jenis kelamin can't be empty")
 
 		repo := mock.NewMockRepositoryProfile(controller)
-		repo.EXPECT().Update(context.Background(), email, input).Return(nil, err).Times(1)
+		repo.EXPECT().UpdateOne(context.Background(), email, input).Return(nil, err).Times(1)
 
 		p := NewProfileUsecase(repo)
 		response, respErr := p.UpdateProfile(context.Background(), email, input)

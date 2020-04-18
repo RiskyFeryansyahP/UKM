@@ -80,7 +80,7 @@ func TestProfileRepository(t *testing.T) {
 
 		email := "171111040@mhs.stiki.ac.id"
 
-		profile, err := p.Update(context.Background(), email, input)
+		profile, err := p.UpdateOne(context.Background(), email, input)
 
 		require.NoError(t, err)
 		require.Equal(t, "Galih", profile.FirstName)
@@ -100,7 +100,7 @@ func TestProfileRepository(t *testing.T) {
 
 		email := ""
 
-		_, err := p.Update(context.Background(), email, input)
+		_, err := p.UpdateOne(context.Background(), email, input)
 
 		require.Error(t, err)
 	})
@@ -119,7 +119,7 @@ func TestProfileRepository(t *testing.T) {
 
 		email := "171111040@mhs.stiki.ac.id"
 
-		profile, err := p.Update(context.Background(), email, input)
+		profile, err := p.UpdateOne(context.Background(), email, input)
 
 		log.Println(profile)
 
@@ -131,7 +131,7 @@ func TestProfileRepository(t *testing.T) {
 
 		email := "171111040@mhs.stiki.ac.id"
 
-		profile, err := p.GetByEmail(context.Background(), email)
+		profile, err := p.FindByEmail(context.Background(), email)
 
 		require.NoError(t, err)
 		require.Equal(t, "Galih", profile.FirstName)
@@ -144,7 +144,7 @@ func TestProfileRepository(t *testing.T) {
 
 		email := "171111041@mhs.stiki.ac.id"
 
-		profile, err := p.GetByEmail(context.Background(), email)
+		profile, err := p.FindByEmail(context.Background(), email)
 
 		require.Error(t, err)
 		require.Nil(t, profile)

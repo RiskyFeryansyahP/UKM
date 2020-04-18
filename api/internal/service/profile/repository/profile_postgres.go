@@ -21,10 +21,10 @@ func NewProfileRepository(DB *ent.Client) profile.RepositoryProfile {
 }
 
 // Update is a update new profile
-func (p *ProfileRepository) Update(ctx context.Context, email string, input model.InputUpdateProfile) (*ent.Profile, error) {
+func (p *ProfileRepository) UpdateOne(ctx context.Context, email string, input model.InputUpdateProfile) (*ent.Profile, error) {
 	now := time.Now()
 
-	id, err := p.DB.User.Query().
+	userID, err := p.DB.User.Query().
 		Where(user.Email(email)).
 		QueryProfile().
 		OnlyID(ctx)
@@ -33,7 +33,7 @@ func (p *ProfileRepository) Update(ctx context.Context, email string, input mode
 		return nil, err
 	}
 
-	result, err := p.DB.Profile.UpdateOneID(id).
+	profile, err := p.DB.Profile.UpdateOneID(userID).
 		SetFirstName(input.FirstName).
 		SetLastName(input.LastName).
 		SetJk(input.Jk).
@@ -49,12 +49,12 @@ func (p *ProfileRepository) Update(ctx context.Context, email string, input mode
 		return nil, err
 	}
 
-	return result, nil
+	return profile, nil
 }
 
 // GetByEmail get detail profile by email
-func (p *ProfileRepository) GetByEmail(ctx context.Context, email string) (*ent.Profile, error) {
-	result, err := p.DB.User.Query().
+func (p *ProfileRepository) FindByEmail(ctx context.Context, email string) (*ent.Profile, error) {
+	profile, err := p.DB.User.Query().
 		Where(user.EmailEQ(email)).
 		QueryProfile().
 		Only(ctx)
@@ -62,5 +62,5 @@ func (p *ProfileRepository) GetByEmail(ctx context.Context, email string) (*ent.
 		return nil, err
 	}
 
-	return result, nil
+	return profile, nil
 }

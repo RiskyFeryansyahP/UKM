@@ -27,7 +27,7 @@ func (p *ProfileHandler) GetDetailProfile(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	resp, err := p.ProfileUsecase.GetProfile(context.Background(), email)
+	resp, err := p.ProfileUsecase.GetDetailProfile(context.Background(), email)
 	if err != nil {
 		log.Printf("failed get detail profile %v", err)
 
