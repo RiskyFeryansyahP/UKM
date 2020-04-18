@@ -115,26 +115,38 @@ Example sent request for Login user :
 ```json
 {
     "statuscode": 200,
-    "Status": true,
+    "status": true,
     "result_profile": {
-        "id": 2,
-        "firstName": "Risky",
-        "lastName": "Feryansyah",
-        "year_generation": "2017",
-        "phone": "083834121715",
-        "status": true,
-        "created_at": "2020-04-08T12:44:16.041149Z",
-        "updated_at": "2020-04-08T12:44:16.041149Z",
-        "edges": {
-            "Owner": null,
-            "Ukm": null
-        }
-    },
-    "result_role": {
         "id": 1,
-        "value": "DEVELOPER",
+        "email": "171111040@mhs.stiki.ac.id",
+        "password": "risky",
+        "created_at": "2020-04-10T07:10:35.252282Z",
+        "updated_at": "2020-04-10T07:10:35.252282Z",
         "edges": {
-            "Access": null
+            "Profile": {
+                "id": 1,
+                "firstName": "Risky",
+                "lastName": "Pribadi",
+                "jk": "Male",
+                "alamat": "Jln Gadang",
+                "tanggal_lahir": "07-10-1998",
+                "year_generation": "2017",
+                "phone": "083834121715",
+                "status": true,
+                "created_at": "2020-04-10T07:10:35.252282Z",
+                "updated_at": "2020-04-10T07:12:51.428912Z",
+                "edges": {
+                    "Owner": null,
+                    "Ukm": null
+                }
+            },
+            "Role": {
+                "id": 1,
+                "value": "DEVELOPER",
+                "edges": {
+                    "Access": null
+                }
+            }
         }
     }
 }
@@ -288,6 +300,13 @@ we need to passing a url parameter `:profileID`
 `POST https://ukm-backend.herokuapp.com/api/v0/ukm/register/profile/1`
 
 `Content-Type: application/json`
+
+**Request Body** :
+```json
+{
+	"name": "SceN"
+}
+```
 
 **Response Success From Server** :
 
