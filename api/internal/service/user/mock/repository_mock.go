@@ -6,11 +6,10 @@ package mock
 
 import (
 	context "context"
-	reflect "reflect"
-
 	ent "github.com/confus1on/UKM/ent"
 	model "github.com/confus1on/UKM/internal/model"
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockRepositoryUser is a mock of RepositoryUser interface
@@ -52,13 +51,12 @@ func (mr *MockRepositoryUserMockRecorder) Register(ctx, input interface{}) *gomo
 }
 
 // Login mocks base method
-func (m *MockRepositoryUser) Login(ctx context.Context, input model.InputLoginUser) (*ent.Profile, *ent.Role, error) {
+func (m *MockRepositoryUser) Login(ctx context.Context, input model.InputLoginUser) (*ent.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", ctx, input)
-	ret0, _ := ret[0].(*ent.Profile)
-	ret1, _ := ret[1].(*ent.Role)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret0, _ := ret[0].(*ent.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Login indicates an expected call of Login
