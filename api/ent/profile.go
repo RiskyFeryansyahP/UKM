@@ -22,10 +22,10 @@ type Profile struct {
 	LastName string `json:"lastName,omitempty"`
 	// Jk holds the value of the "jk" field.
 	Jk profile.Jk `json:"jk,omitempty"`
-	// Alamat holds the value of the "alamat" field.
-	Alamat string `json:"alamat,omitempty"`
-	// TanggalLahir holds the value of the "tanggal_lahir" field.
-	TanggalLahir string `json:"tanggal_lahir,omitempty"`
+	// Address holds the value of the "address" field.
+	Address string `json:"address,omitempty"`
+	// BirthDate holds the value of the "birth_date" field.
+	BirthDate string `json:"birth_date,omitempty"`
 	// YearGeneration holds the value of the "year_generation" field.
 	YearGeneration string `json:"year_generation,omitempty"`
 	// Phone holds the value of the "phone" field.
@@ -79,8 +79,8 @@ func (*Profile) scanValues() []interface{} {
 		&sql.NullString{}, // firstName
 		&sql.NullString{}, // lastName
 		&sql.NullString{}, // jk
-		&sql.NullString{}, // alamat
-		&sql.NullString{}, // tanggal_lahir
+		&sql.NullString{}, // address
+		&sql.NullString{}, // birth_date
 		&sql.NullString{}, // year_generation
 		&sql.NullString{}, // phone
 		&sql.NullBool{},   // status
@@ -118,14 +118,14 @@ func (pr *Profile) assignValues(values ...interface{}) error {
 		pr.Jk = profile.Jk(value.String)
 	}
 	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field alamat", values[3])
+		return fmt.Errorf("unexpected type %T for field address", values[3])
 	} else if value.Valid {
-		pr.Alamat = value.String
+		pr.Address = value.String
 	}
 	if value, ok := values[4].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field tanggal_lahir", values[4])
+		return fmt.Errorf("unexpected type %T for field birth_date", values[4])
 	} else if value.Valid {
-		pr.TanggalLahir = value.String
+		pr.BirthDate = value.String
 	}
 	if value, ok := values[5].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field year_generation", values[5])
@@ -199,10 +199,10 @@ func (pr *Profile) String() string {
 	builder.WriteString(pr.LastName)
 	builder.WriteString(", jk=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Jk))
-	builder.WriteString(", alamat=")
-	builder.WriteString(pr.Alamat)
-	builder.WriteString(", tanggal_lahir=")
-	builder.WriteString(pr.TanggalLahir)
+	builder.WriteString(", address=")
+	builder.WriteString(pr.Address)
+	builder.WriteString(", birth_date=")
+	builder.WriteString(pr.BirthDate)
 	builder.WriteString(", year_generation=")
 	builder.WriteString(pr.YearGeneration)
 	builder.WriteString(", phone=")

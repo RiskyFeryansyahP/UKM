@@ -14,9 +14,9 @@ const (
 	FieldID             = "id"              // FieldFirstName holds the string denoting the firstname vertex property in the database.
 	FieldFirstName      = "first_name"      // FieldLastName holds the string denoting the lastname vertex property in the database.
 	FieldLastName       = "last_name"       // FieldJk holds the string denoting the jk vertex property in the database.
-	FieldJk             = "jk"              // FieldAlamat holds the string denoting the alamat vertex property in the database.
-	FieldAlamat         = "alamat"          // FieldTanggalLahir holds the string denoting the tanggal_lahir vertex property in the database.
-	FieldTanggalLahir   = "tanggal_lahir"   // FieldYearGeneration holds the string denoting the year_generation vertex property in the database.
+	FieldJk             = "jk"              // FieldAddress holds the string denoting the address vertex property in the database.
+	FieldAddress        = "address"         // FieldBirthDate holds the string denoting the birth_date vertex property in the database.
+	FieldBirthDate      = "birth_date"      // FieldYearGeneration holds the string denoting the year_generation vertex property in the database.
 	FieldYearGeneration = "year_generation" // FieldPhone holds the string denoting the phone vertex property in the database.
 	FieldPhone          = "phone"           // FieldStatus holds the string denoting the status vertex property in the database.
 	FieldStatus         = "status"          // FieldImgProfile holds the string denoting the img_profile vertex property in the database.
@@ -51,8 +51,8 @@ var Columns = []string{
 	FieldFirstName,
 	FieldLastName,
 	FieldJk,
-	FieldAlamat,
-	FieldTanggalLahir,
+	FieldAddress,
+	FieldBirthDate,
 	FieldYearGeneration,
 	FieldPhone,
 	FieldStatus,
@@ -93,6 +93,7 @@ type Jk string
 const (
 	JkMale   Jk = "Male"
 	JkFemale Jk = "Female"
+	JkNone   Jk = "None"
 )
 
 func (s Jk) String() string {
@@ -102,7 +103,7 @@ func (s Jk) String() string {
 // JkValidator is a validator for the "j" field enum values. It is called by the builders before save.
 func JkValidator(j Jk) error {
 	switch j {
-	case JkMale, JkFemale:
+	case JkMale, JkFemale, JkNone:
 		return nil
 	default:
 		return fmt.Errorf("profile: invalid enum value for jk field: %q", j)

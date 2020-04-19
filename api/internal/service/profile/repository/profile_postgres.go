@@ -37,8 +37,8 @@ func (p *ProfileRepository) UpdateOne(ctx context.Context, email string, input m
 		SetFirstName(input.FirstName).
 		SetLastName(input.LastName).
 		SetJk(input.Jk).
-		SetAlamat(input.Alamat).
-		SetTanggalLahir(input.TanggalLahir).
+		SetAddress(input.Address).
+		SetBirthDate(input.BirthDate).
 		SetYearGeneration(input.YearGeneration).
 		SetPhone(input.Phone).
 		SetStatus(true).

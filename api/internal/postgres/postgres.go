@@ -14,11 +14,40 @@ import (
 	_ "github.com/lib/pq" // Dialect Postgres
 )
 
+// Check DB
+func checkDB() {
+	databaseURL := os.Getenv("DATABASE_URL") // load url database from environment variable
+	databaseNAME := os.Getenv("DATABASE_NAME")
+	databasePARAMS := os.Getenv("DATABASE_PARAMS")
+	drv, err := sql.Open("postgres", databaseURL+"?"+databasePARAMS)
+	if err != nil {
+		log.Fatalf("Error Connect DB %v", err)
+	}
+
+	db := drv.DB()
+
+	statement := `SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '` + databaseNAME + `');`
+	row := db.QueryRow(statement)
+	var exists bool
+	err = row.Scan(&exists)
+
+	if exists == false {
+		statement = `CREATE DATABASE ` + databaseNAME + `;`
+		_, err = db.Exec(statement)
+	}
+	if err != nil {
+		log.Fatalf("Error Create DB %v", err)
+	}
+	db.Close()
+}
+
 // NewPostgreSQL create a client connection to database
 func NewPostgreSQL() (*ent.Client, error) {
+	checkDB()
 	databaseURL := os.Getenv("DATABASE_URL") // load url database from environment variable
-
-	drv, err := sql.Open("postgres", databaseURL)
+	databaseNAME := os.Getenv("DATABASE_NAME")
+	databasePARAMS := os.Getenv("DATABASE_PARAMS")
+	drv, err := sql.Open("postgres", databaseURL+databaseNAME+"?"+databasePARAMS)
 	if err != nil {
 		return nil, err
 	}

@@ -39,8 +39,8 @@ type ProfileMutation struct {
 	firstName       *string
 	lastName        *string
 	jk              *profile.Jk
-	alamat          *string
-	tanggal_lahir   *string
+	address         *string
+	birth_date      *string
 	year_generation *string
 	phone           *string
 	status          *bool
@@ -151,68 +151,68 @@ func (m *ProfileMutation) ResetJk() {
 	m.jk = nil
 }
 
-// SetAlamat sets the alamat field.
-func (m *ProfileMutation) SetAlamat(s string) {
-	m.alamat = &s
+// SetAddress sets the address field.
+func (m *ProfileMutation) SetAddress(s string) {
+	m.address = &s
 }
 
-// Alamat returns the alamat value in the mutation.
-func (m *ProfileMutation) Alamat() (r string, exists bool) {
-	v := m.alamat
+// Address returns the address value in the mutation.
+func (m *ProfileMutation) Address() (r string, exists bool) {
+	v := m.address
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearAlamat clears the value of alamat.
-func (m *ProfileMutation) ClearAlamat() {
-	m.alamat = nil
-	m.clearedFields[profile.FieldAlamat] = struct{}{}
+// ClearAddress clears the value of address.
+func (m *ProfileMutation) ClearAddress() {
+	m.address = nil
+	m.clearedFields[profile.FieldAddress] = struct{}{}
 }
 
-// AlamatCleared returns if the field alamat was cleared in this mutation.
-func (m *ProfileMutation) AlamatCleared() bool {
-	_, ok := m.clearedFields[profile.FieldAlamat]
+// AddressCleared returns if the field address was cleared in this mutation.
+func (m *ProfileMutation) AddressCleared() bool {
+	_, ok := m.clearedFields[profile.FieldAddress]
 	return ok
 }
 
-// ResetAlamat reset all changes of the alamat field.
-func (m *ProfileMutation) ResetAlamat() {
-	m.alamat = nil
-	delete(m.clearedFields, profile.FieldAlamat)
+// ResetAddress reset all changes of the address field.
+func (m *ProfileMutation) ResetAddress() {
+	m.address = nil
+	delete(m.clearedFields, profile.FieldAddress)
 }
 
-// SetTanggalLahir sets the tanggal_lahir field.
-func (m *ProfileMutation) SetTanggalLahir(s string) {
-	m.tanggal_lahir = &s
+// SetBirthDate sets the birth_date field.
+func (m *ProfileMutation) SetBirthDate(s string) {
+	m.birth_date = &s
 }
 
-// TanggalLahir returns the tanggal_lahir value in the mutation.
-func (m *ProfileMutation) TanggalLahir() (r string, exists bool) {
-	v := m.tanggal_lahir
+// BirthDate returns the birth_date value in the mutation.
+func (m *ProfileMutation) BirthDate() (r string, exists bool) {
+	v := m.birth_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearTanggalLahir clears the value of tanggal_lahir.
-func (m *ProfileMutation) ClearTanggalLahir() {
-	m.tanggal_lahir = nil
-	m.clearedFields[profile.FieldTanggalLahir] = struct{}{}
+// ClearBirthDate clears the value of birth_date.
+func (m *ProfileMutation) ClearBirthDate() {
+	m.birth_date = nil
+	m.clearedFields[profile.FieldBirthDate] = struct{}{}
 }
 
-// TanggalLahirCleared returns if the field tanggal_lahir was cleared in this mutation.
-func (m *ProfileMutation) TanggalLahirCleared() bool {
-	_, ok := m.clearedFields[profile.FieldTanggalLahir]
+// BirthDateCleared returns if the field birth_date was cleared in this mutation.
+func (m *ProfileMutation) BirthDateCleared() bool {
+	_, ok := m.clearedFields[profile.FieldBirthDate]
 	return ok
 }
 
-// ResetTanggalLahir reset all changes of the tanggal_lahir field.
-func (m *ProfileMutation) ResetTanggalLahir() {
-	m.tanggal_lahir = nil
-	delete(m.clearedFields, profile.FieldTanggalLahir)
+// ResetBirthDate reset all changes of the birth_date field.
+func (m *ProfileMutation) ResetBirthDate() {
+	m.birth_date = nil
+	delete(m.clearedFields, profile.FieldBirthDate)
 }
 
 // SetYearGeneration sets the year_generation field.
@@ -437,11 +437,11 @@ func (m *ProfileMutation) Fields() []string {
 	if m.jk != nil {
 		fields = append(fields, profile.FieldJk)
 	}
-	if m.alamat != nil {
-		fields = append(fields, profile.FieldAlamat)
+	if m.address != nil {
+		fields = append(fields, profile.FieldAddress)
 	}
-	if m.tanggal_lahir != nil {
-		fields = append(fields, profile.FieldTanggalLahir)
+	if m.birth_date != nil {
+		fields = append(fields, profile.FieldBirthDate)
 	}
 	if m.year_generation != nil {
 		fields = append(fields, profile.FieldYearGeneration)
@@ -475,10 +475,10 @@ func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
 		return m.LastName()
 	case profile.FieldJk:
 		return m.Jk()
-	case profile.FieldAlamat:
-		return m.Alamat()
-	case profile.FieldTanggalLahir:
-		return m.TanggalLahir()
+	case profile.FieldAddress:
+		return m.Address()
+	case profile.FieldBirthDate:
+		return m.BirthDate()
 	case profile.FieldYearGeneration:
 		return m.YearGeneration()
 	case profile.FieldPhone:
@@ -521,19 +521,19 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetJk(v)
 		return nil
-	case profile.FieldAlamat:
+	case profile.FieldAddress:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlamat(v)
+		m.SetAddress(v)
 		return nil
-	case profile.FieldTanggalLahir:
+	case profile.FieldBirthDate:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTanggalLahir(v)
+		m.SetBirthDate(v)
 		return nil
 	case profile.FieldYearGeneration:
 		v, ok := value.(string)
@@ -607,11 +607,11 @@ func (m *ProfileMutation) AddField(name string, value ent.Value) error {
 // during this mutation.
 func (m *ProfileMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(profile.FieldAlamat) {
-		fields = append(fields, profile.FieldAlamat)
+	if m.FieldCleared(profile.FieldAddress) {
+		fields = append(fields, profile.FieldAddress)
 	}
-	if m.FieldCleared(profile.FieldTanggalLahir) {
-		fields = append(fields, profile.FieldTanggalLahir)
+	if m.FieldCleared(profile.FieldBirthDate) {
+		fields = append(fields, profile.FieldBirthDate)
 	}
 	return fields
 }
@@ -627,11 +627,11 @@ func (m *ProfileMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ProfileMutation) ClearField(name string) error {
 	switch name {
-	case profile.FieldAlamat:
-		m.ClearAlamat()
+	case profile.FieldAddress:
+		m.ClearAddress()
 		return nil
-	case profile.FieldTanggalLahir:
-		m.ClearTanggalLahir()
+	case profile.FieldBirthDate:
+		m.ClearBirthDate()
 		return nil
 	}
 	return fmt.Errorf("unknown Profile nullable field %s", name)
@@ -651,11 +651,11 @@ func (m *ProfileMutation) ResetField(name string) error {
 	case profile.FieldJk:
 		m.ResetJk()
 		return nil
-	case profile.FieldAlamat:
-		m.ResetAlamat()
+	case profile.FieldAddress:
+		m.ResetAddress()
 		return nil
-	case profile.FieldTanggalLahir:
-		m.ResetTanggalLahir()
+	case profile.FieldBirthDate:
+		m.ResetBirthDate()
 		return nil
 	case profile.FieldYearGeneration:
 		m.ResetYearGeneration()
