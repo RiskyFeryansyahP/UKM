@@ -15,13 +15,16 @@ import (
 )
 
 // Check DB
-func checkDB() {
-	databaseURL := os.Getenv("DATABASE_URL") // load url database from environment variable
+func checkDB(databaseURL string) error {
 	databaseNAME := os.Getenv("DATABASE_NAME")
-	databasePARAMS := os.Getenv("DATABASE_PARAMS")
-	drv, err := sql.Open("postgres", databaseURL+"?"+databasePARAMS)
+
+	if databaseNAME == "" {
+		return nil
+	}
+
+	drv, err := sql.Open("postgres", databaseURL)
 	if err != nil {
-		log.Fatalf("Error Connect DB %v", err)
+		return err
 	}
 
 	db := drv.DB()
@@ -31,23 +34,27 @@ func checkDB() {
 	var exists bool
 	err = row.Scan(&exists)
 
-	if exists == false {
+	if !exists {
 		statement = `CREATE DATABASE ` + databaseNAME + `;`
 		_, err = db.Exec(statement)
 	}
 	if err != nil {
-		log.Fatalf("Error Create DB %v", err)
+		return err
 	}
 	db.Close()
+
+	return nil
 }
 
 // NewPostgreSQL create a client connection to database
 func NewPostgreSQL() (*ent.Client, error) {
-	checkDB()
 	databaseURL := os.Getenv("DATABASE_URL") // load url database from environment variable
-	databaseNAME := os.Getenv("DATABASE_NAME")
-	databasePARAMS := os.Getenv("DATABASE_PARAMS")
-	drv, err := sql.Open("postgres", databaseURL+databaseNAME+"?"+databasePARAMS)
+	err := checkDB(databaseURL)
+	if err != nil {
+		log.Fatalf("error when checking db %v", err)
+	}
+
+	drv, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, err
 	}
