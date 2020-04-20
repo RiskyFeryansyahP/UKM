@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   ukm_api:
-    image: ukm-organization:0.3.1
+    image: ukm-organization:0.3.2
     ports:
       - 5000:5000
     depends_on:
