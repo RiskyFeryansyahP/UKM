@@ -33,15 +33,15 @@ func checkDB(databaseURL string) error {
 	row := db.QueryRow(statement)
 	var exists bool
 	err = row.Scan(&exists)
+	if err != nil {
+		return err
+	}
 
 	if !exists {
 		statement = `CREATE DATABASE ` + databaseNAME + `;`
 		_, err = db.Exec(statement)
 	}
-	if err != nil {
-		return err
-	}
-	db.Close()
+	_ = db.Close()
 
 	return nil
 }
