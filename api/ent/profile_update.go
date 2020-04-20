@@ -48,43 +48,43 @@ func (pu *ProfileUpdate) SetJk(pr profile.Jk) *ProfileUpdate {
 	return pu
 }
 
-// SetAlamat sets the alamat field.
-func (pu *ProfileUpdate) SetAlamat(s string) *ProfileUpdate {
-	pu.mutation.SetAlamat(s)
+// SetAddress sets the address field.
+func (pu *ProfileUpdate) SetAddress(s string) *ProfileUpdate {
+	pu.mutation.SetAddress(s)
 	return pu
 }
 
-// SetNillableAlamat sets the alamat field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableAlamat(s *string) *ProfileUpdate {
+// SetNillableAddress sets the address field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableAddress(s *string) *ProfileUpdate {
 	if s != nil {
-		pu.SetAlamat(*s)
+		pu.SetAddress(*s)
 	}
 	return pu
 }
 
-// ClearAlamat clears the value of alamat.
-func (pu *ProfileUpdate) ClearAlamat() *ProfileUpdate {
-	pu.mutation.ClearAlamat()
+// ClearAddress clears the value of address.
+func (pu *ProfileUpdate) ClearAddress() *ProfileUpdate {
+	pu.mutation.ClearAddress()
 	return pu
 }
 
-// SetTanggalLahir sets the tanggal_lahir field.
-func (pu *ProfileUpdate) SetTanggalLahir(s string) *ProfileUpdate {
-	pu.mutation.SetTanggalLahir(s)
+// SetBirthDate sets the birth_date field.
+func (pu *ProfileUpdate) SetBirthDate(s string) *ProfileUpdate {
+	pu.mutation.SetBirthDate(s)
 	return pu
 }
 
-// SetNillableTanggalLahir sets the tanggal_lahir field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableTanggalLahir(s *string) *ProfileUpdate {
+// SetNillableBirthDate sets the birth_date field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableBirthDate(s *string) *ProfileUpdate {
 	if s != nil {
-		pu.SetTanggalLahir(*s)
+		pu.SetBirthDate(*s)
 	}
 	return pu
 }
 
-// ClearTanggalLahir clears the value of tanggal_lahir.
-func (pu *ProfileUpdate) ClearTanggalLahir() *ProfileUpdate {
-	pu.mutation.ClearTanggalLahir()
+// ClearBirthDate clears the value of birth_date.
+func (pu *ProfileUpdate) ClearBirthDate() *ProfileUpdate {
+	pu.mutation.ClearBirthDate()
 	return pu
 }
 
@@ -322,30 +322,30 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: profile.FieldJk,
 		})
 	}
-	if value, ok := pu.mutation.Alamat(); ok {
+	if value, ok := pu.mutation.Address(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: profile.FieldAlamat,
+			Column: profile.FieldAddress,
 		})
 	}
-	if pu.mutation.AlamatCleared() {
+	if pu.mutation.AddressCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: profile.FieldAlamat,
+			Column: profile.FieldAddress,
 		})
 	}
-	if value, ok := pu.mutation.TanggalLahir(); ok {
+	if value, ok := pu.mutation.BirthDate(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: profile.FieldTanggalLahir,
+			Column: profile.FieldBirthDate,
 		})
 	}
-	if pu.mutation.TanggalLahirCleared() {
+	if pu.mutation.BirthDateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: profile.FieldTanggalLahir,
+			Column: profile.FieldBirthDate,
 		})
 	}
 	if value, ok := pu.mutation.YearGeneration(); ok {
@@ -502,43 +502,43 @@ func (puo *ProfileUpdateOne) SetJk(pr profile.Jk) *ProfileUpdateOne {
 	return puo
 }
 
-// SetAlamat sets the alamat field.
-func (puo *ProfileUpdateOne) SetAlamat(s string) *ProfileUpdateOne {
-	puo.mutation.SetAlamat(s)
+// SetAddress sets the address field.
+func (puo *ProfileUpdateOne) SetAddress(s string) *ProfileUpdateOne {
+	puo.mutation.SetAddress(s)
 	return puo
 }
 
-// SetNillableAlamat sets the alamat field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableAlamat(s *string) *ProfileUpdateOne {
+// SetNillableAddress sets the address field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableAddress(s *string) *ProfileUpdateOne {
 	if s != nil {
-		puo.SetAlamat(*s)
+		puo.SetAddress(*s)
 	}
 	return puo
 }
 
-// ClearAlamat clears the value of alamat.
-func (puo *ProfileUpdateOne) ClearAlamat() *ProfileUpdateOne {
-	puo.mutation.ClearAlamat()
+// ClearAddress clears the value of address.
+func (puo *ProfileUpdateOne) ClearAddress() *ProfileUpdateOne {
+	puo.mutation.ClearAddress()
 	return puo
 }
 
-// SetTanggalLahir sets the tanggal_lahir field.
-func (puo *ProfileUpdateOne) SetTanggalLahir(s string) *ProfileUpdateOne {
-	puo.mutation.SetTanggalLahir(s)
+// SetBirthDate sets the birth_date field.
+func (puo *ProfileUpdateOne) SetBirthDate(s string) *ProfileUpdateOne {
+	puo.mutation.SetBirthDate(s)
 	return puo
 }
 
-// SetNillableTanggalLahir sets the tanggal_lahir field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableTanggalLahir(s *string) *ProfileUpdateOne {
+// SetNillableBirthDate sets the birth_date field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableBirthDate(s *string) *ProfileUpdateOne {
 	if s != nil {
-		puo.SetTanggalLahir(*s)
+		puo.SetBirthDate(*s)
 	}
 	return puo
 }
 
-// ClearTanggalLahir clears the value of tanggal_lahir.
-func (puo *ProfileUpdateOne) ClearTanggalLahir() *ProfileUpdateOne {
-	puo.mutation.ClearTanggalLahir()
+// ClearBirthDate clears the value of birth_date.
+func (puo *ProfileUpdateOne) ClearBirthDate() *ProfileUpdateOne {
+	puo.mutation.ClearBirthDate()
 	return puo
 }
 
@@ -774,30 +774,30 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (pr *Profile, err erro
 			Column: profile.FieldJk,
 		})
 	}
-	if value, ok := puo.mutation.Alamat(); ok {
+	if value, ok := puo.mutation.Address(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: profile.FieldAlamat,
+			Column: profile.FieldAddress,
 		})
 	}
-	if puo.mutation.AlamatCleared() {
+	if puo.mutation.AddressCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: profile.FieldAlamat,
+			Column: profile.FieldAddress,
 		})
 	}
-	if value, ok := puo.mutation.TanggalLahir(); ok {
+	if value, ok := puo.mutation.BirthDate(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: profile.FieldTanggalLahir,
+			Column: profile.FieldBirthDate,
 		})
 	}
-	if puo.mutation.TanggalLahirCleared() {
+	if puo.mutation.BirthDateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: profile.FieldTanggalLahir,
+			Column: profile.FieldBirthDate,
 		})
 	}
 	if value, ok := puo.mutation.YearGeneration(); ok {

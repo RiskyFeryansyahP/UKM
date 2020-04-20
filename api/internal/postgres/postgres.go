@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"time"
+	sqlDB "database/sql"
 
 	"github.com/pkg/errors"
 
@@ -13,6 +14,33 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	_ "github.com/lib/pq" // Dialect Postgres
 )
+
+// Check DB
+func checkDB(databaseURL string, db *sqlDB.DB) error {
+	databaseNAME := os.Getenv("DATABASE_NAME")
+
+	if databaseNAME == "" {
+		return nil
+	}
+
+	statement := `SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '` + databaseNAME + `');`
+	row := db.QueryRow(statement)
+	var exists bool
+	err := row.Scan(&exists)
+
+	if !exists {
+		statement = `CREATE DATABASE ` + databaseNAME + `;`
+		_, err = db.Exec(statement)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	_ = db.Close()
+
+	return nil
+}
 
 // NewPostgreSQL create a client connection to database
 func NewPostgreSQL() (*ent.Client, error) {
@@ -27,6 +55,11 @@ func NewPostgreSQL() (*ent.Client, error) {
 	db.SetMaxOpenConns(100)
 	db.SetMaxIdleConns(10)
 	db.SetConnMaxLifetime(time.Hour)
+
+	err = checkDB(databaseURL, db)
+	if err != nil {
+		log.Fatalf("error when checking db %v", err)
+	}
 
 	return ent.NewClient(ent.Driver(drv)), nil
 }

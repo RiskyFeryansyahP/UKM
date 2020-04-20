@@ -40,30 +40,30 @@ func (pc *ProfileCreate) SetJk(pr profile.Jk) *ProfileCreate {
 	return pc
 }
 
-// SetAlamat sets the alamat field.
-func (pc *ProfileCreate) SetAlamat(s string) *ProfileCreate {
-	pc.mutation.SetAlamat(s)
+// SetAddress sets the address field.
+func (pc *ProfileCreate) SetAddress(s string) *ProfileCreate {
+	pc.mutation.SetAddress(s)
 	return pc
 }
 
-// SetNillableAlamat sets the alamat field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableAlamat(s *string) *ProfileCreate {
+// SetNillableAddress sets the address field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableAddress(s *string) *ProfileCreate {
 	if s != nil {
-		pc.SetAlamat(*s)
+		pc.SetAddress(*s)
 	}
 	return pc
 }
 
-// SetTanggalLahir sets the tanggal_lahir field.
-func (pc *ProfileCreate) SetTanggalLahir(s string) *ProfileCreate {
-	pc.mutation.SetTanggalLahir(s)
+// SetBirthDate sets the birth_date field.
+func (pc *ProfileCreate) SetBirthDate(s string) *ProfileCreate {
+	pc.mutation.SetBirthDate(s)
 	return pc
 }
 
-// SetNillableTanggalLahir sets the tanggal_lahir field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableTanggalLahir(s *string) *ProfileCreate {
+// SetNillableBirthDate sets the birth_date field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableBirthDate(s *string) *ProfileCreate {
 	if s != nil {
-		pc.SetTanggalLahir(*s)
+		pc.SetBirthDate(*s)
 	}
 	return pc
 }
@@ -292,21 +292,21 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 		})
 		pr.Jk = value
 	}
-	if value, ok := pc.mutation.Alamat(); ok {
+	if value, ok := pc.mutation.Address(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: profile.FieldAlamat,
+			Column: profile.FieldAddress,
 		})
-		pr.Alamat = value
+		pr.Address = value
 	}
-	if value, ok := pc.mutation.TanggalLahir(); ok {
+	if value, ok := pc.mutation.BirthDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: profile.FieldTanggalLahir,
+			Column: profile.FieldBirthDate,
 		})
-		pr.TanggalLahir = value
+		pr.BirthDate = value
 	}
 	if value, ok := pc.mutation.YearGeneration(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

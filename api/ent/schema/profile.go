@@ -1,10 +1,11 @@
 package schema
 
 import (
+	"time"
+
 	"github.com/facebookincubator/ent"
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
-	"time"
 )
 
 // Profile holds the schema definition for the Profile entity.
@@ -20,10 +21,10 @@ func (Profile) Fields() []ent.Field {
 		field.String("lastName").
 			NotEmpty(),
 		field.Enum("jk").
-			Values("Male", "Female"),
-		field.String("alamat").
+			Values("Male", "Female", "None"),
+		field.String("address").
 			Optional(),
-		field.String("tanggal_lahir").
+		field.String("birth_date").
 			Optional(),
 		field.String("year_generation"),
 		field.String("phone").
