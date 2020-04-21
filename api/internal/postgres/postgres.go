@@ -2,18 +2,17 @@ package postgres
 
 import (
 	"context"
-	"github.com/confus1on/UKM/ent/ukm"
+	sqlDB "database/sql"
 	"log"
 	"os"
 	"time"
-	sqlDB "database/sql"
-
-	"github.com/pkg/errors"
 
 	"github.com/confus1on/UKM/ent"
+	"github.com/confus1on/UKM/ent/ukm"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 	_ "github.com/lib/pq" // Dialect Postgres
+	"github.com/pkg/errors"
 )
 
 // Check DB
@@ -37,8 +36,6 @@ func checkDB(databaseURL string, db *sqlDB.DB) error {
 	if err != nil {
 		return err
 	}
-
-	_ = db.Close()
 
 	return nil
 }
