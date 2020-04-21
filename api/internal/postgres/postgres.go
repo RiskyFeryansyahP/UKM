@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"github.com/confus1on/UKM/ent/ukm"
 	"log"
 	"os"
 	"time"
@@ -112,6 +113,8 @@ func initValueForUkmDB(client *ent.Client) error {
 
 	now := time.Now()
 
+	var status ukm.Status = "close" // initial enum value status ukm
+
 	ukms, err := client.Ukm.Query().
 		All(ctx)
 
@@ -125,6 +128,7 @@ func initValueForUkmDB(client *ent.Client) error {
 		for _, v := range ukmInitValue {
 			_, err := client.Ukm.Create().
 				SetName(v).
+				SetStatus(status).
 				SetUpdatedAt(now).
 				SetCreatedAt(now).
 				Save(ctx)
