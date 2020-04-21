@@ -101,6 +101,8 @@ func initValue(client *ent.Client, t *testing.T) {
 		SetStatus("open").
 		Save(ctx)
 
+	require.NoError(t, err)
+
 	_, err = client.Ukm.Create().
 		SetName("SFC").
 		SetStatus("close").
