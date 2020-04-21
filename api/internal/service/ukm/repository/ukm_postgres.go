@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-
+	"errors"
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/ent/profile"
 	ukmField "github.com/confus1on/UKM/ent/ukm"
@@ -34,11 +34,19 @@ func (u *UKMRepository) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 
 // RegisterUKM registering ukm for users
 func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input model.InputRegisterUKM) (*ent.Profile, error) {
-	_, err := u.DB.Ukm.Update().
+	rowUpdated := u.DB.Ukm.Update().
+		Where(
+			ukmField.And(
+				ukmField.NameEQ(input.Name),
+				ukmField.StatusEQ("open"),
+			),
+		).
 		AddProfileIDs(profileID).
-		Where(ukmField.NameEQ(input.Name)).
-		Save(ctx)
-	if err != nil {
+		SaveX(ctx)
+
+	// failed register ukm, probably status close
+	if rowUpdated <= 0 {
+		err := errors.New("registration ukm is closed")
 		return nil, err
 	}
 
@@ -47,7 +55,7 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 		WithUkm().
 		OnlyX(ctx)
 
-	return profile, err
+	return profile, nil
 }
 
 // Update set a new name for ukm
