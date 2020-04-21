@@ -35,6 +35,12 @@ func (uu *UkmUpdate) SetName(s string) *UkmUpdate {
 	return uu
 }
 
+// SetStatus sets the status field.
+func (uu *UkmUpdate) SetStatus(u ukm.Status) *UkmUpdate {
+	uu.mutation.SetStatus(u)
+	return uu
+}
+
 // SetCreatedAt sets the created_at field.
 func (uu *UkmUpdate) SetCreatedAt(t time.Time) *UkmUpdate {
 	uu.mutation.SetCreatedAt(t)
@@ -90,6 +96,11 @@ func (uu *UkmUpdate) Save(ctx context.Context) (int, error) {
 	if v, ok := uu.mutation.Name(); ok {
 		if err := ukm.NameValidator(v); err != nil {
 			return 0, fmt.Errorf("ent: validator failed for field \"name\": %v", err)
+		}
+	}
+	if v, ok := uu.mutation.Status(); ok {
+		if err := ukm.StatusValidator(v); err != nil {
+			return 0, fmt.Errorf("ent: validator failed for field \"status\": %v", err)
 		}
 	}
 	if _, ok := uu.mutation.UpdatedAt(); !ok {
@@ -170,6 +181,13 @@ func (uu *UkmUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: ukm.FieldName,
 		})
 	}
+	if value, ok := uu.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: ukm.FieldStatus,
+		})
+	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -246,6 +264,12 @@ func (uuo *UkmUpdateOne) SetName(s string) *UkmUpdateOne {
 	return uuo
 }
 
+// SetStatus sets the status field.
+func (uuo *UkmUpdateOne) SetStatus(u ukm.Status) *UkmUpdateOne {
+	uuo.mutation.SetStatus(u)
+	return uuo
+}
+
 // SetCreatedAt sets the created_at field.
 func (uuo *UkmUpdateOne) SetCreatedAt(t time.Time) *UkmUpdateOne {
 	uuo.mutation.SetCreatedAt(t)
@@ -301,6 +325,11 @@ func (uuo *UkmUpdateOne) Save(ctx context.Context) (*Ukm, error) {
 	if v, ok := uuo.mutation.Name(); ok {
 		if err := ukm.NameValidator(v); err != nil {
 			return nil, fmt.Errorf("ent: validator failed for field \"name\": %v", err)
+		}
+	}
+	if v, ok := uuo.mutation.Status(); ok {
+		if err := ukm.StatusValidator(v); err != nil {
+			return nil, fmt.Errorf("ent: validator failed for field \"status\": %v", err)
 		}
 	}
 	if _, ok := uuo.mutation.UpdatedAt(); !ok {
@@ -377,6 +406,13 @@ func (uuo *UkmUpdateOne) sqlSave(ctx context.Context) (u *Ukm, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: ukm.FieldName,
+		})
+	}
+	if value, ok := uuo.mutation.Status(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: ukm.FieldStatus,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
