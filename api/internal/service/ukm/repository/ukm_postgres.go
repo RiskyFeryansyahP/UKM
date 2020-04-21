@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/ent/profile"
 	ukmField "github.com/confus1on/UKM/ent/ukm"
@@ -20,7 +21,7 @@ func NewRepositoryUKM(DB *ent.Client) ukm.RepositoryUKM {
 	return &UKMRepository{DB: DB}
 }
 
-// GetAll fetch all ukm data in database
+// FetchAll fetch all ukm data in database
 func (u *UKMRepository) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 	ukms, err := u.DB.Ukm.Query().
 		Order(ent.Asc(ukmField.FieldID)).
@@ -58,10 +59,11 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 	return profile, nil
 }
 
-// Update set a new name for ukm
+// UpdateOne set a new name for ukm
 func (u *UKMRepository) UpdateOne(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error) {
 	ukm, err := u.DB.Ukm.UpdateOneID(id).
 		SetName(input.Name).
+		SetStatus(input.Status).
 		Save(ctx)
 	if err != nil {
 		return nil, err
