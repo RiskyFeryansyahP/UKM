@@ -45,12 +45,12 @@ func TestUKMRepository(t *testing.T) {
 		require.Equal(t, "SceN", profile.Edges.Ukm[0].Name)
 	})
 
-	t.Run("failed not found profileID", func(t *testing.T) {
+	t.Run("failed registration ukm is closed", func(t *testing.T) {
 		input := model.InputRegisterUKM{
-			Name: "SceN",
+			Name: "SFC",
 		}
 
-		profileID := 2
+		profileID := 1
 
 		profile, err := ukm.RegisterUKM(ctx, profileID, input)
 
@@ -97,9 +97,17 @@ func initValue(client *ent.Client, t *testing.T) {
 
 	_, err := client.Ukm.Create().
 		SetName("SceN").
+		SetStatus("open").
 		Save(ctx)
 
 	require.NoError(t, err)
+
+	_, err = client.Ukm.Create().
+		SetName("SFC").
+		SetStatus("close").
+		Save(ctx)
+
+
 
 	user := client.User.Create().
 		SetEmail("171111010@mhs.stiki.ac.id").
