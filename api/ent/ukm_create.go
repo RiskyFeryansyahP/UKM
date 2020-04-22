@@ -27,6 +27,12 @@ func (uc *UkmCreate) SetName(s string) *UkmCreate {
 	return uc
 }
 
+// SetStatus sets the status field.
+func (uc *UkmCreate) SetStatus(u ukm.Status) *UkmCreate {
+	uc.mutation.SetStatus(u)
+	return uc
+}
+
 // SetCreatedAt sets the created_at field.
 func (uc *UkmCreate) SetCreatedAt(t time.Time) *UkmCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -78,6 +84,14 @@ func (uc *UkmCreate) Save(ctx context.Context) (*Ukm, error) {
 	if v, ok := uc.mutation.Name(); ok {
 		if err := ukm.NameValidator(v); err != nil {
 			return nil, fmt.Errorf("ent: validator failed for field \"name\": %v", err)
+		}
+	}
+	if _, ok := uc.mutation.Status(); !ok {
+		return nil, errors.New("ent: missing required field \"status\"")
+	}
+	if v, ok := uc.mutation.Status(); ok {
+		if err := ukm.StatusValidator(v); err != nil {
+			return nil, fmt.Errorf("ent: validator failed for field \"status\": %v", err)
 		}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
@@ -141,6 +155,14 @@ func (uc *UkmCreate) sqlSave(ctx context.Context) (*Ukm, error) {
 			Column: ukm.FieldName,
 		})
 		u.Name = value
+	}
+	if value, ok := uc.mutation.Status(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: ukm.FieldStatus,
+		})
+		u.Status = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

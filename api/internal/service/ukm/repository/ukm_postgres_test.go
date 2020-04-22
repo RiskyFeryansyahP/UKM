@@ -2,15 +2,15 @@ package repository
 
 import (
 	"context"
-	"github.com/confus1on/UKM/internal/model"
-	"github.com/stretchr/testify/require"
 	"log"
 	"testing"
 	"time"
 
 	"github.com/confus1on/UKM/ent"
+	"github.com/confus1on/UKM/internal/model"
 
 	_ "github.com/mattn/go-sqlite3" // SQLite dialect
+	"github.com/stretchr/testify/require"
 )
 
 func TestUKMRepository(t *testing.T) {
@@ -45,12 +45,12 @@ func TestUKMRepository(t *testing.T) {
 		require.Equal(t, "SceN", profile.Edges.Ukm[0].Name)
 	})
 
-	t.Run("failed not found profileID", func(t *testing.T) {
+	t.Run("failed registration ukm is closed", func(t *testing.T) {
 		input := model.InputRegisterUKM{
-			Name: "SceN",
+			Name: "SFC",
 		}
 
-		profileID := 2
+		profileID := 1
 
 		profile, err := ukm.RegisterUKM(ctx, profileID, input)
 
@@ -67,7 +67,8 @@ func TestUKMRepository(t *testing.T) {
 
 	t.Run("success update name ukm", func(t *testing.T) {
 		input := model.InputUpdateUKM{
-			Name: "SFC",
+			Name:   "SFC",
+			Status: "open",
 		}
 
 		ukmID := 1
@@ -93,10 +94,18 @@ func TestUKMRepository(t *testing.T) {
 }
 
 func initValue(client *ent.Client, t *testing.T) {
-	ctx := context.Background();
+	ctx := context.Background()
 
 	_, err := client.Ukm.Create().
 		SetName("SceN").
+		SetStatus("open").
+		Save(ctx)
+
+	require.NoError(t, err)
+
+	_, err = client.Ukm.Create().
+		SetName("SFC").
+		SetStatus("close").
 		Save(ctx)
 
 	require.NoError(t, err)

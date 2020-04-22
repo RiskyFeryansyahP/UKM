@@ -17,6 +17,8 @@ func (Ukm) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			NotEmpty(),
+		field.Enum("status").
+			Values("open", "close"),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").

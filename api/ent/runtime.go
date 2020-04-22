@@ -61,11 +61,11 @@ func init() {
 	// ukm.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	ukm.NameValidator = ukmDescName.Validators[0].(func(string) error)
 	// ukmDescCreatedAt is the schema descriptor for created_at field.
-	ukmDescCreatedAt := ukmFields[1].Descriptor()
+	ukmDescCreatedAt := ukmFields[2].Descriptor()
 	// ukm.DefaultCreatedAt holds the default value on creation for the created_at field.
 	ukm.DefaultCreatedAt = ukmDescCreatedAt.Default.(func() time.Time)
 	// ukmDescUpdatedAt is the schema descriptor for updated_at field.
-	ukmDescUpdatedAt := ukmFields[2].Descriptor()
+	ukmDescUpdatedAt := ukmFields[3].Descriptor()
 	// ukm.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	ukm.DefaultUpdatedAt = ukmDescUpdatedAt.Default.(func() time.Time)
 	// ukm.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

@@ -3,6 +3,7 @@
 package ukm
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -11,7 +12,8 @@ const (
 	Label = "ukm"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID        = "id"         // FieldName holds the string denoting the name vertex property in the database.
-	FieldName      = "name"       // FieldCreatedAt holds the string denoting the created_at vertex property in the database.
+	FieldName      = "name"       // FieldStatus holds the string denoting the status vertex property in the database.
+	FieldStatus    = "status"     // FieldCreatedAt holds the string denoting the created_at vertex property in the database.
 	FieldCreatedAt = "created_at" // FieldUpdatedAt holds the string denoting the updated_at vertex property in the database.
 	FieldUpdatedAt = "updated_at"
 
@@ -31,6 +33,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
+	FieldStatus,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -51,3 +54,26 @@ var (
 	// UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	UpdateDefaultUpdatedAt func() time.Time
 )
+
+// Status defines the type for the status enum field.
+type Status string
+
+// Status values.
+const (
+	StatusOpen  Status = "open"
+	StatusClose Status = "close"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "s" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusOpen, StatusClose:
+		return nil
+	default:
+		return fmt.Errorf("ukm: invalid enum value for status field: %q", s)
+	}
+}

@@ -2,42 +2,44 @@ package postgres
 
 import (
 	"context"
+	sqlDB "database/sql"
+	"fmt"
 	"log"
 	"os"
 	"time"
-	sqlDB "database/sql"
-
-	"github.com/pkg/errors"
 
 	"github.com/confus1on/UKM/ent"
+	"github.com/confus1on/UKM/ent/ukm"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 	_ "github.com/lib/pq" // Dialect Postgres
+	"github.com/pkg/errors"
 )
 
 // Check DB
-func checkDB(databaseURL string, db *sqlDB.DB) error {
+func checkDB(db *sqlDB.DB) error {
 	databaseNAME := os.Getenv("DATABASE_NAME")
 
 	if databaseNAME == "" {
 		return nil
 	}
 
-	statement := `SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '` + databaseNAME + `');`
+	statement := fmt.Sprintf("SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '%s')", databaseNAME)
 	row := db.QueryRow(statement)
+
 	var exists bool
 	err := row.Scan(&exists)
-
-	if !exists {
-		statement = `CREATE DATABASE ` + databaseNAME + `;`
-		_, err = db.Exec(statement)
-	}
-
 	if err != nil {
 		return err
 	}
 
-	_ = db.Close()
+	if !exists {
+		statement = fmt.Sprintf("CREATE DATABASE %s", databaseNAME)
+		_, err = db.Exec(statement)
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -56,7 +58,7 @@ func NewPostgreSQL() (*ent.Client, error) {
 	db.SetMaxIdleConns(10)
 	db.SetConnMaxLifetime(time.Hour)
 
-	err = checkDB(databaseURL, db)
+	err = checkDB(db)
 	if err != nil {
 		log.Fatalf("error when checking db %v", err)
 	}
@@ -112,6 +114,8 @@ func initValueForUkmDB(client *ent.Client) error {
 
 	now := time.Now()
 
+	var status ukm.Status = "close" // initial enum value status ukm
+
 	ukms, err := client.Ukm.Query().
 		All(ctx)
 
@@ -125,6 +129,7 @@ func initValueForUkmDB(client *ent.Client) error {
 		for _, v := range ukmInitValue {
 			_, err := client.Ukm.Create().
 				SetName(v).
+				SetStatus(status).
 				SetUpdatedAt(now).
 				SetCreatedAt(now).
 				Save(ctx)

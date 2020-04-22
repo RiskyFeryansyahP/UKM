@@ -1089,6 +1089,7 @@ type UkmMutation struct {
 	typ             string
 	id              *int
 	name            *string
+	status          *ukm.Status
 	created_at      *time.Time
 	updated_at      *time.Time
 	clearedFields   map[string]struct{}
@@ -1153,6 +1154,25 @@ func (m *UkmMutation) Name() (r string, exists bool) {
 // ResetName reset all changes of the name field.
 func (m *UkmMutation) ResetName() {
 	m.name = nil
+}
+
+// SetStatus sets the status field.
+func (m *UkmMutation) SetStatus(u ukm.Status) {
+	m.status = &u
+}
+
+// Status returns the status value in the mutation.
+func (m *UkmMutation) Status() (r ukm.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus reset all changes of the status field.
+func (m *UkmMutation) ResetStatus() {
+	m.status = nil
 }
 
 // SetCreatedAt sets the created_at field.
@@ -1249,9 +1269,12 @@ func (m *UkmMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *UkmMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.name != nil {
 		fields = append(fields, ukm.FieldName)
+	}
+	if m.status != nil {
+		fields = append(fields, ukm.FieldStatus)
 	}
 	if m.created_at != nil {
 		fields = append(fields, ukm.FieldCreatedAt)
@@ -1269,6 +1292,8 @@ func (m *UkmMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case ukm.FieldName:
 		return m.Name()
+	case ukm.FieldStatus:
+		return m.Status()
 	case ukm.FieldCreatedAt:
 		return m.CreatedAt()
 	case ukm.FieldUpdatedAt:
@@ -1288,6 +1313,13 @@ func (m *UkmMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case ukm.FieldStatus:
+		v, ok := value.(ukm.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	case ukm.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1355,6 +1387,9 @@ func (m *UkmMutation) ResetField(name string) error {
 	switch name {
 	case ukm.FieldName:
 		m.ResetName()
+		return nil
+	case ukm.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case ukm.FieldCreatedAt:
 		m.ResetCreatedAt()

@@ -14,7 +14,7 @@ build: dep
 	-o build/ukm .
 
 docker-build:
-	docker build -t ukm-organization:0.3.2 . -f Dockerfile
+	docker build -t ukm-organization:0.3.3 . -f Dockerfile
 
 run: build
 	./build/ukm

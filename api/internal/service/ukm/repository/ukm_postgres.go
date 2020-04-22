@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/ent/profile"
@@ -20,7 +21,7 @@ func NewRepositoryUKM(DB *ent.Client) ukm.RepositoryUKM {
 	return &UKMRepository{DB: DB}
 }
 
-// GetAll fetch all ukm data in database
+// FetchAll fetch all ukm data in database
 func (u *UKMRepository) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 	ukms, err := u.DB.Ukm.Query().
 		Order(ent.Asc(ukmField.FieldID)).
@@ -34,11 +35,19 @@ func (u *UKMRepository) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 
 // RegisterUKM registering ukm for users
 func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input model.InputRegisterUKM) (*ent.Profile, error) {
-	_, err := u.DB.Ukm.Update().
+	rowUpdated := u.DB.Ukm.Update().
+		Where(
+			ukmField.And(
+				ukmField.NameEQ(input.Name),
+				ukmField.StatusEQ("open"),
+			),
+		).
 		AddProfileIDs(profileID).
-		Where(ukmField.NameEQ(input.Name)).
-		Save(ctx)
-	if err != nil {
+		SaveX(ctx)
+
+	// failed register ukm, probably status close
+	if rowUpdated <= 0 {
+		err := errors.New("registration ukm is closed")
 		return nil, err
 	}
 
@@ -47,13 +56,14 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 		WithUkm().
 		OnlyX(ctx)
 
-	return profile, err
+	return profile, nil
 }
 
-// Update set a new name for ukm
+// UpdateOne set a new name for ukm
 func (u *UKMRepository) UpdateOne(ctx context.Context, id int, input model.InputUpdateUKM) (*ent.Ukm, error) {
 	ukm, err := u.DB.Ukm.UpdateOneID(id).
 		SetName(input.Name).
+		SetStatus(input.Status).
 		Save(ctx)
 	if err != nil {
 		return nil, err

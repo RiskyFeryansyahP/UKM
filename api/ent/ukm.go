@@ -18,6 +18,8 @@ type Ukm struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Status holds the value of the "status" field.
+	Status ukm.Status `json:"status,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -50,6 +52,7 @@ func (*Ukm) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
+		&sql.NullString{}, // status
 		&sql.NullTime{},   // created_at
 		&sql.NullTime{},   // updated_at
 	}
@@ -72,13 +75,18 @@ func (u *Ukm) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		u.Name = value.String
 	}
-	if value, ok := values[1].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field created_at", values[1])
+	if value, ok := values[1].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[1])
+	} else if value.Valid {
+		u.Status = ukm.Status(value.String)
+	}
+	if value, ok := values[2].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field created_at", values[2])
 	} else if value.Valid {
 		u.CreatedAt = value.Time
 	}
-	if value, ok := values[2].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field updated_at", values[2])
+	if value, ok := values[3].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field updated_at", values[3])
 	} else if value.Valid {
 		u.UpdatedAt = value.Time
 	}
@@ -115,6 +123,8 @@ func (u *Ukm) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
 	builder.WriteString(", name=")
 	builder.WriteString(u.Name)
+	builder.WriteString(", status=")
+	builder.WriteString(fmt.Sprintf("%v", u.Status))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")
