@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	sqlDB "database/sql"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -16,25 +17,28 @@ import (
 )
 
 // Check DB
-func checkDB(databaseURL string, db *sqlDB.DB) error {
+func checkDB(db *sqlDB.DB) error {
 	databaseNAME := os.Getenv("DATABASE_NAME")
 
 	if databaseNAME == "" {
 		return nil
 	}
 
-	statement := `SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '` + databaseNAME + `');`
+	statement := fmt.Sprintf("SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '%s')", databaseNAME)
 	row := db.QueryRow(statement)
+
 	var exists bool
 	err := row.Scan(&exists)
-
-	if !exists {
-		statement = `CREATE DATABASE ` + databaseNAME + `;`
-		_, err = db.Exec(statement)
-	}
-
 	if err != nil {
 		return err
+	}
+
+	if !exists {
+		statement = fmt.Sprintf("CREATE DATABASE %s", databaseNAME)
+		_, err = db.Exec(statement)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -54,7 +58,7 @@ func NewPostgreSQL() (*ent.Client, error) {
 	db.SetMaxIdleConns(10)
 	db.SetConnMaxLifetime(time.Hour)
 
-	err = checkDB(databaseURL, db)
+	err = checkDB(db)
 	if err != nil {
 		log.Fatalf("error when checking db %v", err)
 	}
