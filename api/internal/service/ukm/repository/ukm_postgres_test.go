@@ -33,6 +33,7 @@ func TestUKMRepository(t *testing.T) {
 
 	t.Run("register ukm to profile should success", func(t *testing.T) {
 		input := model.InputRegisterUKM{
+			Reason: "i like scen",
 			Name: "SceN",
 		}
 
@@ -42,12 +43,27 @@ func TestUKMRepository(t *testing.T) {
 
 		require.NoError(t, err)
 		require.Equal(t, "Risky", profile.FirstName)
-		require.Equal(t, "SceN", profile.Edges.Ukm[0].Name)
+		require.Equal(t, "i like scen", profile.Edges.Ukms[0].Reason)
 	})
 
 	t.Run("failed registration ukm is closed", func(t *testing.T) {
 		input := model.InputRegisterUKM{
+			Reason: "Love sf",
 			Name: "SFC",
+		}
+
+		profileID := 1
+
+		profile, err := ukm.RegisterUKM(ctx, profileID, input)
+
+		require.Error(t, err)
+		require.Nil(t, profile)
+	})
+
+	t.Run("failed registration reason is empty", func(t *testing.T) {
+		input := model.InputRegisterUKM{
+			Reason: "",
+			Name: "SceN",
 		}
 
 		profileID := 1
@@ -126,6 +142,18 @@ func initValue(client *ent.Client, t *testing.T) {
 		AddOwner(user).
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
+		Save(ctx)
+
+	require.NoError(t, err)
+
+	_, err = client.RoleUKM.Create().
+		SetStatusRole("PENGURUS").
+		Save(ctx)
+
+	require.NoError(t, err)
+
+	_, err = client.RoleUKM.Create().
+		SetStatusRole("ANGGOTA").
 		Save(ctx)
 
 	require.NoError(t, err)
