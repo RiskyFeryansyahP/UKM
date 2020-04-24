@@ -9,7 +9,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profile"
-	"github.com/confus1on/UKM/ent/ukm"
+	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/user"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
@@ -163,17 +163,17 @@ func (pu *ProfileUpdate) AddOwner(u ...*User) *ProfileUpdate {
 	return pu.AddOwnerIDs(ids...)
 }
 
-// AddUkmIDs adds the ukm edge to Ukm by ids.
+// AddUkmIDs adds the ukms edge to ProfileUKM by ids.
 func (pu *ProfileUpdate) AddUkmIDs(ids ...int) *ProfileUpdate {
 	pu.mutation.AddUkmIDs(ids...)
 	return pu
 }
 
-// AddUkm adds the ukm edges to Ukm.
-func (pu *ProfileUpdate) AddUkm(u ...*Ukm) *ProfileUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// AddUkms adds the ukms edges to ProfileUKM.
+func (pu *ProfileUpdate) AddUkms(p ...*ProfileUKM) *ProfileUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
 	}
 	return pu.AddUkmIDs(ids...)
 }
@@ -193,17 +193,17 @@ func (pu *ProfileUpdate) RemoveOwner(u ...*User) *ProfileUpdate {
 	return pu.RemoveOwnerIDs(ids...)
 }
 
-// RemoveUkmIDs removes the ukm edge to Ukm by ids.
+// RemoveUkmIDs removes the ukms edge to ProfileUKM by ids.
 func (pu *ProfileUpdate) RemoveUkmIDs(ids ...int) *ProfileUpdate {
 	pu.mutation.RemoveUkmIDs(ids...)
 	return pu
 }
 
-// RemoveUkm removes ukm edges to Ukm.
-func (pu *ProfileUpdate) RemoveUkm(u ...*Ukm) *ProfileUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// RemoveUkms removes ukms edges to ProfileUKM.
+func (pu *ProfileUpdate) RemoveUkms(p ...*ProfileUKM) *ProfileUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
 	}
 	return pu.RemoveUkmIDs(ids...)
 }
@@ -428,17 +428,17 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := pu.mutation.RemovedUkmIDs(); len(nodes) > 0 {
+	if nodes := pu.mutation.RemovedUkmsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   profile.UkmTable,
-			Columns: profile.UkmPrimaryKey,
+			Table:   profile.UkmsTable,
+			Columns: []string{profile.UkmsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: ukm.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}
@@ -447,17 +447,17 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.UkmIDs(); len(nodes) > 0 {
+	if nodes := pu.mutation.UkmsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   profile.UkmTable,
-			Columns: profile.UkmPrimaryKey,
+			Table:   profile.UkmsTable,
+			Columns: []string{profile.UkmsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: ukm.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}
@@ -617,17 +617,17 @@ func (puo *ProfileUpdateOne) AddOwner(u ...*User) *ProfileUpdateOne {
 	return puo.AddOwnerIDs(ids...)
 }
 
-// AddUkmIDs adds the ukm edge to Ukm by ids.
+// AddUkmIDs adds the ukms edge to ProfileUKM by ids.
 func (puo *ProfileUpdateOne) AddUkmIDs(ids ...int) *ProfileUpdateOne {
 	puo.mutation.AddUkmIDs(ids...)
 	return puo
 }
 
-// AddUkm adds the ukm edges to Ukm.
-func (puo *ProfileUpdateOne) AddUkm(u ...*Ukm) *ProfileUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// AddUkms adds the ukms edges to ProfileUKM.
+func (puo *ProfileUpdateOne) AddUkms(p ...*ProfileUKM) *ProfileUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
 	}
 	return puo.AddUkmIDs(ids...)
 }
@@ -647,17 +647,17 @@ func (puo *ProfileUpdateOne) RemoveOwner(u ...*User) *ProfileUpdateOne {
 	return puo.RemoveOwnerIDs(ids...)
 }
 
-// RemoveUkmIDs removes the ukm edge to Ukm by ids.
+// RemoveUkmIDs removes the ukms edge to ProfileUKM by ids.
 func (puo *ProfileUpdateOne) RemoveUkmIDs(ids ...int) *ProfileUpdateOne {
 	puo.mutation.RemoveUkmIDs(ids...)
 	return puo
 }
 
-// RemoveUkm removes ukm edges to Ukm.
-func (puo *ProfileUpdateOne) RemoveUkm(u ...*Ukm) *ProfileUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// RemoveUkms removes ukms edges to ProfileUKM.
+func (puo *ProfileUpdateOne) RemoveUkms(p ...*ProfileUKM) *ProfileUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
 	}
 	return puo.RemoveUkmIDs(ids...)
 }
@@ -880,17 +880,17 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (pr *Profile, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := puo.mutation.RemovedUkmIDs(); len(nodes) > 0 {
+	if nodes := puo.mutation.RemovedUkmsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   profile.UkmTable,
-			Columns: profile.UkmPrimaryKey,
+			Table:   profile.UkmsTable,
+			Columns: []string{profile.UkmsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: ukm.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}
@@ -899,17 +899,17 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (pr *Profile, err erro
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.UkmIDs(); len(nodes) > 0 {
+	if nodes := puo.mutation.UkmsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   profile.UkmTable,
-			Columns: profile.UkmPrimaryKey,
+			Table:   profile.UkmsTable,
+			Columns: []string{profile.UkmsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: ukm.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}

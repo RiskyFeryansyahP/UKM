@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
@@ -61,14 +61,14 @@ func (uc *UkmCreate) SetNillableUpdatedAt(t *time.Time) *UkmCreate {
 	return uc
 }
 
-// AddProfileIDs adds the profiles edge to Profile by ids.
+// AddProfileIDs adds the profiles edge to ProfileUKM by ids.
 func (uc *UkmCreate) AddProfileIDs(ids ...int) *UkmCreate {
 	uc.mutation.AddProfileIDs(ids...)
 	return uc
 }
 
-// AddProfiles adds the profiles edges to Profile.
-func (uc *UkmCreate) AddProfiles(p ...*Profile) *UkmCreate {
+// AddProfiles adds the profiles edges to ProfileUKM.
+func (uc *UkmCreate) AddProfiles(p ...*ProfileUKM) *UkmCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -182,15 +182,15 @@ func (uc *UkmCreate) sqlSave(ctx context.Context) (*Ukm, error) {
 	}
 	if nodes := uc.mutation.ProfilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   ukm.ProfilesTable,
-			Columns: ukm.ProfilesPrimaryKey,
+			Columns: []string{ukm.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: profile.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}

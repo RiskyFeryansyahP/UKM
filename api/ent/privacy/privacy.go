@@ -168,6 +168,30 @@ func (f ProfileMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ProfileMutation", m)
 }
 
+// The ProfileUKMQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ProfileUKMQueryRuleFunc func(context.Context, *ent.ProfileUKMQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ProfileUKMQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProfileUKMQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ProfileUKMQuery", q)
+}
+
+// The ProfileUKMMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ProfileUKMMutationRuleFunc func(context.Context, *ent.ProfileUKMMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ProfileUKMMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ProfileUKMMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ProfileUKMMutation", m)
+}
+
 // The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RoleQueryRuleFunc func(context.Context, *ent.RoleQuery) error
@@ -190,6 +214,30 @@ func (f RoleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RoleMutation", m)
+}
+
+// The RoleUKMQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RoleUKMQueryRuleFunc func(context.Context, *ent.RoleUKMQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RoleUKMQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RoleUKMQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RoleUKMQuery", q)
+}
+
+// The RoleUKMMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RoleUKMMutationRuleFunc func(context.Context, *ent.RoleUKMMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RoleUKMMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RoleUKMMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RoleUKMMutation", m)
 }
 
 // The UkmQueryRuleFunc type is an adapter to allow the use of ordinary

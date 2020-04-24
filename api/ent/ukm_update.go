@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/predicate"
-	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
@@ -61,14 +61,14 @@ func (uu *UkmUpdate) SetUpdatedAt(t time.Time) *UkmUpdate {
 	return uu
 }
 
-// AddProfileIDs adds the profiles edge to Profile by ids.
+// AddProfileIDs adds the profiles edge to ProfileUKM by ids.
 func (uu *UkmUpdate) AddProfileIDs(ids ...int) *UkmUpdate {
 	uu.mutation.AddProfileIDs(ids...)
 	return uu
 }
 
-// AddProfiles adds the profiles edges to Profile.
-func (uu *UkmUpdate) AddProfiles(p ...*Profile) *UkmUpdate {
+// AddProfiles adds the profiles edges to ProfileUKM.
+func (uu *UkmUpdate) AddProfiles(p ...*ProfileUKM) *UkmUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -76,14 +76,14 @@ func (uu *UkmUpdate) AddProfiles(p ...*Profile) *UkmUpdate {
 	return uu.AddProfileIDs(ids...)
 }
 
-// RemoveProfileIDs removes the profiles edge to Profile by ids.
+// RemoveProfileIDs removes the profiles edge to ProfileUKM by ids.
 func (uu *UkmUpdate) RemoveProfileIDs(ids ...int) *UkmUpdate {
 	uu.mutation.RemoveProfileIDs(ids...)
 	return uu
 }
 
-// RemoveProfiles removes profiles edges to Profile.
-func (uu *UkmUpdate) RemoveProfiles(p ...*Profile) *UkmUpdate {
+// RemoveProfiles removes profiles edges to ProfileUKM.
+func (uu *UkmUpdate) RemoveProfiles(p ...*ProfileUKM) *UkmUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -204,15 +204,15 @@ func (uu *UkmUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := uu.mutation.RemovedProfilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   ukm.ProfilesTable,
-			Columns: ukm.ProfilesPrimaryKey,
+			Columns: []string{ukm.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: profile.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}
@@ -223,15 +223,15 @@ func (uu *UkmUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := uu.mutation.ProfilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   ukm.ProfilesTable,
-			Columns: ukm.ProfilesPrimaryKey,
+			Columns: []string{ukm.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: profile.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}
@@ -290,14 +290,14 @@ func (uuo *UkmUpdateOne) SetUpdatedAt(t time.Time) *UkmUpdateOne {
 	return uuo
 }
 
-// AddProfileIDs adds the profiles edge to Profile by ids.
+// AddProfileIDs adds the profiles edge to ProfileUKM by ids.
 func (uuo *UkmUpdateOne) AddProfileIDs(ids ...int) *UkmUpdateOne {
 	uuo.mutation.AddProfileIDs(ids...)
 	return uuo
 }
 
-// AddProfiles adds the profiles edges to Profile.
-func (uuo *UkmUpdateOne) AddProfiles(p ...*Profile) *UkmUpdateOne {
+// AddProfiles adds the profiles edges to ProfileUKM.
+func (uuo *UkmUpdateOne) AddProfiles(p ...*ProfileUKM) *UkmUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -305,14 +305,14 @@ func (uuo *UkmUpdateOne) AddProfiles(p ...*Profile) *UkmUpdateOne {
 	return uuo.AddProfileIDs(ids...)
 }
 
-// RemoveProfileIDs removes the profiles edge to Profile by ids.
+// RemoveProfileIDs removes the profiles edge to ProfileUKM by ids.
 func (uuo *UkmUpdateOne) RemoveProfileIDs(ids ...int) *UkmUpdateOne {
 	uuo.mutation.RemoveProfileIDs(ids...)
 	return uuo
 }
 
-// RemoveProfiles removes profiles edges to Profile.
-func (uuo *UkmUpdateOne) RemoveProfiles(p ...*Profile) *UkmUpdateOne {
+// RemoveProfiles removes profiles edges to ProfileUKM.
+func (uuo *UkmUpdateOne) RemoveProfiles(p ...*ProfileUKM) *UkmUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -431,15 +431,15 @@ func (uuo *UkmUpdateOne) sqlSave(ctx context.Context) (u *Ukm, err error) {
 	}
 	if nodes := uuo.mutation.RemovedProfilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   ukm.ProfilesTable,
-			Columns: ukm.ProfilesPrimaryKey,
+			Columns: []string{ukm.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: profile.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}
@@ -450,15 +450,15 @@ func (uuo *UkmUpdateOne) sqlSave(ctx context.Context) (u *Ukm, err error) {
 	}
 	if nodes := uuo.mutation.ProfilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   ukm.ProfilesTable,
-			Columns: ukm.ProfilesPrimaryKey,
+			Columns: []string{ukm.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: profile.FieldID,
+					Column: profileukm.FieldID,
 				},
 			},
 		}

@@ -30,6 +30,43 @@ var (
 		PrimaryKey:  []*schema.Column{ProfilesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// ProfileUkmColumns holds the columns for the "profile_ukm" table.
+	ProfileUkmColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "reason", Type: field.TypeString},
+		{Name: "profile_ukms", Type: field.TypeInt, Nullable: true},
+		{Name: "role_ukm_profile_roles", Type: field.TypeInt, Nullable: true},
+		{Name: "ukm_profiles", Type: field.TypeInt, Nullable: true},
+	}
+	// ProfileUkmTable holds the schema information for the "profile_ukm" table.
+	ProfileUkmTable = &schema.Table{
+		Name:       "profile_ukm",
+		Columns:    ProfileUkmColumns,
+		PrimaryKey: []*schema.Column{ProfileUkmColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "profile_ukm_profiles_ukms",
+				Columns: []*schema.Column{ProfileUkmColumns[2]},
+
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "profile_ukm_role_ukm_profile_roles",
+				Columns: []*schema.Column{ProfileUkmColumns[3]},
+
+				RefColumns: []*schema.Column{RoleUkmColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "profile_ukm_ukms_profiles",
+				Columns: []*schema.Column{ProfileUkmColumns[4]},
+
+				RefColumns: []*schema.Column{UkmsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// RolesColumns holds the columns for the "roles" table.
 	RolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -40,6 +77,18 @@ var (
 		Name:        "roles",
 		Columns:     RolesColumns,
 		PrimaryKey:  []*schema.Column{RolesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// RoleUkmColumns holds the columns for the "role_ukm" table.
+	RoleUkmColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status_role", Type: field.TypeString},
+	}
+	// RoleUkmTable holds the schema information for the "role_ukm" table.
+	RoleUkmTable = &schema.Table{
+		Name:        "role_ukm",
+		Columns:     RoleUkmColumns,
+		PrimaryKey:  []*schema.Column{RoleUkmColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// UkmsColumns holds the columns for the "ukms" table.
@@ -89,46 +138,21 @@ var (
 			},
 		},
 	}
-	// ProfileUkmColumns holds the columns for the "profile_ukm" table.
-	ProfileUkmColumns = []*schema.Column{
-		{Name: "profile_id", Type: field.TypeInt},
-		{Name: "ukm_id", Type: field.TypeInt},
-	}
-	// ProfileUkmTable holds the schema information for the "profile_ukm" table.
-	ProfileUkmTable = &schema.Table{
-		Name:       "profile_ukm",
-		Columns:    ProfileUkmColumns,
-		PrimaryKey: []*schema.Column{ProfileUkmColumns[0], ProfileUkmColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:  "profile_ukm_profile_id",
-				Columns: []*schema.Column{ProfileUkmColumns[0]},
-
-				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:  "profile_ukm_ukm_id",
-				Columns: []*schema.Column{ProfileUkmColumns[1]},
-
-				RefColumns: []*schema.Column{UkmsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ProfilesTable,
+		ProfileUkmTable,
 		RolesTable,
+		RoleUkmTable,
 		UkmsTable,
 		UsersTable,
-		ProfileUkmTable,
 	}
 )
 
 func init() {
+	ProfileUkmTable.ForeignKeys[0].RefTable = ProfilesTable
+	ProfileUkmTable.ForeignKeys[1].RefTable = RoleUkmTable
+	ProfileUkmTable.ForeignKeys[2].RefTable = UkmsTable
 	UsersTable.ForeignKeys[0].RefTable = ProfilesTable
 	UsersTable.ForeignKeys[1].RefTable = RolesTable
-	ProfileUkmTable.ForeignKeys[0].RefTable = ProfilesTable
-	ProfileUkmTable.ForeignKeys[1].RefTable = UkmsTable
 }

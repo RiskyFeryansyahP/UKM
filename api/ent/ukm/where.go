@@ -431,19 +431,19 @@ func HasProfiles() predicate.Ukm {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(ProfilesTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, ProfilesTable, ProfilesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProfilesTable, ProfilesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasProfilesWith applies the HasEdge predicate on the "profiles" edge with a given conditions (other predicates).
-func HasProfilesWith(preds ...predicate.Profile) predicate.Ukm {
+func HasProfilesWith(preds ...predicate.ProfileUKM) predicate.Ukm {
 	return predicate.Ukm(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(ProfilesInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, ProfilesTable, ProfilesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProfilesTable, ProfilesColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
