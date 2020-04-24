@@ -48,7 +48,7 @@ func (u *UKMUsecase) RegisterUKM(ctx context.Context, profileID int, input model
 	}
 
 	if profileID == 0 || &profileID == nil {
-		err := errors.New("phone can't be empty")
+		err := errors.New("profile can't be empty")
 
 		return nil, utils.WrapErrorJson(err, fasthttp.StatusBadRequest)
 	}
