@@ -80,6 +80,12 @@ func InitDefaultValue(client *ent.Client) error {
 		return err
 	}
 
+	err = initValueForRoleUKM(client)
+	if err != nil {
+		err = errors.Wrap(err , "failed init value role ukm :")
+		return err
+	}
+
 	return nil
 }
 
@@ -94,11 +100,33 @@ func initValueRoleDB(client *ent.Client) error {
 	}
 
 	if len(roles) <= 0 {
-		roleValue := []string{"DEVELOPER", "KEMAHASISWAAN", "BEM", "PENGURUS", "ANGGOTA"}
+		roleValue := []string{"DEVELOPER", "KEMAHASISWAAN", "BEM", "MAHASISWA"}
 
 		for _, value := range roleValue {
 			_, err := client.Role.Create().
 				SetValue(value).
+				Save(ctx)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func initValueForRoleUKM(client *ent.Client) error {
+	ctx := context.Background()
+
+	roleUKMValue := []string{"PENGURUS", "ANGGOTA"}
+
+	role := client.RoleUKM.Query().
+		AllX(ctx)
+
+	if len(role) <= 0 {
+		for _, v := range roleUKMValue {
+			_, err := client.RoleUKM.Create().
+				SetStatusRole(v).
 				Save(ctx)
 			if err != nil {
 				return err

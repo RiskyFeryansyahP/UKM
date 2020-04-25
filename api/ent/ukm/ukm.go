@@ -22,11 +22,13 @@ const (
 
 	// Table holds the table name of the ukm in the database.
 	Table = "ukms"
-	// ProfilesTable is the table the holds the profiles relation/edge. The primary key declared below.
+	// ProfilesTable is the table the holds the profiles relation/edge.
 	ProfilesTable = "profile_ukm"
-	// ProfilesInverseTable is the table name for the Profile entity.
-	// It exists in this package in order to avoid circular dependency with the "profile" package.
-	ProfilesInverseTable = "profiles"
+	// ProfilesInverseTable is the table name for the ProfileUKM entity.
+	// It exists in this package in order to avoid circular dependency with the "profileukm" package.
+	ProfilesInverseTable = "profile_ukm"
+	// ProfilesColumn is the table column denoting the profiles relation/edge.
+	ProfilesColumn = "ukm_profiles"
 )
 
 // Columns holds all SQL columns for ukm fields.
@@ -37,12 +39,6 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
-
-var (
-	// ProfilesPrimaryKey and ProfilesColumn2 are the table columns denoting the
-	// primary key for the profiles relation (M2M).
-	ProfilesPrimaryKey = []string{"profile_id", "ukm_id"}
-)
 
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.

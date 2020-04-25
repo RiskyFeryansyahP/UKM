@@ -1210,25 +1210,25 @@ func HasOwnerWith(preds ...predicate.User) predicate.Profile {
 	})
 }
 
-// HasUkm applies the HasEdge predicate on the "ukm" edge.
-func HasUkm() predicate.Profile {
+// HasUkms applies the HasEdge predicate on the "ukms" edge.
+func HasUkms() predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UkmTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, UkmTable, UkmPrimaryKey...),
+			sqlgraph.To(UkmsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UkmsTable, UkmsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUkmWith applies the HasEdge predicate on the "ukm" edge with a given conditions (other predicates).
-func HasUkmWith(preds ...predicate.Ukm) predicate.Profile {
+// HasUkmsWith applies the HasEdge predicate on the "ukms" edge with a given conditions (other predicates).
+func HasUkmsWith(preds ...predicate.ProfileUKM) predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(UkmInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, UkmTable, UkmPrimaryKey...),
+			sqlgraph.To(UkmsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UkmsTable, UkmsColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

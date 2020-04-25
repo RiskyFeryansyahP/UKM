@@ -9,8 +9,14 @@ import (
 // Profile is the predicate function for profile builders.
 type Profile func(*sql.Selector)
 
+// ProfileUKM is the predicate function for profileukm builders.
+type ProfileUKM func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
+
+// RoleUKM is the predicate function for roleukm builders.
+type RoleUKM func(*sql.Selector)
 
 // Ukm is the predicate function for ukm builders.
 type Ukm func(*sql.Selector)

@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/role"
+	"github.com/confus1on/UKM/ent/roleukm"
 	"github.com/confus1on/UKM/ent/schema"
 	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
@@ -48,12 +50,24 @@ func init() {
 	profile.DefaultUpdatedAt = profileDescUpdatedAt.Default.(func() time.Time)
 	// profile.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	profile.UpdateDefaultUpdatedAt = profileDescUpdatedAt.UpdateDefault.(func() time.Time)
+	profileukmFields := schema.ProfileUKM{}.Fields()
+	_ = profileukmFields
+	// profileukmDescReason is the schema descriptor for reason field.
+	profileukmDescReason := profileukmFields[0].Descriptor()
+	// profileukm.ReasonValidator is a validator for the "reason" field. It is called by the builders before save.
+	profileukm.ReasonValidator = profileukmDescReason.Validators[0].(func(string) error)
 	roleFields := schema.Role{}.Fields()
 	_ = roleFields
 	// roleDescValue is the schema descriptor for value field.
 	roleDescValue := roleFields[0].Descriptor()
 	// role.ValueValidator is a validator for the "value" field. It is called by the builders before save.
 	role.ValueValidator = roleDescValue.Validators[0].(func(string) error)
+	roleukmFields := schema.RoleUKM{}.Fields()
+	_ = roleukmFields
+	// roleukmDescStatusRole is the schema descriptor for status_role field.
+	roleukmDescStatusRole := roleukmFields[0].Descriptor()
+	// roleukm.StatusRoleValidator is a validator for the "status_role" field. It is called by the builders before save.
+	roleukm.StatusRoleValidator = roleukmDescStatusRole.Validators[0].(func(string) error)
 	ukmFields := schema.Ukm{}.Fields()
 	_ = ukmFields
 	// ukmDescName is the schema descriptor for name field.

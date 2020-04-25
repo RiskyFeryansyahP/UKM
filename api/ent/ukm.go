@@ -32,7 +32,7 @@ type Ukm struct {
 // UkmEdges holds the relations/edges for other nodes in the graph.
 type UkmEdges struct {
 	// Profiles holds the value of the profiles edge.
-	Profiles []*Profile
+	Profiles []*ProfileUKM
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -40,7 +40,7 @@ type UkmEdges struct {
 
 // ProfilesOrErr returns the Profiles value or an error if the edge
 // was not loaded in eager-loading.
-func (e UkmEdges) ProfilesOrErr() ([]*Profile, error) {
+func (e UkmEdges) ProfilesOrErr() ([]*ProfileUKM, error) {
 	if e.loadedTypes[0] {
 		return e.Profiles, nil
 	}
@@ -94,7 +94,7 @@ func (u *Ukm) assignValues(values ...interface{}) error {
 }
 
 // QueryProfiles queries the profiles edge of the Ukm.
-func (u *Ukm) QueryProfiles() *ProfileQuery {
+func (u *Ukm) QueryProfiles() *ProfileUKMQuery {
 	return (&UkmClient{config: u.config}).QueryProfiles(u)
 }
 

@@ -2,8 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
-
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/ent/profile"
 	ukmField "github.com/confus1on/UKM/ent/ukm"
@@ -35,25 +33,31 @@ func (u *UKMRepository) FetchAll(ctx context.Context) ([]*ent.Ukm, error) {
 
 // RegisterUKM registering ukm for users
 func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input model.InputRegisterUKM) (*ent.Profile, error) {
-	rowUpdated := u.DB.Ukm.Update().
+	ukmID, err := u.DB.Ukm.Query().
 		Where(
 			ukmField.And(
-				ukmField.NameEQ(input.Name),
+				ukmField.Name(input.Name),
 				ukmField.StatusEQ("open"),
 			),
 		).
-		AddProfileIDs(profileID).
-		SaveX(ctx)
+		OnlyID(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	// failed register ukm, probably status close
-	if rowUpdated <= 0 {
-		err := errors.New("registration ukm is closed")
+	_, err = u.DB.ProfileUKM.Create().
+		SetReason(input.Reason).
+		SetOwnerProfileID(profileID).
+		SetOwnerUkmID(ukmID).
+		SetOwnerRoleID(2).
+		Save(ctx)
+	if err != nil {
 		return nil, err
 	}
 
 	profile := u.DB.Profile.Query().
 		Where(profile.IDEQ(profileID)).
-		WithUkm().
+		WithUkms().
 		OnlyX(ctx)
 
 	return profile, nil

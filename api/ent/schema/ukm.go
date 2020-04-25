@@ -30,7 +30,6 @@ func (Ukm) Fields() []ent.Field {
 // Edges of the Ukm.
 func (Ukm) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profiles", Profile.Type).
-			Ref("ukm"),
+		edge.To("profiles", ProfileUKM.Type),
 	}
 }

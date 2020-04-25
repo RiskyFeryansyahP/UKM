@@ -7,7 +7,9 @@ import (
 
 // InputRegisterUKM hold value input for register ukm
 type InputRegisterUKM struct {
-	// Name holds the value of the "name" field.
+	// Reason holds the value of the "reason" field.
+	Reason string `json:"reason,omitempty"`
+	// Name holds the value of the "name" field
 	Name string `json:"name,omitempty"`
 }
 

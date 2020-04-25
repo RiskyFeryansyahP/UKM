@@ -22,6 +22,19 @@ func (f ProfileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return f(ctx, mv)
 }
 
+// The ProfileUKMFunc type is an adapter to allow the use of ordinary
+// function as ProfileUKM mutator.
+type ProfileUKMFunc func(context.Context, *ent.ProfileUKMMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProfileUKMFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ProfileUKMMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProfileUKMMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The RoleFunc type is an adapter to allow the use of ordinary
 // function as Role mutator.
 type RoleFunc func(context.Context, *ent.RoleMutation) (ent.Value, error)
@@ -31,6 +44,19 @@ func (f RoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	mv, ok := m.(*ent.RoleMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The RoleUKMFunc type is an adapter to allow the use of ordinary
+// function as RoleUKM mutator.
+type RoleUKMFunc func(context.Context, *ent.RoleUKMMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RoleUKMFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.RoleUKMMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleUKMMutation", m)
 	}
 	return f(ctx, mv)
 }

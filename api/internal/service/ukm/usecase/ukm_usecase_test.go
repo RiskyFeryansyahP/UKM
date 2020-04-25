@@ -102,7 +102,7 @@ func TestUKMUsecase_Register(t *testing.T) {
 		response, err := ukmUC.RegisterUKM(ctx, profileID, input)
 
 		require.Equal(t, 400, err.StatusCode)
-		require.Equal(t, "phone can't be empty", err.Message)
+		require.Equal(t, "profile can't be empty", err.Message)
 		require.Nil(t, response)
 	})
 

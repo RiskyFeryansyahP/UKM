@@ -10,7 +10,9 @@ import (
 	"github.com/confus1on/UKM/ent/migrate"
 
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/role"
+	"github.com/confus1on/UKM/ent/roleukm"
 	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/ent/user"
 
@@ -26,8 +28,12 @@ type Client struct {
 	Schema *migrate.Schema
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
+	// ProfileUKM is the client for interacting with the ProfileUKM builders.
+	ProfileUKM *ProfileUKMClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// RoleUKM is the client for interacting with the RoleUKM builders.
+	RoleUKM *RoleUKMClient
 	// Ukm is the client for interacting with the Ukm builders.
 	Ukm *UkmClient
 	// User is the client for interacting with the User builders.
@@ -46,7 +52,9 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Profile = NewProfileClient(c.config)
+	c.ProfileUKM = NewProfileUKMClient(c.config)
 	c.Role = NewRoleClient(c.config)
+	c.RoleUKM = NewRoleUKMClient(c.config)
 	c.Ukm = NewUkmClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -78,11 +86,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	}
 	cfg := config{driver: tx, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
-		config:  cfg,
-		Profile: NewProfileClient(cfg),
-		Role:    NewRoleClient(cfg),
-		Ukm:     NewUkmClient(cfg),
-		User:    NewUserClient(cfg),
+		config:     cfg,
+		Profile:    NewProfileClient(cfg),
+		ProfileUKM: NewProfileUKMClient(cfg),
+		Role:       NewRoleClient(cfg),
+		RoleUKM:    NewRoleUKMClient(cfg),
+		Ukm:        NewUkmClient(cfg),
+		User:       NewUserClient(cfg),
 	}, nil
 }
 
@@ -112,7 +122,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Profile.Use(hooks...)
+	c.ProfileUKM.Use(hooks...)
 	c.Role.Use(hooks...)
+	c.RoleUKM.Use(hooks...)
 	c.Ukm.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -209,14 +221,14 @@ func (c *ProfileClient) QueryOwner(pr *Profile) *UserQuery {
 	return query
 }
 
-// QueryUkm queries the ukm edge of a Profile.
-func (c *ProfileClient) QueryUkm(pr *Profile) *UkmQuery {
-	query := &UkmQuery{config: c.config}
+// QueryUkms queries the ukms edge of a Profile.
+func (c *ProfileClient) QueryUkms(pr *Profile) *ProfileUKMQuery {
+	query := &ProfileUKMQuery{config: c.config}
 	id := pr.ID
 	step := sqlgraph.NewStep(
 		sqlgraph.From(profile.Table, profile.FieldID, id),
-		sqlgraph.To(ukm.Table, ukm.FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, profile.UkmTable, profile.UkmPrimaryKey...),
+		sqlgraph.To(profileukm.Table, profileukm.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, profile.UkmsTable, profile.UkmsColumn),
 	)
 	query.sql = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 
@@ -226,6 +238,131 @@ func (c *ProfileClient) QueryUkm(pr *Profile) *UkmQuery {
 // Hooks returns the client hooks.
 func (c *ProfileClient) Hooks() []Hook {
 	return c.hooks.Profile
+}
+
+// ProfileUKMClient is a client for the ProfileUKM schema.
+type ProfileUKMClient struct {
+	config
+}
+
+// NewProfileUKMClient returns a client for the ProfileUKM from the given config.
+func NewProfileUKMClient(c config) *ProfileUKMClient {
+	return &ProfileUKMClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `profileukm.Hooks(f(g(h())))`.
+func (c *ProfileUKMClient) Use(hooks ...Hook) {
+	c.hooks.ProfileUKM = append(c.hooks.ProfileUKM, hooks...)
+}
+
+// Create returns a create builder for ProfileUKM.
+func (c *ProfileUKMClient) Create() *ProfileUKMCreate {
+	mutation := newProfileUKMMutation(c.config, OpCreate)
+	return &ProfileUKMCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for ProfileUKM.
+func (c *ProfileUKMClient) Update() *ProfileUKMUpdate {
+	mutation := newProfileUKMMutation(c.config, OpUpdate)
+	return &ProfileUKMUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProfileUKMClient) UpdateOne(pu *ProfileUKM) *ProfileUKMUpdateOne {
+	return c.UpdateOneID(pu.ID)
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProfileUKMClient) UpdateOneID(id int) *ProfileUKMUpdateOne {
+	mutation := newProfileUKMMutation(c.config, OpUpdateOne)
+	mutation.id = &id
+	return &ProfileUKMUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProfileUKM.
+func (c *ProfileUKMClient) Delete() *ProfileUKMDelete {
+	mutation := newProfileUKMMutation(c.config, OpDelete)
+	return &ProfileUKMDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ProfileUKMClient) DeleteOne(pu *ProfileUKM) *ProfileUKMDeleteOne {
+	return c.DeleteOneID(pu.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ProfileUKMClient) DeleteOneID(id int) *ProfileUKMDeleteOne {
+	builder := c.Delete().Where(profileukm.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProfileUKMDeleteOne{builder}
+}
+
+// Create returns a query builder for ProfileUKM.
+func (c *ProfileUKMClient) Query() *ProfileUKMQuery {
+	return &ProfileUKMQuery{config: c.config}
+}
+
+// Get returns a ProfileUKM entity by its id.
+func (c *ProfileUKMClient) Get(ctx context.Context, id int) (*ProfileUKM, error) {
+	return c.Query().Where(profileukm.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProfileUKMClient) GetX(ctx context.Context, id int) *ProfileUKM {
+	pu, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return pu
+}
+
+// QueryOwnerProfile queries the owner_profile edge of a ProfileUKM.
+func (c *ProfileUKMClient) QueryOwnerProfile(pu *ProfileUKM) *ProfileQuery {
+	query := &ProfileQuery{config: c.config}
+	id := pu.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profileukm.Table, profileukm.FieldID, id),
+		sqlgraph.To(profile.Table, profile.FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, profileukm.OwnerProfileTable, profileukm.OwnerProfileColumn),
+	)
+	query.sql = sqlgraph.Neighbors(pu.driver.Dialect(), step)
+
+	return query
+}
+
+// QueryOwnerUkm queries the owner_ukm edge of a ProfileUKM.
+func (c *ProfileUKMClient) QueryOwnerUkm(pu *ProfileUKM) *UkmQuery {
+	query := &UkmQuery{config: c.config}
+	id := pu.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profileukm.Table, profileukm.FieldID, id),
+		sqlgraph.To(ukm.Table, ukm.FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, profileukm.OwnerUkmTable, profileukm.OwnerUkmColumn),
+	)
+	query.sql = sqlgraph.Neighbors(pu.driver.Dialect(), step)
+
+	return query
+}
+
+// QueryOwnerRole queries the owner_role edge of a ProfileUKM.
+func (c *ProfileUKMClient) QueryOwnerRole(pu *ProfileUKM) *RoleUKMQuery {
+	query := &RoleUKMQuery{config: c.config}
+	id := pu.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(profileukm.Table, profileukm.FieldID, id),
+		sqlgraph.To(roleukm.Table, roleukm.FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, profileukm.OwnerRoleTable, profileukm.OwnerRoleColumn),
+	)
+	query.sql = sqlgraph.Neighbors(pu.driver.Dialect(), step)
+
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProfileUKMClient) Hooks() []Hook {
+	return c.hooks.ProfileUKM
 }
 
 // RoleClient is a client for the Role schema.
@@ -325,6 +462,103 @@ func (c *RoleClient) Hooks() []Hook {
 	return c.hooks.Role
 }
 
+// RoleUKMClient is a client for the RoleUKM schema.
+type RoleUKMClient struct {
+	config
+}
+
+// NewRoleUKMClient returns a client for the RoleUKM from the given config.
+func NewRoleUKMClient(c config) *RoleUKMClient {
+	return &RoleUKMClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `roleukm.Hooks(f(g(h())))`.
+func (c *RoleUKMClient) Use(hooks ...Hook) {
+	c.hooks.RoleUKM = append(c.hooks.RoleUKM, hooks...)
+}
+
+// Create returns a create builder for RoleUKM.
+func (c *RoleUKMClient) Create() *RoleUKMCreate {
+	mutation := newRoleUKMMutation(c.config, OpCreate)
+	return &RoleUKMCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for RoleUKM.
+func (c *RoleUKMClient) Update() *RoleUKMUpdate {
+	mutation := newRoleUKMMutation(c.config, OpUpdate)
+	return &RoleUKMUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RoleUKMClient) UpdateOne(ru *RoleUKM) *RoleUKMUpdateOne {
+	return c.UpdateOneID(ru.ID)
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RoleUKMClient) UpdateOneID(id int) *RoleUKMUpdateOne {
+	mutation := newRoleUKMMutation(c.config, OpUpdateOne)
+	mutation.id = &id
+	return &RoleUKMUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RoleUKM.
+func (c *RoleUKMClient) Delete() *RoleUKMDelete {
+	mutation := newRoleUKMMutation(c.config, OpDelete)
+	return &RoleUKMDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *RoleUKMClient) DeleteOne(ru *RoleUKM) *RoleUKMDeleteOne {
+	return c.DeleteOneID(ru.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *RoleUKMClient) DeleteOneID(id int) *RoleUKMDeleteOne {
+	builder := c.Delete().Where(roleukm.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RoleUKMDeleteOne{builder}
+}
+
+// Create returns a query builder for RoleUKM.
+func (c *RoleUKMClient) Query() *RoleUKMQuery {
+	return &RoleUKMQuery{config: c.config}
+}
+
+// Get returns a RoleUKM entity by its id.
+func (c *RoleUKMClient) Get(ctx context.Context, id int) (*RoleUKM, error) {
+	return c.Query().Where(roleukm.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RoleUKMClient) GetX(ctx context.Context, id int) *RoleUKM {
+	ru, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return ru
+}
+
+// QueryProfileRoles queries the profile_roles edge of a RoleUKM.
+func (c *RoleUKMClient) QueryProfileRoles(ru *RoleUKM) *ProfileUKMQuery {
+	query := &ProfileUKMQuery{config: c.config}
+	id := ru.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(roleukm.Table, roleukm.FieldID, id),
+		sqlgraph.To(profileukm.Table, profileukm.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, roleukm.ProfileRolesTable, roleukm.ProfileRolesColumn),
+	)
+	query.sql = sqlgraph.Neighbors(ru.driver.Dialect(), step)
+
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RoleUKMClient) Hooks() []Hook {
+	return c.hooks.RoleUKM
+}
+
 // UkmClient is a client for the Ukm schema.
 type UkmClient struct {
 	config
@@ -404,13 +638,13 @@ func (c *UkmClient) GetX(ctx context.Context, id int) *Ukm {
 }
 
 // QueryProfiles queries the profiles edge of a Ukm.
-func (c *UkmClient) QueryProfiles(u *Ukm) *ProfileQuery {
-	query := &ProfileQuery{config: c.config}
+func (c *UkmClient) QueryProfiles(u *Ukm) *ProfileUKMQuery {
+	query := &ProfileUKMQuery{config: c.config}
 	id := u.ID
 	step := sqlgraph.NewStep(
 		sqlgraph.From(ukm.Table, ukm.FieldID, id),
-		sqlgraph.To(profile.Table, profile.FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, ukm.ProfilesTable, ukm.ProfilesPrimaryKey...),
+		sqlgraph.To(profileukm.Table, profileukm.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ukm.ProfilesTable, ukm.ProfilesColumn),
 	)
 	query.sql = sqlgraph.Neighbors(u.driver.Dialect(), step)
 
