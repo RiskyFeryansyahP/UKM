@@ -60,10 +60,26 @@ func TestUKMRepository(t *testing.T) {
 		require.Nil(t, profile)
 	})
 
+	t.Run("failed registration ukm is closed", func(t *testing.T) {
+		input := model.InputRegisterUKM{
+			Reason: "Love scen",
+			Name: "SceN",
+		}
+
+		profileID := 1
+
+		profile, err := ukm.RegisterUKM(ctx, profileID, input)
+
+		t.Log("err", err)
+
+		require.Error(t, err)
+		require.Nil(t, profile)
+	})
+
 	t.Run("failed registration reason is empty", func(t *testing.T) {
 		input := model.InputRegisterUKM{
 			Reason: "",
-			Name: "SceN",
+			Name: "Pencak Silat",
 		}
 
 		profileID := 1
@@ -122,6 +138,13 @@ func initValue(client *ent.Client, t *testing.T) {
 	_, err = client.Ukm.Create().
 		SetName("SFC").
 		SetStatus("close").
+		Save(ctx)
+
+	require.NoError(t, err)
+
+	_, err = client.Ukm.Create().
+		SetName("Pencak Silat").
+		SetStatus("open").
 		Save(ctx)
 
 	require.NoError(t, err)
