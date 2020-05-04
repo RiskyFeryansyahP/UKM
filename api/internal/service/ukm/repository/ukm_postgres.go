@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"github.com/confus1on/UKM/ent"
 	"github.com/confus1on/UKM/ent/profile"
+	"github.com/confus1on/UKM/ent/profileukm"
 	ukmField "github.com/confus1on/UKM/ent/ukm"
 	"github.com/confus1on/UKM/internal/model"
 	"github.com/confus1on/UKM/internal/service/ukm"
@@ -42,6 +44,19 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 		).
 		OnlyID(ctx)
 	if err != nil {
+		return nil, err
+	}
+
+	count := u.DB.ProfileUKM.Query().
+		Where(
+			profileukm.And(
+				profileukm.HasOwnerUkmWith(ukmField.ID(ukmID)),
+				profileukm.HasOwnerProfileWith(profile.ID(profileID)),
+				),
+		).
+		CountX(ctx)
+	if count > 0 {
+		err = errors.New("already registered in this ukm")
 		return nil, err
 	}
 
