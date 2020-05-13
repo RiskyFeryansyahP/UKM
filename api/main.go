@@ -7,15 +7,18 @@ import (
 	"os"
 
 	"github.com/confus1on/UKM/internal/postgres"
+	announcementHandler "github.com/confus1on/UKM/internal/service/announcement/handler"
+	announcementRepo "github.com/confus1on/UKM/internal/service/announcement/repository"
+	announcementUC "github.com/confus1on/UKM/internal/service/announcement/usecase"
 	profileHandler "github.com/confus1on/UKM/internal/service/profile/handler"
 	profileRepo "github.com/confus1on/UKM/internal/service/profile/repository"
 	profileUC "github.com/confus1on/UKM/internal/service/profile/usecase"
+	ukmHandler "github.com/confus1on/UKM/internal/service/ukm/handler"
+	ukmRepo "github.com/confus1on/UKM/internal/service/ukm/repository"
+	ukmUC "github.com/confus1on/UKM/internal/service/ukm/usecase"
 	usrHandler "github.com/confus1on/UKM/internal/service/user/handler"
 	usrRepo "github.com/confus1on/UKM/internal/service/user/repository"
 	usrUC "github.com/confus1on/UKM/internal/service/user/usecase"
-	ukmRepo "github.com/confus1on/UKM/internal/service/ukm/repository"
-	ukmUC "github.com/confus1on/UKM/internal/service/ukm/usecase"
-	ukmHandler "github.com/confus1on/UKM/internal/service/ukm/handler"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/joho/godotenv"
@@ -76,6 +79,11 @@ func main() {
 	ukmUsecase := ukmUC.NewUKMUsecase(ukmRepo)
 	ukm := ukmHandler.NewUKMHandler(ukmUsecase)
 
+	// initialize announcement service
+	announcementRepo := announcementRepo.NewAnnouncementRepository(client)
+	announcementUsecase := announcementUC.NewAnnouncementUsecase(announcementRepo)
+	announcement := announcementHandler.NewAnnouncementHandler(announcementUsecase)
+
 	router := fasthttprouter.New()
 	router.POST("/api/v0/user/register", user.RegisterUser)
 	router.POST("/api/v0/user/login", user.LoginUser)
@@ -86,6 +94,11 @@ func main() {
 	router.GET("/api/v0/ukm", ukm.GetAllUKM)
 	router.POST("/api/v0/ukm/register/profile/:profileID", ukm.RegisterUKM)
 	router.PUT("/api/v0/ukm/:ukmID", ukm.UpdateUKM)
+
+	router.GET("/api/v0/announcement/ukm/:ukmID", announcement.GetAnnouncement)
+	router.POST("/api/v0/announcement/ukm/:ukmID", announcement.PostAnnouncement)
+	router.PUT("/api/v0/announcement/:announcementID", announcement.UpdateAnnouncement)
+	router.DELETE("/api/v0/announcement/:announcementID", announcement.DeleteAnnouncement)
 
 	log.Printf("Server Running at http://localhost%v \n", port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))
