@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/confus1on/UKM/ent/announcement"
 	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/ukm"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
@@ -74,6 +75,21 @@ func (uc *UkmCreate) AddProfiles(p ...*ProfileUKM) *UkmCreate {
 		ids[i] = p[i].ID
 	}
 	return uc.AddProfileIDs(ids...)
+}
+
+// AddAnnouncementIDs adds the announcement edge to Announcement by ids.
+func (uc *UkmCreate) AddAnnouncementIDs(ids ...int) *UkmCreate {
+	uc.mutation.AddAnnouncementIDs(ids...)
+	return uc
+}
+
+// AddAnnouncement adds the announcement edges to Announcement.
+func (uc *UkmCreate) AddAnnouncement(a ...*Announcement) *UkmCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAnnouncementIDs(ids...)
 }
 
 // Save creates the Ukm in the database.
@@ -191,6 +207,25 @@ func (uc *UkmCreate) sqlSave(ctx context.Context) (*Ukm, error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: profileukm.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AnnouncementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ukm.AnnouncementTable,
+			Columns: []string{ukm.AnnouncementColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: announcement.FieldID,
 				},
 			},
 		}

@@ -144,6 +144,30 @@ type fixedDecisionRule struct{ err error }
 func (f fixedDecisionRule) EvalQuery(context.Context, ent.Query) error       { return f.err }
 func (f fixedDecisionRule) EvalMutation(context.Context, ent.Mutation) error { return f.err }
 
+// The AnnouncementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AnnouncementQueryRuleFunc func(context.Context, *ent.AnnouncementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AnnouncementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AnnouncementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AnnouncementQuery", q)
+}
+
+// The AnnouncementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AnnouncementMutationRuleFunc func(context.Context, *ent.AnnouncementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AnnouncementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AnnouncementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AnnouncementMutation", m)
+}
+
 // The ProfileQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ProfileQueryRuleFunc func(context.Context, *ent.ProfileQuery) error

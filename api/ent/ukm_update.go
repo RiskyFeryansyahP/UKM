@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/confus1on/UKM/ent/announcement"
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/ukm"
@@ -76,6 +77,21 @@ func (uu *UkmUpdate) AddProfiles(p ...*ProfileUKM) *UkmUpdate {
 	return uu.AddProfileIDs(ids...)
 }
 
+// AddAnnouncementIDs adds the announcement edge to Announcement by ids.
+func (uu *UkmUpdate) AddAnnouncementIDs(ids ...int) *UkmUpdate {
+	uu.mutation.AddAnnouncementIDs(ids...)
+	return uu
+}
+
+// AddAnnouncement adds the announcement edges to Announcement.
+func (uu *UkmUpdate) AddAnnouncement(a ...*Announcement) *UkmUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAnnouncementIDs(ids...)
+}
+
 // RemoveProfileIDs removes the profiles edge to ProfileUKM by ids.
 func (uu *UkmUpdate) RemoveProfileIDs(ids ...int) *UkmUpdate {
 	uu.mutation.RemoveProfileIDs(ids...)
@@ -89,6 +105,21 @@ func (uu *UkmUpdate) RemoveProfiles(p ...*ProfileUKM) *UkmUpdate {
 		ids[i] = p[i].ID
 	}
 	return uu.RemoveProfileIDs(ids...)
+}
+
+// RemoveAnnouncementIDs removes the announcement edge to Announcement by ids.
+func (uu *UkmUpdate) RemoveAnnouncementIDs(ids ...int) *UkmUpdate {
+	uu.mutation.RemoveAnnouncementIDs(ids...)
+	return uu
+}
+
+// RemoveAnnouncement removes announcement edges to Announcement.
+func (uu *UkmUpdate) RemoveAnnouncement(a ...*Announcement) *UkmUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAnnouncementIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -240,6 +271,44 @@ func (uu *UkmUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if nodes := uu.mutation.RemovedAnnouncementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ukm.AnnouncementTable,
+			Columns: []string{ukm.AnnouncementColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: announcement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AnnouncementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ukm.AnnouncementTable,
+			Columns: []string{ukm.AnnouncementColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: announcement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{ukm.Label}
@@ -305,6 +374,21 @@ func (uuo *UkmUpdateOne) AddProfiles(p ...*ProfileUKM) *UkmUpdateOne {
 	return uuo.AddProfileIDs(ids...)
 }
 
+// AddAnnouncementIDs adds the announcement edge to Announcement by ids.
+func (uuo *UkmUpdateOne) AddAnnouncementIDs(ids ...int) *UkmUpdateOne {
+	uuo.mutation.AddAnnouncementIDs(ids...)
+	return uuo
+}
+
+// AddAnnouncement adds the announcement edges to Announcement.
+func (uuo *UkmUpdateOne) AddAnnouncement(a ...*Announcement) *UkmUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAnnouncementIDs(ids...)
+}
+
 // RemoveProfileIDs removes the profiles edge to ProfileUKM by ids.
 func (uuo *UkmUpdateOne) RemoveProfileIDs(ids ...int) *UkmUpdateOne {
 	uuo.mutation.RemoveProfileIDs(ids...)
@@ -318,6 +402,21 @@ func (uuo *UkmUpdateOne) RemoveProfiles(p ...*ProfileUKM) *UkmUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return uuo.RemoveProfileIDs(ids...)
+}
+
+// RemoveAnnouncementIDs removes the announcement edge to Announcement by ids.
+func (uuo *UkmUpdateOne) RemoveAnnouncementIDs(ids ...int) *UkmUpdateOne {
+	uuo.mutation.RemoveAnnouncementIDs(ids...)
+	return uuo
+}
+
+// RemoveAnnouncement removes announcement edges to Announcement.
+func (uuo *UkmUpdateOne) RemoveAnnouncement(a ...*Announcement) *UkmUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAnnouncementIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -459,6 +558,44 @@ func (uuo *UkmUpdateOne) sqlSave(ctx context.Context) (u *Ukm, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: profileukm.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := uuo.mutation.RemovedAnnouncementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ukm.AnnouncementTable,
+			Columns: []string{ukm.AnnouncementColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: announcement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AnnouncementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ukm.AnnouncementTable,
+			Columns: []string{ukm.AnnouncementColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: announcement.FieldID,
 				},
 			},
 		}
