@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/confus1on/UKM/ent/announcement"
 	"github.com/confus1on/UKM/ent/predicate"
 	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/ukm"
@@ -26,7 +27,8 @@ type UkmQuery struct {
 	unique     []string
 	predicates []predicate.Ukm
 	// eager-loading edges.
-	withProfiles *ProfileUKMQuery
+	withProfiles     *ProfileUKMQuery
+	withAnnouncement *AnnouncementQuery
 	// intermediate query.
 	sql *sql.Selector
 }
@@ -62,6 +64,18 @@ func (uq *UkmQuery) QueryProfiles() *ProfileUKMQuery {
 		sqlgraph.From(ukm.Table, ukm.FieldID, uq.sqlQuery()),
 		sqlgraph.To(profileukm.Table, profileukm.FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ukm.ProfilesTable, ukm.ProfilesColumn),
+	)
+	query.sql = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+	return query
+}
+
+// QueryAnnouncement chains the current query on the announcement edge.
+func (uq *UkmQuery) QueryAnnouncement() *AnnouncementQuery {
+	query := &AnnouncementQuery{config: uq.config}
+	step := sqlgraph.NewStep(
+		sqlgraph.From(ukm.Table, ukm.FieldID, uq.sqlQuery()),
+		sqlgraph.To(announcement.Table, announcement.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ukm.AnnouncementTable, ukm.AnnouncementColumn),
 	)
 	query.sql = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 	return query
@@ -247,6 +261,17 @@ func (uq *UkmQuery) WithProfiles(opts ...func(*ProfileUKMQuery)) *UkmQuery {
 	return uq
 }
 
+//  WithAnnouncement tells the query-builder to eager-loads the nodes that are connected to
+// the "announcement" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UkmQuery) WithAnnouncement(opts ...func(*AnnouncementQuery)) *UkmQuery {
+	query := &AnnouncementQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAnnouncement = query
+	return uq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -292,8 +317,9 @@ func (uq *UkmQuery) sqlAll(ctx context.Context) ([]*Ukm, error) {
 	var (
 		nodes       = []*Ukm{}
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withProfiles != nil,
+			uq.withAnnouncement != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -342,6 +368,34 @@ func (uq *UkmQuery) sqlAll(ctx context.Context) ([]*Ukm, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "ukm_profiles" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Profiles = append(node.Edges.Profiles, n)
+		}
+	}
+
+	if query := uq.withAnnouncement; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Ukm)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.Announcement(func(s *sql.Selector) {
+			s.Where(sql.InValues(ukm.AnnouncementColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.ukm_announcement
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "ukm_announcement" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "ukm_announcement" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Announcement = append(node.Edges.Announcement, n)
 		}
 	}
 

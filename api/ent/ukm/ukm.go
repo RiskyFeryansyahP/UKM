@@ -19,6 +19,8 @@ const (
 
 	// EdgeProfiles holds the string denoting the profiles edge name in mutations.
 	EdgeProfiles = "profiles"
+	// EdgeAnnouncement holds the string denoting the announcement edge name in mutations.
+	EdgeAnnouncement = "announcement"
 
 	// Table holds the table name of the ukm in the database.
 	Table = "ukms"
@@ -29,6 +31,13 @@ const (
 	ProfilesInverseTable = "profile_ukm"
 	// ProfilesColumn is the table column denoting the profiles relation/edge.
 	ProfilesColumn = "ukm_profiles"
+	// AnnouncementTable is the table the holds the announcement relation/edge.
+	AnnouncementTable = "announcements"
+	// AnnouncementInverseTable is the table name for the Announcement entity.
+	// It exists in this package in order to avoid circular dependency with the "announcement" package.
+	AnnouncementInverseTable = "announcements"
+	// AnnouncementColumn is the table column denoting the announcement relation/edge.
+	AnnouncementColumn = "ukm_announcement"
 )
 
 // Columns holds all SQL columns for ukm fields.

@@ -44,6 +44,7 @@ func (u *UKMRepository) RegisterUKM(ctx context.Context, profileID int, input mo
 		).
 		OnlyID(ctx)
 	if err != nil {
+		err = errors.New("ukm already closed")
 		return nil, err
 	}
 

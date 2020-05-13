@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/confus1on/UKM/ent/announcement"
 	"github.com/confus1on/UKM/ent/profile"
 	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/role"
@@ -25,13 +26,376 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeProfile    = "Profile"
-	TypeProfileUKM = "ProfileUKM"
-	TypeRole       = "Role"
-	TypeRoleUKM    = "RoleUKM"
-	TypeUkm        = "Ukm"
-	TypeUser       = "User"
+	TypeAnnouncement = "Announcement"
+	TypeProfile      = "Profile"
+	TypeProfileUKM   = "ProfileUKM"
+	TypeRole         = "Role"
+	TypeRoleUKM      = "RoleUKM"
+	TypeUkm          = "Ukm"
+	TypeUser         = "User"
 )
+
+// AnnouncementMutation represents an operation that mutate the Announcements
+// nodes in the graph.
+type AnnouncementMutation struct {
+	config
+	op                        Op
+	typ                       string
+	id                        *int
+	title                     *string
+	description               *string
+	time                      *string
+	clearedFields             map[string]struct{}
+	owner_announcement        *int
+	clearedowner_announcement bool
+}
+
+var _ ent.Mutation = (*AnnouncementMutation)(nil)
+
+// newAnnouncementMutation creates new mutation for $n.Name.
+func newAnnouncementMutation(c config, op Op) *AnnouncementMutation {
+	return &AnnouncementMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAnnouncement,
+		clearedFields: make(map[string]struct{}),
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AnnouncementMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AnnouncementMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *AnnouncementMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetTitle sets the title field.
+func (m *AnnouncementMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the title value in the mutation.
+func (m *AnnouncementMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTitle reset all changes of the title field.
+func (m *AnnouncementMutation) ResetTitle() {
+	m.title = nil
+}
+
+// SetDescription sets the description field.
+func (m *AnnouncementMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *AnnouncementMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDescription reset all changes of the description field.
+func (m *AnnouncementMutation) ResetDescription() {
+	m.description = nil
+}
+
+// SetTime sets the time field.
+func (m *AnnouncementMutation) SetTime(s string) {
+	m.time = &s
+}
+
+// Time returns the time value in the mutation.
+func (m *AnnouncementMutation) Time() (r string, exists bool) {
+	v := m.time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTime reset all changes of the time field.
+func (m *AnnouncementMutation) ResetTime() {
+	m.time = nil
+}
+
+// SetOwnerAnnouncementID sets the owner_announcement edge to Ukm by id.
+func (m *AnnouncementMutation) SetOwnerAnnouncementID(id int) {
+	m.owner_announcement = &id
+}
+
+// ClearOwnerAnnouncement clears the owner_announcement edge to Ukm.
+func (m *AnnouncementMutation) ClearOwnerAnnouncement() {
+	m.clearedowner_announcement = true
+}
+
+// OwnerAnnouncementCleared returns if the edge owner_announcement was cleared.
+func (m *AnnouncementMutation) OwnerAnnouncementCleared() bool {
+	return m.clearedowner_announcement
+}
+
+// OwnerAnnouncementID returns the owner_announcement id in the mutation.
+func (m *AnnouncementMutation) OwnerAnnouncementID() (id int, exists bool) {
+	if m.owner_announcement != nil {
+		return *m.owner_announcement, true
+	}
+	return
+}
+
+// OwnerAnnouncementIDs returns the owner_announcement ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// OwnerAnnouncementID instead. It exists only for internal usage by the builders.
+func (m *AnnouncementMutation) OwnerAnnouncementIDs() (ids []int) {
+	if id := m.owner_announcement; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwnerAnnouncement reset all changes of the owner_announcement edge.
+func (m *AnnouncementMutation) ResetOwnerAnnouncement() {
+	m.owner_announcement = nil
+	m.clearedowner_announcement = false
+}
+
+// Op returns the operation name.
+func (m *AnnouncementMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Announcement).
+func (m *AnnouncementMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *AnnouncementMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.title != nil {
+		fields = append(fields, announcement.FieldTitle)
+	}
+	if m.description != nil {
+		fields = append(fields, announcement.FieldDescription)
+	}
+	if m.time != nil {
+		fields = append(fields, announcement.FieldTime)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *AnnouncementMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case announcement.FieldTitle:
+		return m.Title()
+	case announcement.FieldDescription:
+		return m.Description()
+	case announcement.FieldTime:
+		return m.Time()
+	}
+	return nil, false
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AnnouncementMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case announcement.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case announcement.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case announcement.FieldTime:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTime(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Announcement field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *AnnouncementMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *AnnouncementMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *AnnouncementMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Announcement numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *AnnouncementMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *AnnouncementMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AnnouncementMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Announcement nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *AnnouncementMutation) ResetField(name string) error {
+	switch name {
+	case announcement.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case announcement.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case announcement.FieldTime:
+		m.ResetTime()
+		return nil
+	}
+	return fmt.Errorf("unknown Announcement field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *AnnouncementMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.owner_announcement != nil {
+		edges = append(edges, announcement.EdgeOwnerAnnouncement)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *AnnouncementMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case announcement.EdgeOwnerAnnouncement:
+		if id := m.owner_announcement; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *AnnouncementMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *AnnouncementMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *AnnouncementMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedowner_announcement {
+		edges = append(edges, announcement.EdgeOwnerAnnouncement)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *AnnouncementMutation) EdgeCleared(name string) bool {
+	switch name {
+	case announcement.EdgeOwnerAnnouncement:
+		return m.clearedowner_announcement
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *AnnouncementMutation) ClearEdge(name string) error {
+	switch name {
+	case announcement.EdgeOwnerAnnouncement:
+		m.ClearOwnerAnnouncement()
+		return nil
+	}
+	return fmt.Errorf("unknown Announcement unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *AnnouncementMutation) ResetEdge(name string) error {
+	switch name {
+	case announcement.EdgeOwnerAnnouncement:
+		m.ResetOwnerAnnouncement()
+		return nil
+	}
+	return fmt.Errorf("unknown Announcement edge %s", name)
+}
 
 // ProfileMutation represents an operation that mutate the Profiles
 // nodes in the graph.
@@ -1797,16 +2161,18 @@ func (m *RoleUKMMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type UkmMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	name            *string
-	status          *ukm.Status
-	created_at      *time.Time
-	updated_at      *time.Time
-	clearedFields   map[string]struct{}
-	profiles        map[int]struct{}
-	removedprofiles map[int]struct{}
+	op                  Op
+	typ                 string
+	id                  *int
+	name                *string
+	status              *ukm.Status
+	created_at          *time.Time
+	updated_at          *time.Time
+	clearedFields       map[string]struct{}
+	profiles            map[int]struct{}
+	removedprofiles     map[int]struct{}
+	announcement        map[int]struct{}
+	removedannouncement map[int]struct{}
 }
 
 var _ ent.Mutation = (*UkmMutation)(nil)
@@ -1967,6 +2333,48 @@ func (m *UkmMutation) ResetProfiles() {
 	m.removedprofiles = nil
 }
 
+// AddAnnouncementIDs adds the announcement edge to Announcement by ids.
+func (m *UkmMutation) AddAnnouncementIDs(ids ...int) {
+	if m.announcement == nil {
+		m.announcement = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.announcement[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveAnnouncementIDs removes the announcement edge to Announcement by ids.
+func (m *UkmMutation) RemoveAnnouncementIDs(ids ...int) {
+	if m.removedannouncement == nil {
+		m.removedannouncement = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedannouncement[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAnnouncement returns the removed ids of announcement.
+func (m *UkmMutation) RemovedAnnouncementIDs() (ids []int) {
+	for id := range m.removedannouncement {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AnnouncementIDs returns the announcement ids in the mutation.
+func (m *UkmMutation) AnnouncementIDs() (ids []int) {
+	for id := range m.announcement {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAnnouncement reset all changes of the announcement edge.
+func (m *UkmMutation) ResetAnnouncement() {
+	m.announcement = nil
+	m.removedannouncement = nil
+}
+
 // Op returns the operation name.
 func (m *UkmMutation) Op() Op {
 	return m.op
@@ -2116,9 +2524,12 @@ func (m *UkmMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UkmMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.profiles != nil {
 		edges = append(edges, ukm.EdgeProfiles)
+	}
+	if m.announcement != nil {
+		edges = append(edges, ukm.EdgeAnnouncement)
 	}
 	return edges
 }
@@ -2133,6 +2544,12 @@ func (m *UkmMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case ukm.EdgeAnnouncement:
+		ids := make([]ent.Value, 0, len(m.announcement))
+		for id := range m.announcement {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2140,9 +2557,12 @@ func (m *UkmMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UkmMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedprofiles != nil {
 		edges = append(edges, ukm.EdgeProfiles)
+	}
+	if m.removedannouncement != nil {
+		edges = append(edges, ukm.EdgeAnnouncement)
 	}
 	return edges
 }
@@ -2157,6 +2577,12 @@ func (m *UkmMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case ukm.EdgeAnnouncement:
+		ids := make([]ent.Value, 0, len(m.removedannouncement))
+		for id := range m.removedannouncement {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2164,7 +2590,7 @@ func (m *UkmMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UkmMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -2191,6 +2617,9 @@ func (m *UkmMutation) ResetEdge(name string) error {
 	switch name {
 	case ukm.EdgeProfiles:
 		m.ResetProfiles()
+		return nil
+	case ukm.EdgeAnnouncement:
+		m.ResetAnnouncement()
 		return nil
 	}
 	return fmt.Errorf("unknown Ukm edge %s", name)

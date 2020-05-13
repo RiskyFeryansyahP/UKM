@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/confus1on/UKM/ent/announcement"
 	"github.com/confus1on/UKM/ent/profile"
 	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/role"
@@ -18,6 +19,20 @@ import (
 // code (default values, validators or hooks) and stitches it
 // to their package variables.
 func init() {
+	announcementFields := schema.Announcement{}.Fields()
+	_ = announcementFields
+	// announcementDescTitle is the schema descriptor for title field.
+	announcementDescTitle := announcementFields[0].Descriptor()
+	// announcement.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	announcement.TitleValidator = announcementDescTitle.Validators[0].(func(string) error)
+	// announcementDescDescription is the schema descriptor for description field.
+	announcementDescDescription := announcementFields[1].Descriptor()
+	// announcement.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	announcement.DescriptionValidator = announcementDescDescription.Validators[0].(func(string) error)
+	// announcementDescTime is the schema descriptor for time field.
+	announcementDescTime := announcementFields[2].Descriptor()
+	// announcement.TimeValidator is a validator for the "time" field. It is called by the builders before save.
+	announcement.TimeValidator = announcementDescTime.Validators[0].(func(string) error)
 	profileFields := schema.Profile{}.Fields()
 	_ = profileFields
 	// profileDescFirstName is the schema descriptor for firstName field.

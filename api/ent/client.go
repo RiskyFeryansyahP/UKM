@@ -9,6 +9,7 @@ import (
 
 	"github.com/confus1on/UKM/ent/migrate"
 
+	"github.com/confus1on/UKM/ent/announcement"
 	"github.com/confus1on/UKM/ent/profile"
 	"github.com/confus1on/UKM/ent/profileukm"
 	"github.com/confus1on/UKM/ent/role"
@@ -26,6 +27,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Announcement is the client for interacting with the Announcement builders.
+	Announcement *AnnouncementClient
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
 	// ProfileUKM is the client for interacting with the ProfileUKM builders.
@@ -51,6 +54,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Announcement = NewAnnouncementClient(c.config)
 	c.Profile = NewProfileClient(c.config)
 	c.ProfileUKM = NewProfileUKMClient(c.config)
 	c.Role = NewRoleClient(c.config)
@@ -86,20 +90,21 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	}
 	cfg := config{driver: tx, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
-		config:     cfg,
-		Profile:    NewProfileClient(cfg),
-		ProfileUKM: NewProfileUKMClient(cfg),
-		Role:       NewRoleClient(cfg),
-		RoleUKM:    NewRoleUKMClient(cfg),
-		Ukm:        NewUkmClient(cfg),
-		User:       NewUserClient(cfg),
+		config:       cfg,
+		Announcement: NewAnnouncementClient(cfg),
+		Profile:      NewProfileClient(cfg),
+		ProfileUKM:   NewProfileUKMClient(cfg),
+		Role:         NewRoleClient(cfg),
+		RoleUKM:      NewRoleUKMClient(cfg),
+		Ukm:          NewUkmClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Profile.
+//		Announcement.
 //		Query().
 //		Count(ctx)
 //
@@ -121,12 +126,110 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Announcement.Use(hooks...)
 	c.Profile.Use(hooks...)
 	c.ProfileUKM.Use(hooks...)
 	c.Role.Use(hooks...)
 	c.RoleUKM.Use(hooks...)
 	c.Ukm.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// AnnouncementClient is a client for the Announcement schema.
+type AnnouncementClient struct {
+	config
+}
+
+// NewAnnouncementClient returns a client for the Announcement from the given config.
+func NewAnnouncementClient(c config) *AnnouncementClient {
+	return &AnnouncementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `announcement.Hooks(f(g(h())))`.
+func (c *AnnouncementClient) Use(hooks ...Hook) {
+	c.hooks.Announcement = append(c.hooks.Announcement, hooks...)
+}
+
+// Create returns a create builder for Announcement.
+func (c *AnnouncementClient) Create() *AnnouncementCreate {
+	mutation := newAnnouncementMutation(c.config, OpCreate)
+	return &AnnouncementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for Announcement.
+func (c *AnnouncementClient) Update() *AnnouncementUpdate {
+	mutation := newAnnouncementMutation(c.config, OpUpdate)
+	return &AnnouncementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AnnouncementClient) UpdateOne(a *Announcement) *AnnouncementUpdateOne {
+	return c.UpdateOneID(a.ID)
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AnnouncementClient) UpdateOneID(id int) *AnnouncementUpdateOne {
+	mutation := newAnnouncementMutation(c.config, OpUpdateOne)
+	mutation.id = &id
+	return &AnnouncementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Announcement.
+func (c *AnnouncementClient) Delete() *AnnouncementDelete {
+	mutation := newAnnouncementMutation(c.config, OpDelete)
+	return &AnnouncementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AnnouncementClient) DeleteOne(a *Announcement) *AnnouncementDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AnnouncementClient) DeleteOneID(id int) *AnnouncementDeleteOne {
+	builder := c.Delete().Where(announcement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AnnouncementDeleteOne{builder}
+}
+
+// Create returns a query builder for Announcement.
+func (c *AnnouncementClient) Query() *AnnouncementQuery {
+	return &AnnouncementQuery{config: c.config}
+}
+
+// Get returns a Announcement entity by its id.
+func (c *AnnouncementClient) Get(ctx context.Context, id int) (*Announcement, error) {
+	return c.Query().Where(announcement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AnnouncementClient) GetX(ctx context.Context, id int) *Announcement {
+	a, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return a
+}
+
+// QueryOwnerAnnouncement queries the owner_announcement edge of a Announcement.
+func (c *AnnouncementClient) QueryOwnerAnnouncement(a *Announcement) *UkmQuery {
+	query := &UkmQuery{config: c.config}
+	id := a.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(announcement.Table, announcement.FieldID, id),
+		sqlgraph.To(ukm.Table, ukm.FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, announcement.OwnerAnnouncementTable, announcement.OwnerAnnouncementColumn),
+	)
+	query.sql = sqlgraph.Neighbors(a.driver.Dialect(), step)
+
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AnnouncementClient) Hooks() []Hook {
+	return c.hooks.Announcement
 }
 
 // ProfileClient is a client for the Profile schema.
@@ -645,6 +748,20 @@ func (c *UkmClient) QueryProfiles(u *Ukm) *ProfileUKMQuery {
 		sqlgraph.From(ukm.Table, ukm.FieldID, id),
 		sqlgraph.To(profileukm.Table, profileukm.FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ukm.ProfilesTable, ukm.ProfilesColumn),
+	)
+	query.sql = sqlgraph.Neighbors(u.driver.Dialect(), step)
+
+	return query
+}
+
+// QueryAnnouncement queries the announcement edge of a Ukm.
+func (c *UkmClient) QueryAnnouncement(u *Ukm) *AnnouncementQuery {
+	query := &AnnouncementQuery{config: c.config}
+	id := u.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(ukm.Table, ukm.FieldID, id),
+		sqlgraph.To(announcement.Table, announcement.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ukm.AnnouncementTable, ukm.AnnouncementColumn),
 	)
 	query.sql = sqlgraph.Neighbors(u.driver.Dialect(), step)
 

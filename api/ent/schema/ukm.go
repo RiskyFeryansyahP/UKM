@@ -31,5 +31,6 @@ func (Ukm) Fields() []ent.Field {
 func (Ukm) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("profiles", ProfileUKM.Type),
+		edge.To("announcement", Announcement.Type),
 	}
 }

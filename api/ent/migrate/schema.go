@@ -8,6 +8,29 @@ import (
 )
 
 var (
+	// AnnouncementsColumns holds the columns for the "announcements" table.
+	AnnouncementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "title", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString},
+		{Name: "time", Type: field.TypeString},
+		{Name: "ukm_announcement", Type: field.TypeInt, Nullable: true},
+	}
+	// AnnouncementsTable holds the schema information for the "announcements" table.
+	AnnouncementsTable = &schema.Table{
+		Name:       "announcements",
+		Columns:    AnnouncementsColumns,
+		PrimaryKey: []*schema.Column{AnnouncementsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "announcements_ukms_announcement",
+				Columns: []*schema.Column{AnnouncementsColumns[4]},
+
+				RefColumns: []*schema.Column{UkmsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ProfilesColumns holds the columns for the "profiles" table.
 	ProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -140,6 +163,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AnnouncementsTable,
 		ProfilesTable,
 		ProfileUkmTable,
 		RolesTable,
@@ -150,6 +174,7 @@ var (
 )
 
 func init() {
+	AnnouncementsTable.ForeignKeys[0].RefTable = UkmsTable
 	ProfileUkmTable.ForeignKeys[0].RefTable = ProfilesTable
 	ProfileUkmTable.ForeignKeys[1].RefTable = RoleUkmTable
 	ProfileUkmTable.ForeignKeys[2].RefTable = UkmsTable

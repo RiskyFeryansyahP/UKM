@@ -33,9 +33,11 @@ type Ukm struct {
 type UkmEdges struct {
 	// Profiles holds the value of the profiles edge.
 	Profiles []*ProfileUKM
+	// Announcement holds the value of the announcement edge.
+	Announcement []*Announcement
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // ProfilesOrErr returns the Profiles value or an error if the edge
@@ -45,6 +47,15 @@ func (e UkmEdges) ProfilesOrErr() ([]*ProfileUKM, error) {
 		return e.Profiles, nil
 	}
 	return nil, &NotLoadedError{edge: "profiles"}
+}
+
+// AnnouncementOrErr returns the Announcement value or an error if the edge
+// was not loaded in eager-loading.
+func (e UkmEdges) AnnouncementOrErr() ([]*Announcement, error) {
+	if e.loadedTypes[1] {
+		return e.Announcement, nil
+	}
+	return nil, &NotLoadedError{edge: "announcement"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -96,6 +107,11 @@ func (u *Ukm) assignValues(values ...interface{}) error {
 // QueryProfiles queries the profiles edge of the Ukm.
 func (u *Ukm) QueryProfiles() *ProfileUKMQuery {
 	return (&UkmClient{config: u.config}).QueryProfiles(u)
+}
+
+// QueryAnnouncement queries the announcement edge of the Ukm.
+func (u *Ukm) QueryAnnouncement() *AnnouncementQuery {
+	return (&UkmClient{config: u.config}).QueryAnnouncement(u)
 }
 
 // Update returns a builder for updating this Ukm.

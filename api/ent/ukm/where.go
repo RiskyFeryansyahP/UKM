@@ -453,6 +453,34 @@ func HasProfilesWith(preds ...predicate.ProfileUKM) predicate.Ukm {
 	})
 }
 
+// HasAnnouncement applies the HasEdge predicate on the "announcement" edge.
+func HasAnnouncement() predicate.Ukm {
+	return predicate.Ukm(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AnnouncementTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AnnouncementTable, AnnouncementColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAnnouncementWith applies the HasEdge predicate on the "announcement" edge with a given conditions (other predicates).
+func HasAnnouncementWith(preds ...predicate.Announcement) predicate.Ukm {
+	return predicate.Ukm(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AnnouncementInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AnnouncementTable, AnnouncementColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.Ukm) predicate.Ukm {
 	return predicate.Ukm(func(s *sql.Selector) {
