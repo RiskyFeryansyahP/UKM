@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
@@ -28,7 +29,7 @@ func (a *AnnouncementHandler) GetAnnouncement(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := a.AnnouncementUC.GetSpecificAnnouncement(ctx, ukmID)
+	result, err := a.AnnouncementUC.GetSpecificAnnouncement(context.Background(), ukmID)
 	if err != nil {
 		_ = json.NewEncoder(ctx).Encode(err)
 		return
@@ -50,7 +51,7 @@ func (a *AnnouncementHandler) PostAnnouncement(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := a.AnnouncementUC.ValidationPostAnnouncement(ctx, ukmID, input)
+	result, err := a.AnnouncementUC.ValidationPostAnnouncement(context.Background(), ukmID, input)
 	if err != nil {
 		_ = json.NewEncoder(ctx).Encode(err)
 		return
@@ -72,7 +73,7 @@ func (a *AnnouncementHandler) UpdateAnnouncement(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := a.AnnouncementUC.UpdateOneAnnouncement(ctx, annoncementID, input)
+	result, err := a.AnnouncementUC.UpdateOneAnnouncement(context.Background(), annoncementID, input)
 	if err != nil {
 		_ = json.NewEncoder(ctx).Encode(err)
 		return
@@ -89,7 +90,7 @@ func (a *AnnouncementHandler) DeleteAnnouncement(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.Header.SetContentType("application/json")
 
-	result, err := a.AnnouncementUC.DeleteOneAnnouncement(ctx, annoncementID)
+	result, err := a.AnnouncementUC.DeleteOneAnnouncement(context.Background(), annoncementID)
 	if err != nil {
 		_ = json.NewEncoder(ctx).Encode(err)
 		return

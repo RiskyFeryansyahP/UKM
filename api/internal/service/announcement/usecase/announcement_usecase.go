@@ -97,7 +97,7 @@ func (a *AnnouncementUsecase) UpdateOneAnnouncement(ctx context.Context, announc
 	}
 
 	if input.Time == "" || &input.Time == nil {
-		responseError := errors.New("time can't be null or emptry")
+		responseError := errors.New("time can't be null or empty")
 		return nil, utils.WrapErrorJson(responseError, fasthttp.StatusBadRequest)
 	}
 
